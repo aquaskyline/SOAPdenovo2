@@ -1,0 +1,1244 @@
+#######################
+2012-00-00
+Purpose:
+    a) 
+Details:
+1) main.c::fun()
+    a)
+#######################
+
+2012-00-00
+Purpose:
+    a)fix bug for map, zombie process cause by fclose
+Details:
+1) readseq1by1.c::openFile4read()
+    a)delete these lines
+#if defined(SIGCHLD)
+signal(SIGCHLD,SIG_IGN);
+#elif defined(SIGCLD)
+signal(SIGCLD,SIG_IGN);
+#endif
+    b)
+    || ((lib_array[i].curr_type == 1) && feof (lib_array[i].fp1) && feof (lib_array[i].fp2))
+    || ((lib_array[i].curr_type != 1) && (lib_array[i].curr_type != 4) && feof (lib_array[i].fp1)))
+    -->
+    || ((lib_array[i].curr_type == 1 || lib_array[i].curr_type == 2) && feof (lib_array[i].fp1) && feof (lib_array[i].fp2))
+    || ((lib_array[i].curr_type != 1 && lib_array[i].curr_type != 2) && (lib_array[i].curr_type != 4) && feof (lib_array[i].fp1)))
+
+2012-07-31
+Purpose:
+    a) fix bug for map, zombie process cause by fclose
+Details:
+1) readseq1by1.c::openFile4read()
+    a)
+        sprintf (cmd, "gzip -dc %s", fname);
+        fp = popen (cmd, "r");
+        free (cmd);
+        return fp;
+        -->
+        sprintf (cmd, "gzip -dc %s", fname);
+        fp = popen (cmd, "r");
+
+#if defined(SIGCHLD) 
+signal(SIGCHLD,SIG_IGN);        
+#elif defined(SIGCLD) 
+signal(SIGCLD,SIG_IGN); 
+#endif
+
+        free (cmd);
+        return fp;
+
+2012-07-13
+Purpose:
+    a) fix bugs for output, delete the empty line of the output(*.edge.gz, *.contig, *.scafSeq)
+Details:
+1) concatenateEdge.c::printEdgeSeq()
+    a)
+        if ((i + overlaplen + 1) % 100 == 0)
+        -->
+        if ((i + overlaplen + 1) % 100 == 0 && i < len - 1)
+2) iterate.c::output_1contig()
+    a)
+        if ((i + overlaplen + 1) % 100 == 0)    
+        -->
+        if ((i + overlaplen + 1) % 100 == 0 && i < edge->length - 1)    
+3) output_contig.c::output_1contig()
+    a)
+        if ((i + overlaplen + 1) % 100 == 0)
+        -->    
+        if ((i + overlaplen + 1) % 100 == 0 && i < edge->length - 1)    
+4) output_pregraph.c::output_1edge()
+    a)
+        if ((i + 1) % 100 == 0)
+        --> 
+        if ((i + 1) % 100 == 0 && i < edge->length - 1) 
+5) seq.c::printTightString()
+    a)
+        if ((i + 1) % 100 == 0)
+        -->
+        if ((i + 1) % 100 == 0 && i < len - 1)
+6) prlReadFillGap.c
+    a)outputTightStr2Visual()
+            if ((++column) % 100 == 0)
+            -->
+            if ((++column) % 100 == 0 && i < end - 1)
+
+            if ((++column) % 100 == 0)
+            -->
+            if ((++column) % 100 == 0 && i < length - 1 - start)
+
+    b)outputTightStrLowerCase2Visual()
+        if ((++column) % 100 == 0)
+        -->
+        if ((++column) % 100 == 0 && i < end - 1)
+
+    c)outputScafSeq()
+    fprintf (fo, "\n");
+    -->
+    if(column % 100 != 0)
+        fprintf (fo, "\n");
+
+            if(i != 0 && i % 100 == 0)  fprintf(fo3, "\n");
+            -->
+            if(i != 0 && i % 100 == 0 && i < ctg_start_pos - 1)  fprintf(fo3, "\n");
+
+            if(i != 0 && i % 100 == 0)  fprintf(fo3, "\n");
+            -->
+            if(i != 0 && i % 100 == 0 && i < ctg_start_pos - 1)  fprintf(fo3, "\n");
+
+    d)output_ctg()
+    fprintf (fo, "\n");
+    -->
+    if(len % 100 != 0)
+        fprintf (fo, "\n");
+
+    e)output1gap()
+    fprintf (fo, "\n");
+    -->
+    if(column % 100 != 0)
+        fprintf (fo, "\n");
+
+2012-07-13
+Purpose:
+    a) fix bugs for removeWeakEdges
+Details:
+1) cutTip_graph.c::removeWeakEdges()
+    a)
+    for (i = 1; i <= num_ed; i++)
+    {
+        if (edge_array[i].deleted || edge_array[i].length == 0 || edge_array[i].length > lenCutoff || EdSameAsTwin (i))
+        {
+            continue;
+        }
+
+        bal_ed = getTwinEdge (i);
+        arcRight = arcCount (i, &arcRight_n);
+
+        if (arcRight_n > 1 || !arcRight || arcRight->multiplicity > multiCutoff)
+        {
+            continue;
+        }
+
+        arcLeft = arcCount (bal_ed, &arcLeft_n);
+
+        if (arcLeft_n > 1 || !arcLeft || arcLeft->multiplicity > multiCutoff)
+        {
+            continue;
+        }
+
+        destroyEdge (i);
+        counter++;
+    }
+    -->
+    while(counter)
+    {
+        counter = 0;
+        
+        for (i = 1; i <= num_ed; i++)
+        {
+            if (edge_array[i].deleted || edge_array[i].length == 0 || edge_array[i].length > lenCutoff || EdSameAsTwin (i))
+            {
+                continue;
+            }
+
+            bal_ed = getTwinEdge (i);
+            arcRight = arcCount (i, &arcRight_n);
+
+            if (arcRight_n > 1 || !arcRight || arcRight->multiplicity > multiCutoff)
+            {
+                continue;
+            }
+
+            arcLeft = arcCount (bal_ed, &arcLeft_n);
+
+            if (arcLeft_n > 1 || !arcLeft || arcLeft->multiplicity > multiCutoff)
+            {
+                continue;
+            }
+
+            destroyEdge (i);
+            counter++;
+        }
+
+        fprintf (stderr,"%d weak inner edges are destroyed.\n", counter);
+    }
+
+2012-07-13
+Purpose:
+    a) Make the output of SOAPdevovo the same when using different threads.
+Details:
+1) contig.c::call_heavygraph()
+    a)
+    if (repeatSolve)
+    {
+        ret = loadPathBin (graphfile);
+    }
+    -->
+    if (repeatSolve)
+    {
+        ret = loadPathBin (graphfile);
+    }
+    swapedge();
+    sortedge();
+    freshArc();
+
+2012-07-13
+Purpose:
+    a) fix bugs for merge_linearV2, get the correct coverage of edge, l_links maybe change in the original process
+Details:
+1)node2edge.c:merge_linearV2()
+    a)
+    while (nStack->item_c > 1)
+    {
+        temp = (KMER_PT *) stackPop (nStack);
+        del_node = temp->node;
+        del_node->inEdge = 1;
+        symbol += get_kmer_left_covs (*del_node);
+
+        if (temp->isSmaller)
+        {
+            del_node->l_links = edge_c;
+            del_node->twin = (unsigned char) (bal_edge + 1);
+        }
+        else
+        {
+            del_node->l_links = edge_c + bal_edge;
+            del_node->twin = (unsigned char) (-bal_edge + 1);
+        }
+
+        tightSeq[char_index--] = lastCharInKmer (temp->kmer);
+    }
+    -->
+    while (nStack->item_c > 1)
+    {
+        temp = (KMER_PT *) stackPop (nStack);
+        del_node = temp->node;
+        del_node->inEdge = 1;
+        symbol += get_kmer_left_covs (*del_node);       
+
+        tightSeq[char_index--] = lastCharInKmer (temp->kmer);
+    }
+
+    stackRecover(nStack);
+    temp = (KMER_PT *) stackPop (nStack);
+    while(nStack->item_c > 1)
+    {
+        temp = (KMER_PT *) stackPop (nStack);
+        del_node = temp->node;
+        del_node->inEdge = 1;
+        if (temp->isSmaller)
+        {
+            del_node->l_links = edge_c;
+            del_node->twin = (unsigned char) (bal_edge + 1);
+        }
+        else
+        {
+            del_node->l_links = edge_c + bal_edge;
+            del_node->twin = (unsigned char) (-bal_edge + 1);
+        }
+    }
+
+2012-07-13
+Purpose:
+    a) fix bugs for removeMinorTips
+Details:
+1)cutTipPreGraph.c:removeMinorTips ()
+    a)
+    for (i = 0; i < thrd_num; i++)
+    {
+        set = KmerSets[i];
+        flag = 1;
+
+        while (flag)
+        {
+            flag = 0;
+            set->iter_ptr = 0;
+
+            while (set->iter_ptr < set->size)
+            {
+                if (!is_kmer_entity_null (set->flags, set->iter_ptr))
+                {
+                    rs = set->array + set->iter_ptr;
+                    flag += clipTipFromNode (rs, cut_len_tip, 0);
+                }
+
+                set->iter_ptr++;
+            }
+        }
+
+        fprintf (stderr,"Remove minor tips in kmer set %d is done.\n", i);
+    }
+    -->
+    while (flag)
+    {
+        flag = 0;
+        
+        for (i = 0; i < thrd_num; i++)
+        {
+            set = KmerSets[i];
+            set->iter_ptr = 0;
+
+            while (set->iter_ptr < set->size)
+            {
+                if (!is_kmer_entity_null (set->flags, set->iter_ptr))
+                {
+                    rs = set->array + set->iter_ptr;
+                    if (!rs->linear && !rs->deleted)
+                    {
+                        flag += clipTipFromNode (rs, cut_len_tip, 0);
+                    }
+                }
+                set->iter_ptr++;
+            }
+        }
+        fprintf (stderr,"Remove minor tips in kmer set is done(round %d).\n", round++);
+    }
+
+2012-07-13
+Purpose:
+    a) merge 63mer and 127mer version
+Details:
+    1) Use #define MER127 to define 127mer version
+    2) Use #define MER63 to define 63mer version
+
+2012-02-15
+Purpose:
+	a) fix bugs of AIORead in reading fastq file which has "@" at the beginning of qulity line. Edited by panqi.
+Details:
+1) prlHashReads.c::AIORead()
+	a) if((curr_type == 2) || (curr_type == 6))
+	   {
+		for (i = get - 1; (temp[i] != '@') || (temp[i-1] != '\n') || (temp[i-2] == '+')|| (temp[i-3] == '/'); i--);
+		for (i2 = i - 2; temp[i2] != '\n'; i2--);
+		if (temp[i2 + 1] == '+')
+		{
+			for(i3 = i2 - 1; temp[i3] != '\n'; i3--);
+		        for(i2 = i3 - 1; temp[i2] != '\n'; i2--);
+		        if(temp[i2 + 1] == '@') {i = i2 + 1;}
+		}
+	   }
+	   -->
+	   int num;
+	   if((curr_type == 2) || (curr_type == 6))
+           {
+                num = 0;
+                for (i = get - 1; (temp[i] != '@') || (temp[i-1] != '\n'); i--)
+                {
+                        if(temp[i] == '\n') {num++;}
+                }
+
+                if (num <= 1)
+                {
+                        for (i2 = i - 2; temp[i2] != '\n'; i2--);
+                        if (temp[i2 + 1] == '+')
+                        {
+                                for(i2 = i2 - 1; temp[i2] != '\n'; i2--);
+                                if(temp[i2 + 1] != '+') {for (i = i2 - 1; (temp[i] != '@') || (temp[i-1] != '\n'); i--);}
+                        }
+                }
+           }
+
+
+2012-02-14
+Purpose:
+	a) seperate codes related to visualization from other codes. Edited by panqi.
+Details:
+	1) prlReadFillGap.c
+	   codes related to visualization
+
+Purpose:
+	a) fix bugs of AIORead in reading fastq file which has "@" at the beginning of qulity line. Edited by panqi.
+Details:
+1) prlHashReads.c::AIORead()
+	a) if((curr_type == 2) || (curr_type == 6))
+		for (i = get - 1; (temp[i] != '@') || (temp[i-1] != '\n') || (temp[i-2] == '+')|| (temp[i-3] == '/'); i--);
+	   else if((curr_type == 1) || (curr_type == 3) ||(curr_type == 5))
+		for (i = get - 1; temp[i] != '>';i--) ;
+	   -->
+	   if((curr_type == 2) || (curr_type == 6))
+	   {
+		for (i = get - 1; (temp[i] != '@') || (temp[i-1] != '\n') || (temp[i-2] == '+')|| (temp[i-3] == '/'); i--);
+		for (i2 = i - 2; temp[i2] != '\n'; i2--);
+		if (temp[i2 + 1] == '+')
+		{
+			for(i3 = i2 - 1; temp[i3] != '\n'; i3--);
+		        for(i2 = i3 - 1; temp[i2] != '\n'; i2--);
+		        if(temp[i2 + 1] == '@') {i = i2 + 1;}
+		}
+	   }
+	   else if((curr_type == 1) || (curr_type == 3) ||(curr_type == 5)
+		for (i = get - 1; temp[i] != '>';i--) ;
+
+Purpose:
+	a) fix bug of AIORead to deal with the case that read length is shorter than Kmer size. Edited by panqi.
+Details:
+1) prlHashReads.c::prlRead2HashTable()
+	a) while (start1 < offset1 || start2 < offset2)
+	   {
+		if (turn == 1)
+		{
+			turn = 2;
+			readseqInLib (seqBuffer[read_c], next_name, &(lenBuffer[read_c]), readBuffer1, &start1, offset1, libNo);
+			if ((++i) % 100000000 == 0)
+				printf ("--- %lldth reads\n", i);
+			if (lenBuffer[read_c] < 0)
+				printf ("read len %d\n", lenBuffer[read_c]);
+			if (lenBuffer[read_c] < overlaplen + 1)
+				continue;
+			......
+		}
+		if (turn == 2)
+		{
+			turn = 1;
+			readseqInLib (seqBuffer[read_c], next_name, &(lenBuffer[read_c]), readBuffer2, &start2, offset2, libNo);
+			if ((++i) % 100000000 == 0)
+				printf ("--- %lldth reads\n", i);
+			if (lenBuffer[read_c] < 0)
+				printf ("read len %d\n", lenBuffer[read_c]);
+			if (lenBuffer[read_c] < overlaplen + 1)
+				continue;
+			......
+		}
+	   }
+	   -->
+	   while (start1 < offset1 || start2 < offset2)
+	   {
+		if (turn == 1)
+		{
+			turn = 2;
+			readseqInLib (seqBuffer[read_c], next_name, &(lenBuffer[read_c]), readBuffer1, &start1, offset1, libNo);
+			if ((++i) % 100000000 == 0)
+				printf ("--- %lldth reads\n", i);
+			if (lenBuffer[read_c] < 0)
+				printf ("read len %d\n", lenBuffer[read_c]);
+			if (lenBuffer[read_c] < overlaplen + 1)
+			{
+				if(start1>=offset1)
+				{
+					start1=0;
+					flag1=AIORead (&aio1, &offset1, readBuffer1, cach1, &rt1, lib_array[libNo].curr_type);
+				}
+				continue;
+			}
+		}
+		if (turn == 2)
+		{
+			turn = 1;
+			readseqInLib (seqBuffer[read_c], next_name, &(lenBuffer[read_c]), readBuffer2, &start2, offset2, libNo);
+			if ((++i) % 100000000 == 0)
+				printf ("--- %lldth reads\n", i);
+			if (lenBuffer[read_c] < 0)
+				printf ("read len %d\n", lenBuffer[read_c]);
+			if (lenBuffer[read_c] < overlaplen + 1)
+			{
+				if((flag2 == 2) && (start2 >= offset2))
+					break;
+				if(start2 >= offset2)
+				{
+					start2=0;
+					flag2 = AIORead (&aio2, &offset2, readBuffer2, cach2, &rt2, lib_array[libNo].curr_type);
+				}
+				continue;
+			}
+		}
+	   }
+
+
+2012-01-09
+Purpose:
+	a) add a parameter "-V" so that some information for visualization can be output by setting this parameter. Edited by panqi.
+
+Details:
+	a) prlReadFillGap.c
+	   codes related to visualization
+
+2011-12-16
+Purpose:
+	a) Fix a bug of scaffolding which may lead to segmentation fault or endless loop
+
+Details:
+1) Function: orderContig.c::linearC2C()
+	a) new:
+	   if (usCtgCounter != oldsize)
+	   {
+		unsigned int prev_c2 = upstreamCTG[usCtgCounter+1];
+		unsigned int bal_prev_c2 = getTwinCtg (prev_c2);
+		setConnectMask (bal_prev_c2, c2, 1);
+		setConnectMask (bal_prev_c2, c2, 0);
+
+		int i = usCtgCounter+1;
+		for ( ; i <= oldsize; i++)
+		{
+			contig_array[upstreamCTG[i]].from_vt = prev_c2;
+			contig_array[getTwinCtg(upstreamCTG[i])].to_vt = bal_prev_c2;
+		}
+
+		if ((cn_temp = getCntBetween(c1,c2)) != NULL)
+		{
+			setConnectMask (c1, c2, 0);
+			setConnectDelete (c1, c2, 0, 0);
+			return 1;
+		}
+	   }
+
+2011-11-08
+Purpose: 
+	a) Change default value of '-b' from 0 to 1.5. Update relative statements.
+
+	b) Change default value of '-B' from 0 to 0.6. Update relative statements.
+
+	c) Update some code so it can read '*.readInGap' and '*.readOnContig' produced by V1.05.
+
+Details:
+1) Variant: inc/globe.h
+	a) float cvg4SNP = 0.0;
+	   -->
+	   float cvg4SNP = 0.6;
+
+	b) float ins_var_idx=0;
+	   -->
+	   float ins_var_idx=1.5
+
+2) Function: scaffold.c::display_scaff_usage()
+	a) printf ("\nscaff -g inputGraph [-F -m -u -S -w] [-G gapLenDiff -L minContigLen -c minContigCvg -C maxContigCvg -b insertSizeUpperBound -N genomeSize -p n_cpu]\n");
+	   -->
+	   printf ("\nscaff -g inputGraph [-F -m -u -S -w] [-G gapLenDiff -L minContigLen -c minContigCvg -C maxContigCvg -b insertSizeUpperBound -B bubbleCoverage -N genomeSize -p n_cpu]\n");
+
+	b) printf ("  -b <float>\tinsertSizeUpperBound: (b*avg_ins) will be used as upper bound of insert size for long insert size ( > 1000) when handling pair-end connections between contigs if b is set to larger than 1, [0]\n");
+	   -->
+	   printf ("  -b <float>\tinsertSizeUpperBound: (b*avg_ins) will be used as upper bound of insert size for long insert size ( > 1000) when handling pair-end connections between contigs if b is set to larger than 1, [1.5]\n");
+
+	c) printf ("  -B <float>\tbubbleCoverage: remove contig with lower cvoerage in bubble structure if both contigs' coverage are smaller than bubbleCoverage*avgCvg, [0]\n");
+	   -->
+	   printf ("  -B <float>\tbubbleCoverage: remove contig with lower cvoerage in bubble structure if both contigs' coverage are smaller than bubbleCoverage*avgCvg, [0.6]\n");
+
+3) Variant: main.c::pipeline()
+	a) unsigned char getB is now related with "bubbleCoverage" instead of "insertSizeUpperBound".
+
+	b) new:
+	   unsigned char getb;	//related with "insertSizeUpperBound".
+
+	c) new:
+	   char bubble_coverage_s[16];
+
+	d) new:
+	   float bubble_coverage = 0.0;
+
+	e) int insert_size_bound = 0;
+	   -->
+	   float insert_size_bound = 0.0;
+
+4) Function: main.c::pipeline()
+	a) while ((copt = getopt (argc, argv, "a:s:o:K:M:L:p:G:d:D:RuFk:fc:C:b:N:w")) != EOF)
+	   -->
+	   while ((copt = getopt (argc, argv, "a:s:o:K:M:L:p:G:d:D:RuFk:fc:C:b:B:N:w")) != EOF)
+
+	b) new:
+	   case 'B':
+		getB = 1;
+		sscanf (optarg, "\s", temp);
+		bubble_coverage = atof (temp);
+		break;
+
+	c) new:
+	   if (getB)
+	   {
+		options[index++] = "-B";
+		sprintf (bubble_coverage_s, "%f", bubble_coverage);
+		options[index++] = bubble_coverage_s;
+	   }
+
+5) Function: main.c::display_all_usage()
+	a) printf ("\nSOAPdenovo all -s configFile -o outputGraph [-R -f -F -u -w] [-K kmer -p n_cpu -a initMemoryAssumption -d KmerFreqCutOff -D EdgeCovCutoff -M mergeLevel -k kmer_R2C, -G gapLenDiff -L minContigLen -c minContigCvg -C maxContigCvg -b insertSizeUpperBound -N genomeSize]\n");
+	   -->
+	   printf ("\nSOAPdenovo all -s configFile -o outputGraph [-R -f -F -u -w] [-K kmer -p n_cpu -a initMemoryAssumption -d KmerFreqCutOff -D EdgeCovCutoff -M mergeLevel -k kmer_R2C, -G gapLenDiff -L minContigLen -c minContigCvg -C maxContigCvg -b insertSizeUpperBound -B bubbleCoverage -N genomeSize]\n");
+
+	b) printf ("  -b <float>\tinsertSizeUpperBound: (b*avg_ins) will be used as upper bound of insert size for large insert size ( > 1000) when handling pair-end connections between contigs if b is set to larger than 1, [0]\n");
+	   -->
+	   printf ("  -b <float>\tinsertSizeUpperBound: (b*avg_ins) will be used as upper bound of insert size for large insert size ( > 1000) when handling pair-end connections between contigs if b is set to larger than 1, [1.5]\n");
+
+	c) new:
+	   printf ("  -B <float>\tbubbleCoverage: remove contig with lower cvoerage in bubble structure if both contigs' coverage are smaller than bubbleCoverage*avgCvg, [0.6]\n");
+
+6) Function: orderContig.c::PE2Links()
+	a) gzFile *fp
+	   -->
+	   FILE *fp1;
+	   gzFile *fp2;
+
+	b) sprintf (name, "%s.readOnContig.gz", infile);
+	   fp = gzopen (name, "r");
+	   -->
+	   if (COMPATIBLE_MODE == 1)
+	   {
+		sprintf(name,"%s.readOnContig",infile);
+		fp1 = ckopen(name,"r");
+	   }
+	   else
+	   {
+		sprintf (name, "%s.readOnContig.gz", infile);
+		fp2 = gzopen (name, "r");
+	   }
+
+	c) gzgets (fp, line, lineLen);
+	   -->
+	   if (COMPATIBLE_MODE == 1)
+	   {
+		fgets(line,lineLen,fp1);
+	   }
+	   else
+	   {
+		gzgets (fp2, line, lineLen);
+	   }
+
+	d) flag += connectByPE_grad(fp,i,line);
+	   -->
+	   if (COMPATIBLE_MODE == 1)
+	   {
+		flag += connectByPE_grad(fp1,i,line);
+	   }
+	   else
+	   {
+		flag += connectByPE_grad_gz(fp2,i,line);
+	   }
+
+	e) gzclose(fp);
+	   -->
+	   if (COMPATIBLE_MODE == 1)
+	   {
+		fclose(fp1);
+	   }
+	   else
+	   {
+		gzclose(fp2);
+	   }
+
+7) Function: inc/extfunc.h
+	a) connectByPE_grad( gzFile* fp, int peGrad, char * line );
+	   -->
+	   extern int connectByPE_grad_gz ( gzFile * fp, int peGrad, char * line );
+
+8) Function: attachPEinfo.c
+	a) recover:
+	   int connectByPE_grad (FILE * fp, int peGrad, char *line)
+
+	b) int connectByPE_grad (gzFile * fp, int peGrad, char *line)
+	   -->
+	   int connectByPE_grad_gz (gzFile * fp, int peGrad, char *line)
+
+9) Function: prlReadFillGap.c::loadReads4gap()
+	a) update some code to read '*.readInGap'.
+
+2011-11-04
+1) Variant: inc/globe.h
+	a) new:
+	   float cvg4SNP = 0.0;
+
+2) Variant: inc/extvab.h
+	a) new:
+	   extern float cvg4SNP;
+
+3) struct: inc/def.h::struct contig
+	a) new:
+	   unsigned char bubbleInScaff: 1;
+
+4) Function: scaffold.c::initenv()
+	a) while ((copt = getopt (argc, argv, "g:L:p:G:N:c:C:b:FmuSw")) != EOF)
+	   -->
+	   while ((copt = getopt (argc, argv, "g:L:p:G:N:c:C:b:B:FmuSw")) != EOF)
+
+	b) new:
+	   case 'B':
+		sscanf (optarg, "%s", temp);
+		cvg4SNP = atof (temp) > 0 ? atof (temp) : 0.0;
+		break;
+
+5) Function: scaffold.c::display_scaff_usage()
+	a) new:
+	   printf ("  -B <float>\tbubbleCoverage: remove contig with lower cvoerage in bubble structure if both contigs' coverage are smaller than bubbleCoverage*avgCvg, [0]\n");
+
+6) Function: loadGraph.c::loadUpdatedEdges()
+	a) new:
+	   contig_array[newIndex].bubbleInScaff = 0;
+
+7) Variant: orderContig.c
+	a) new:
+	   static FILE *snp_fp = NULL;
+
+8) Fucntion: orderContig.c::Links2Scaf()
+	a) cvg4SNP = ((double)(0.5*cvgAvg) + sqrt(2*cvgAvg));
+	   -->
+	   if (cvg4SNP > 0.001)
+	   {
+		sprintf(name, "%s.bubbleInScaff", infile);
+		snp_fp = ckopen(name, "w");
+	   }
+	   cvg4SNP = (double)(cvg4SNP*cvgAvg);
+
+	b) new:
+	   if (cvg4SNP > 0.001)
+	   {
+		fclose (snp_fp);
+	   }
+
+9) Fucntion: inc/extfunc.h
+	a) new:
+	   extern void outputTightStr(FILE *fp,char *tightStr,int start,int length, int outputlen,int revS,int *col);
+
+10) Fcuntion: prlReadFillGap.c::outputTightStr()
+	a) static void outputTightStr (FILE * fp, char *tightStr, int start, int length, int outputlen, int revS, int *col)
+	   -->
+	   void outputTightStr (FILE * fp, char *tightStr, int start, int length, int outputlen, int revS, int *col)
+
+11) Function: orderContig.c
+	a) new:
+	   static void output_ctg(unsigned int ctg,FILE *fo)
+	   {
+		if(contig_array[ctg].length<1)
+			return;
+		int len;
+		unsigned int bal_ctg = getTwinCtg(ctg);
+
+		len = contig_array[ctg].length + overlaplen;
+
+		int col = 0;
+		if(contig_array[ctg].seq){
+			fprintf(fo,">C%d %4.1f\n",ctg,(double)contig_array[ctg].cvg);
+			outputTightStr(fo,contig_array[ctg].seq,0,len,len,0,&col);
+		}
+		else if(contig_array[bal_ctg].seq){
+			fprintf(fo,">C%d %4.1f\n",bal_ctg,(double)contig_array[ctg].cvg);
+			outputTightStr(fo,contig_array[bal_ctg].seq,0,len,len,0,&col);
+		}
+		fprintf(fo,"\n");
+	   }
+
+12) Function: orderContig.c::removeSNPCtg()
+	a) unsigned int node1, node2;
+	   -->
+	   unsigned int node1, node2, bal_node1, bal_node2;
+
+	b) new:
+	   bal_node1 = getTwinCtg(node1);
+	   bal_node2 = getTwinCtg(node2);
+
+	c) getEndKmers(contig_array[getTwinCtg(node1)].seq, len1, 1, firstKmer1, lastKmer1);
+	   -->
+	   getEndKmers(contig_array[bal_node1].seq, len1, 1, firstKmer1, lastKmer1);
+
+	d) getEndKmers(contig_array[getTwinCtg(node2)].seq, len2, 1, firstKmer2, lastKmer2);
+	   -->
+	   getEndKmers(contig_array[bal_node2].seq, len2, 1, firstKmer2, lastKmer2);
+
+	e) new:
+	   if (contig_array[node1].bubbleInScaff == 0 || contig_array[node2].bubbleInScaff == 0)
+	   {
+		contig_array[node1].bubbleInScaff = 1;
+		contig_array[bal_node1].bubbleInScaff = 1;
+		contig_array[node2].bubbleInScaff = 1;
+		contig_array[bal_node2].bubbleInScaff = 1;
+		output_ctg(node1, snp_fp);
+		output_ctg(node2, snp_fp);
+	   }
+
+	f) transferCnt2RemainNode(getTwinCtg(node2), getTwinCtg(node1));
+	   -->
+	   transferCnt2RemainNode(bal_node2, bal_node1);
+
+	g) transferCnt2RemainNode(getTwinCtg(node1), getTwinCtg(node2));
+	   -->
+	   transferCnt2RemainNode(bal_node1, bal_node2);
+
+2011-11-03
+1) Function: orderContig.c::scaffolding()
+	a) if(pre_score == 0)
+	   {
+		*(unsigned int *)darrayPut(tempArray,prev_p)=0;
+		mask_num++;
+	   }
+	   else if(now_ctg_score == 0)
+	   {
+		*(unsigned int *)darrayPut(tempArray,j)=0;
+		mask_num++;
+		if(j < tempCounter -1)
+			continue;
+	   }
+	   -->
+	   if(pre_score == 0)
+	   {
+		*(unsigned int *)darrayPut(tempArray,prev_p)=0;
+		contig_array[prev_id].flag = 0;
+		contig_array[getTwinCtg(prev_id)].flag = 0;
+		mask_num++;
+	   }
+	   else if(now_ctg_score == 0)
+	   {
+		*(unsigned int *)darrayPut(tempArray,j)=0;
+		contig_array[nowid].flag = 0;
+		contig_array[getTwinCtg(nowid)].flag = 0;
+		mask_num++;
+		if(j < tempCounter -1)
+			continue;
+	   }
+
+	b) if(contig_array[prev_id].cvg < contig_array[nowid].cvg)
+	   {
+		*(unsigned int *)darrayPut(tempArray,prev_p)=0;
+	   }
+	   else
+	   {
+		*(unsigned int *)darrayPut(tempArray,j)=0;
+		if(j < tempCounter -1)
+			continue;
+	   }
+	   -->
+	   if(contig_array[prev_id].cvg < contig_array[nowid].cvg)
+	   {
+		*(unsigned int *)darrayPut(tempArray,prev_p)=0;
+		contig_array[prev_id].flag = 0;
+		contig_array[getTwinCtg(prev_id)].flag = 0;
+	   }
+	   else
+	   {
+		*(unsigned int *)darrayPut(tempArray,j)=0;
+		contig_array[nowid].flag = 0;
+		contig_array[getTwinCtg(nowid)].flag = 0;
+		if(j < tempCounter -1)
+			continue;
+	   }
+
+	c) if(score_count < 2)
+	   {
+		free((void *)score_array);
+		continue;
+	   }
+	   -->
+	   if(score_mask == 1 && num3 + num5 > 5 && score_count < 2)
+	   {
+		free((void *)score_array);
+		--count;
+		sum -= len;
+		for (j=0; j<num3; j++)
+		{
+		    ctg = *(unsigned int *)darrayGet(scaf3,j);
+		    contig_array[ctg].flag = 0;
+		    contig_array[getTwinCtg(ctg)].flag = 0;
+		}
+		for (j=0; j<num5; j++)
+		{
+		    ctg = *(unsigned int *)darrayGet(scaf5,j);
+		    contig_array[ctg].flag = 0;
+		    contig_array[getTwinCtg(ctg)].flag = 0;
+		}
+		continue;
+	   }
+
+	d) after obtaining downstream contigs and upstream contigs
+	   add:
+	   if (num5+num3 == 1)
+	   {
+		contig_array[i].flag = 0;
+		continue;
+	   }
+	   
+	   
+2011-10-27
+1) Function: orderContig.c::checkScafConsist()
+	a) if(!linkCount1||!linkCount2)
+	   -->
+	   if(!linkCount1)
+
+2) Function: loadGraph.c::
+	a) new:
+	   int cut_len;
+	   cut_len = COMPATIBLE_MODE == 0 ? overlaplen : 0;
+
+	b) if(length != 0) contig_array[newIndex].length = length - overlaplen;
+	   -->
+	   if(length != 0) contig_array[newIndex].length = length - cut_len;
+
+	c) counter += length - overlaplen;
+	   cvgSum += cvg * (length - overlaplen);
+	   -->
+	   counter += length - cut_len;
+	   cvgSum += cvg * (length - cut_len);
+
+2011-10-24
+1) Function: orderContig.c::checkScafConsist()
+	a) boolean checkScafConsist(STACK *scafStack1, int len1, STACK *scafStack2)
+	   -->
+	   boolean checkScafConsist(STACK *scafStack1, int len1, STACK *scafStack2, int len2)
+
+	b) int linkCount1 = getDSLink2Scaf(scafStack1,downwardTo1,downwardWt1);
+	   int linkCount2 = getDSLink2Scaf(scafStack2,downwardTo2,downwardWt2);
+	   -->
+	   int linkCount1 = getDSLink2Scaf(scafStack1,downwardTo1,downwardWt1, len1);
+	   int linkCount2 = getDSLink2Scaf(scafStack2,downwardTo2,downwardWt2, len2);
+
+	c) annotate:
+	   boolean flag2 = isLinkReliable(downwardWt2,linkCount2);
+
+	d) if(!flag1||!flag2)
+	   -->
+	   if(!flag1)
+
+	e) if (linkCount2 && flag2)
+	   -->
+	   if (linkCount2)
+
+2) Function: orderContig.c::detectBreakScaff()
+	a) int flag1 = checkScafConsist(scafStack1,scafStack2);
+	   int flag2 = checkScafConsist(scafStack2,scafStack1);
+	   -->
+	   int flag1 = checkScafConsist(scafStack1, len1, scafStack2, len2);
+	   int flag2 = checkScafConsist(scafStack2, len2, scafStack1, len1);
+
+3) Function: 
+	a) int getDSLink2Scaf(STACK *scafStack,DARRAY *SCAF,DARRAY *WT)
+	   -->
+	   int getDSLink2Scaf(STACK *scafStack,DARRAY *SCAF,DARRAY *WT, int total_len)
+
+	b) new:
+	   CONNECT *bind_cnt;
+	   int len=0, gap;
+
+	c) new:
+	   bind_cnt = getBindCnt(ctg);
+	   gap = bind_cnt ? bind_cnt->gapLen : 0;
+	   len += contig_array[ctg].length + gap;
+
+	d) if ((contig_array[ctg].mask && contig_array[ctg].length < 500) || !contig_array[ctg].downwardConnect)
+	   -->
+	   if ((contig_array[ctg].mask && contig_array[ctg].length < 500) || !contig_array[ctg].downwardConnect
+		|| total_len - len > Insert_size)
+
+2011-10-21
+1) Function: orderContig.c::getDSLink2Scaf()
+	a) new:
+	   if (ite_cnt->newIns != 1)
+	   {
+		ite_cnt = ite_cnt->next;
+		continue;
+	   }
+
+2011-10-19
+1) Function: orderContig.c::getScaffold()
+	a) len += contig_array[ctg].length;
+	   -->
+	   len += bindCnt->gapLen + contig_array[ctg].length;
+
+2) Function: orderContig.c::getDSLink2Scaf()
+	a) new:
+	   unsigned int targetCtg,bal_targetCtg;
+
+	b) new:
+	   targetCtg = ite_cnt->contigID;
+	   bal_targetCtg = getTwinCtg(targetCtg);
+
+	c) if ((ite_cnt->mask && contig_array[ctg].length < 500) || ite_cnt->singleInScaf
+	   -->
+	   if ((ite_cnt->mask && contig_array[targetCtg].length < 500) || ite_cnt->singleInScaf
+
+	d) if(contig_array[ctg].from_vt==contig_array[targetCtg].from_vt)
+	   -->
+	   if(contig_array[ctg].from_vt==contig_array[targetCtg].from_vt 
+		|| (targetCtg==contig_array[targetCtg].from_vt && bal_targetCtg==contig_array[bal_targetCtg].from_vt))
+
+2011-10-18
+1) struct: inc/def.h::struct connection
+	a) add new member: unsigned char newIns:1;
+	   It's used to indicate whether the PE relationship between contigs is provided by the latest rank
+
+2) Function: orderContig.c::inputLinks()
+	a) add variants: CONNECT *cnt, *bal_cnt;
+
+	b) add1Connect(ctg,toCtg,gap,wt,0);
+	   add1Connect(bal_toCtg,bal_ctg,gap,wt,0);
+	   -->
+	   cnt = add1Connect(ctg,toCtg,gap,wt,0);
+	   bal_cnt = add1Connect(bal_toCtg,bal_ctg,gap,wt,0);
+	   if (cnt && insertS > 1000)
+	   {
+		cnt->newIns = bal_cnt->newIns = 1;
+	   }
+
+3) Function: orderContig.c::detectBreakScaff()
+	a) new function, developed from detectBreakScaf().
+
+4) Function: orderContig.c::clearNewInsFlag()
+	a) new function.
+
+5) Function: orderContig.c::Links2Scaf()
+	a) if(i==gradsCounter-1&&!isPrevSmall&&smallPE)
+		detectBreakScaf();
+	   -->
+	   if(Insert_size > 1000)
+		detectBreakScaff();
+	b) new:
+	   if (Insert_size > 1000 && i != gradsCounter-1)
+		clearNewInsFlag();
+
+2011-10-11
+1) Function: readseq1by1.c::openFile4read()
+	a) fp = popen (cmd, "r");
+           free (cmd);
+           return fp;
+	   -->
+           do {
+                   if ((fp = popen (cmd, "r")) != NULL)
+                   {
+                           free (cmd);
+                           return fp;
+                   }
+           } while (1);
+
+2011-09-28
+1) Function: readseqfq()
+	a) int i, n, strL, m, p;
+	   -->
+	   int i, n, strL, m, p=0;
+
+	b) else if (buf[m] == '\n' && buf[p] == '\n')
+	   -->
+	   else if (buf[m] == '\n' && buf[p] == '\n' && m>p)
+	   Note: Both modifications are provided by Pan Qi.
+
+2011-09-27
+1) Function: Links2Scaf() 
+	a) cvg4SNP = ((double)(0.5*cvgAvg) + sqrt(2*cvgAvg));
+	   -->
+	   cvg4SNP = ((double)(0.5*cvgAvg) + 3.0*sqrt(cvgAvg/2.0));
+	   Note: This change maybe not suit for all cases
+
+2) Function: general_linearization()
+	a) SNPCtgCounter += removeSNPCtg();
+	   -->
+	   if (Insert_size < 10000)
+	   {
+		SNPCtgCounter += removeSNPCtg();
+	   }
+
+2011-09-21
+1) Function: arrangeNodes_general()
+	a) if(temp_cnt)
+	   {
+		//recover connections
+	   }
+	   -->
+	   if(temp_cnt && (bySmall || temp_cnt->bySmall || temp_cnt->smallIns || (!dh_cnt || !dh_cnt->bySmall || !dh_cnt->smallIns)))
+	   {
+		//recover connections
+	   }
+
+	b) else if (dh_cnt && ((dh_cnt->bySmall || dh_cnt->smallIns || bySmall)
+				|| ((-gap > (int)contig_array[node1].length || -gap > (int)contig_array[node2].length)
+					&& tmp_dis > 0 && tmp_dis < 0.2*Insert_size )))
+	   {
+		//exchange connections
+	   }
+	   -->
+	   else if (dh_cnt && ((dh_cnt->bySmall || dh_cnt->smallIns || bySmall)
+				|| ((-gap > (int)contig_array[node1].length || -gap > (int)contig_array[node2].length)
+					&& tmp_dis > 0 && tmp_dis < 500 )))
+	   {
+		//exchange connections
+	   }
+
+2011-09-15
+1) Function: createAnalogousCnt()
+	a) if(gap<GapLowerBound)
+	   {
+		gapCounter++;
+		return;
+	   }
+	   -->
+	   if(gap<GapLowerBound)
+	   {
+		gapCounter++;
+		originCnt->deleted = 1;
+		temp_cnt = getCntBetween(balSourceStop,balSourceStart);
+		return change_flag;
+	   }
+
+2011-09-07
+1) Function: downSlide()
+	a) annotate the codes related to "lastTop".
+
+2) Function: scaffolding()
+	a) replace the old codes related to the calculation of the score of contig's connection with the new codes from version 0729/63mer updated by Binghang Liu
+
+	b) if(now_ctg_score == 0 && ((j == num3-1 && contig_array[nextid].length < 200 && num3 + num5 > 5)|| (now_cnt_weigth == 0&& j>0 )))
+	   -->
+	   if(score_mask == 1 && now_ctg_score == 0 
+                && ((j == num3-1 && contig_array[nextid].length < 200 && num3 + num5 > 5)|| (now_cnt_weigth == 0&& j>0 )))
+
+	c) if(now_ctg_score == 0 && ((j == num5-1 && contig_array[*(unsigned int *)darrayGet(scaf5,j-1)].length <200 && num3 + num5 > 5)|| (j != num5-1 && now_cnt_weigth == 0)))
+	   -->
+	   if(score_mask == 1 && now_ctg_score == 0   
+                && ((j == num5-1 && contig_array[*(unsigned int *)darrayGet(scaf5,j-1)].length <200 && num3 + num5 > 5)
+                        || (j != num5-1 && now_cnt_weigth == 0)))
+
+3) Function: get_ctg_score2()
+	a) if(dh_cnt && dh_cnt->weight >0)
+                i++;
+	   -->
+	   if(dh_cnt && dh_cnt->weight >0)
+                in++;
+
+4) Function: arrangeNodes_general()
+	a) else if(dh_cnt && ((dh_cnt->weight > weakPE && (-gap > (int)contig_array[node1].length || -gap > (int)contig_array[node2].length))|| (dh_cnt->bySmall || dh_cnt->smallIns || bySmall)))
+	   -->
+	   else if (dh_cnt && ((dh_cnt->bySmall || dh_cnt->smallIns || bySmall)
+                                || ((-gap > (int)contig_array[node1].length || -gap > (int)contig_array[node2].length)
+                                        && tmp_dis > 0 && tmp_dis < 0.2*Insert_size )))
+
+5) Function: removeSNPCtg()
+	a) add:
+	   CONNECT *cnt, *bal_cnt;
+	   cnt = getCntBetween(node1, node2);
+	   dh_cnt = getCntBetween(node2, node1);
+	   change:
+	   if (gap >= 0 || contig_array[node1].cvg > cvg4SNP || contig_array[node2].cvg > cvg4SNP)
+	   -->
+	   if (gap >= 0 || contig_array[node1].cvg > cvg4SNP || contig_array[node2].cvg > cvg4SNP || cnt || bal_cnt)
+
+6) Function: outputScafSeq()
+	a) if (prevCtg && actg->scaftig_start)
+                {
+                        if(!fillGap)
+                        {
+                                gapN = actg->start - prevCtg->start - contig_array[prevCtg->ctgID].length - overlaplen;
+                        }
+                        else     gapN = actg->start - prevCtg->start - contig_array[prevCtg->ctgID].length;
+
+//                      gapN = actg->start - prevCtg->start - contig_array[prevCtg->ctgID].length;      //lzy 0907
+                        gapN = gapN > 0 ? gapN : 1;
+                        outputNs (fo, scaffBuffer, gapN, &column);
+                        ctg_start_pos += gapN;
+                        //outputGapInfo(prevCtg->ctgID,ctg);
+                        Ncounter++;
+                }
+	   if(fillGap)
+           {
+                        if (!prevCtg)
+                        {
+                                start = 0;
+                        }
+                        else
+                        {
+                                start = actg->cutHead;
+                        }
+           }
+           else start = 0;
+	   -->
+	   if (prevCtg && actg->scaftig_start)
+                {
+/*<<lzy 0907
+                        if(!fillGap)
+                        {
+                                gapN = actg->start - prevCtg->start - contig_array[prevCtg->ctgID].length - overlaplen;
+                        }
+                        else     gapN = actg->start - prevCtg->start - contig_array[prevCtg->ctgID].length;
+>>*/
+                        gapN = actg->start - prevCtg->start - contig_array[prevCtg->ctgID].length;      //lzy 0907
+                        gapN = gapN > 0 ? gapN : 1;
+                        outputNs (fo, scaffBuffer, gapN, &column);
+                        ctg_start_pos += gapN;
+                        //outputGapInfo(prevCtg->ctgID,ctg);
+                        Ncounter++;
+                }
+
+           if (!prevCtg)
+           {
+                 start = 0;
+           }
+           else
+           {
+                 start = actg->cutHead;
+           }
+
+
+2011-09-06
+1) Function: removeSNPCtg()
+	a) maskNodeCnt()
+	   -->
+	   transferCnt2RemainNode()
+	   reason: not only mask SNP contig, but also transfer the PE information from masked SNP contig to remain SNP contig
+
+2011-09-02
+1) Function: Links2Scaf()
+	a) cvg4SNP = 0.6*cvgAvg;
+	   -->
+	   cvg4SNP = ((double)(0.5*cvgAvg) + sqrt(2*cvgAvg));
+
+2011-08-31
+1) recover the function removeSNPCtg()
+
+2) Function: removeSNPCtg()
+	a) if (len1 > len2 || (len1 == len2 && contig_array[node1].cvg > contig_array[node2].cvg))
+	   -->
+	   if (contig_array[node1].cvg > contig_array[node2].cvg || (len1 > len2 && contig_array[node1].cvg == contig_array[node2].cvg))
+	   REASON: to keep accordance with the operation of merging bubble that remains the edge with higher coverage
+
+2011-08-29
+1) Function: arrangeNodes_general()
+	a) if (comCount > 0 && abs(adjustedGap/comCount) > abs(gap))
+	   -->
+	   if (comCount > 0)
+
+	b) if (bySmall > 0 ||(-gap > (int)contig_array[node1].length || -gap > (int)contig_array[node2].length)
+                                        && (i != nodeCounter-1))
+	   -->
+	   if (bySmall > 0 && gap < 0 
+		||((-gap > (int)contig_array[node1].length || -gap > (int)contig_array[node2].length)
+	                && (i != nodeCounter-1)))
+
+2) Function: getCntNodes()
+	a) if (cnt->weight < 3)
+	   -->
+	   if (0 == bySmall && cnt->weight < 3 && !cnt->smallIns && !cnt->bySmall)
+
+3) Function: calGapLen()
+	a) if (cnt && cnt->weight>=3)
+	   -->
+	   if (cnt && (cnt->weight>=3 || bySmall || cnt->smallIns || cnt->bySmall))
+
+2011-08-26
+1) Function: arrangeNodes_general()
+	a) else if(dh_cnt && ((dh_cnt->weight > weakPE && (-gap > (int)contig_array[node1].length || -gap > (int)contig_array[node2].length))|| (dh_cnt->bySmall && gap < -overlaplen ))) 
+	   -->
+	   else if(dh_cnt && ((dh_cnt->weight > weakPE && (-gap > (int)contig_array[node1].length || -gap > (int)contig_array[node2].length))|| (dh_cnt->bySmall || dh_cnt->smallIns || bySmall)))
+
+	b) if ((-gap > (int)contig_array[node1].length || -gap > (int)contig_array[node2].length) && (i != nodeCounter-1))
+	   -->
+	   if ((bySmall > 0)
+           ||(-gap > (int)contig_array[node1].length || -gap > (int)contig_array[node2].length) && (i != nodeCounter-1))
+
+	c) if (comCount > 0 && adjustedGap/comCount) > gap)
+	   -->
+	   if (comCount > 0 && abs(adjustedGap/comCount) > abs(gap))
+
+2) Function: Links2Scaf()
+	a) bySmall = Insert_size > 1000 ? 2 : 0;
+	   -->
+	   bySmall = Insert_size > 1000 ? 0 : 1;

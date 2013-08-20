@@ -1,0 +1,24 @@
+1.change the edge node 
+
+old:
+struct edge_node
+{
+	uint64_t edge£º50£¬edge_cov:7,len:6,used:1£»
+	struct edge_node *nxt_edge;
+};
+
+now:
+struct edge_node
+{
+	uint64_t edge;
+	uint64_t edge_cov:7,len:6,used:1,deleted:1;
+	struct edge_node *nxt_edge;
+};
+
+so, the LoadGraph... function can't work when performed on an old hash data set.
+
+
+2. support bam format 
+3. support -R
+4. support 127mer
+5. build vertex K_size -> gap . 

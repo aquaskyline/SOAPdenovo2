@@ -1,0 +1,22 @@
+
+Installation of SOAPdenovo-V2.04
+
+Ruibang Luo, 2012-7-10
+Zhenyu Li, 2012-7-10
+
+********************************************************************
+
+Pre-configurated Makefile was designed to handle most circumstances.
+
+************
+MAKE
+************
+
+Type "make" at root of unpacked folder.
+Type "make debug=1" at root of npacked folder to compile the debug version.
+
+************
+CLEAN
+************
+
+Type "make clean" at root of unpacked folder.
