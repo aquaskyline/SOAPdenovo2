@@ -18,20 +18,20 @@ SOAPdenovo aims for large plant and animal genomes, although it also works well 
 
 For big genome projects with deep sequencing, the data is usually organized as multiple read sequence files generated from multiple libraries. The configuration file tells the assembler where to find these files and the relevant information. "example.config" is an example of such a file.
 
-The configuration file has a section for global information, and then multiple library sections. Right now only "max_rd_len" is included in the global information section. Any read longer than max_rd_len will be cut to this length. 
+The configuration file has a section for global information, and then multiple library sections. Right now only "max_rd_len" is included in the global information section. Any read longer than max_rd_len will be cut to this length.
 
 The library information and the information of sequencing data generated from the library should be organized in the corresponding library section. Each library section starts with tag [LIB] and includes the following items:
 1) avg_ins
    This value indicates the average insert size of this library or the peak value position in the insert size distribution figure.
 2) reverse_seq
-   This option takes value 0 or 1. It tells the assembler if the read sequences need to be complementarily reversed. 
+   This option takes value 0 or 1. It tells the assembler if the read sequences need to be complementarily reversed.
 Illumima GA produces two types of paired-end libraries: a) forward-reverse, generated from fragmented DNA ends with typical insert size less than 500 bp; b) reverse-forward, generated from circularizing libraries with typical insert size greater than 2 Kb. The parameter "reverse_seq" should be set to indicate this: 0, forward-reverse; 1, reverse-forward.
 3) asm_flags
    This indicator decides in which part(s) the reads are used. It takes value 1(only contig assembly), 2 (only scaffold assembly), 3(both contig and scaffold assembly), or 4 (only gap closure).
 4) rd_len_cutof
    The assembler will cut the reads from the current library to this length.
 5) rank
-   It takes integer values and decides in which order the reads are used for scaffold assembly. Libraries with the same "rank" are used at the same time during scaffold assembly. 
+   It takes integer values and decides in which order the reads are used for scaffold assembly. Libraries with the same "rank" are used at the same time during scaffold assembly.
 6) pair_num_cutoff
    This parameter is the cutoff value of pair number for a reliable connection between two contigs or pre-scaffolds. The minimum number for paired-end reads and mate-pair reads is 3 and 5 respectively.
 7) map_len
@@ -49,9 +49,9 @@ ${bin} all -s config_file -K 63 -R -o graph_prefix 1>ass.log 2>ass.err
 
 User can also choose to run the assembly process step by step as:
 step1:
-${bin} pregraph -s config_file -K 63 -R -o graph_prefix 1>pregraph.log 2>pregraph.err  
+${bin} pregraph -s config_file -K 63 -R -o graph_prefix 1>pregraph.log 2>pregraph.err
 OR
-${bin} sparse_pregraph -s config_file -K 63 -z 5000000000 -R -o graph_prefix 1>pregraph.log 2>pregraph.err 
+${bin} sparse_pregraph -s config_file -K 63 -z 5000000000 -R -o graph_prefix 1>pregraph.log 2>pregraph.err
 
 step2:
 ${bin} contig -g graph_prefix -R 1>contig.log 2>contig.err
@@ -108,9 +108,9 @@ ${bin} scaff -g graph_prefix -F 1>scaff.log 2>scaff.err
 ## 4. Output files
 
 ### 4.1 These files are output as assembly results:
-a. *.contig	
+a. *.contig
   contig sequences without using mate pair information.
-b. *.scafSeq	
+b. *.scafSeq
   scaffold sequences (final contig sequences can be extracted by breaking down scaffold sequences at gap regions).
 
 ### 4.2 There are some other files that provide useful information for advanced users, which are listed in Appendix B.
@@ -131,15 +131,15 @@ The -z parameter for sparse pregraph should be set a litter larger than the real
 
 SOAPdenovo will use the pair-end libraries with insert size from smaller to larger to construct scaffolds. Libraries with the same rank would be used at the same time. For example, in a dataset of a human genome, we set five ranks for five libraries with insert size 200-bp, 500-bp, 2-Kb, 5-Kb and 10-Kb, separately. It is desired that the pairs in each rank provide adequate physical coverage of the genome.
 
-# APPENDIX A: an example.config 
+# APPENDIX A: an example.config
 
-``
+<pre>
 #maximal read length
 max_rd_len=100
 [LIB]
 #average insert size
 avg_ins=200
-#if sequence needs to be reversed 
+#if sequence needs to be reversed
 reverse_seq=0
 #in which part(s) the reads are used
 asm_flags=3
@@ -195,15 +195,15 @@ f1=/path/**LIBNAMEA**/fasta_read_1.fa
 f2=/path/**LIBNAMEA**/fasta_read_2.fa
 p=/path/**LIBNAMEA**/pairs_in_one_file.fa
 b=/path/**LIBNAMEA**/reads_in_file.bam
-``
+</pre>
 
 # Appendix B: output files
 
 ## 1. Output files from the command "pregraph"
-``
+<pre>
    a. *.kmerFreq
       Each row shows the number of Kmers with a frequency equals the row number. Note that those peaks of frequencies which are the integral multiple of 63 are due to the data structure.
-   b. *.edge 
+   b. *.edge
       Each record gives the information of an edge in the pre-graph: length, Kmers on both ends, average kmer coverage, whether it's reverse-complementarily identical and the sequence.
    c. *.markOnEdge & *.path
       These two files are for using reads to solve small repeats.
@@ -213,32 +213,32 @@ b=/path/**LIBNAMEA**/reads_in_file.bam
       Kmers at the ends of edges.
    g. *.preGraphBasic
       Some basic information about the pre-graph: number of vertex, K value, number of edges, maximum read length etc.
-``
+</pre>
 
 ## 2. Output files from the command "contig"
-``
+<pre>
    a. *.contig
       Contig information: corresponding edge index, length, kmer coverage, whether it's tip and the sequence. Either a contig or its reverse complementry counterpart is included. Each reverse complementary contig index is indicated in the *.ContigIndex file.
    b. *.Arc
-      Arcs coming out of each edge and their corresponding coverage by reads 
+      Arcs coming out of each edge and their corresponding coverage by reads
    c. *.updated.edge
       Some information for each edge in graph: length, Kmers at both ends, index difference between the reverse-complementary edge and this one.
    d. *.ContigIndex
       Each record gives information about each contig in the *.contig: it's edge index, length, the index difference between its reverse-complementary counterpart and itself.
-``
+</pre>
 
 ## 3. Output files from the command "map"
-``
+<pre>
    a. *.peGrads
-      Information for each clone library: insert-size, read index upper bound, rank and pair number cutoff for a reliable link. This file can be revised manually for scaffolding tuning. 
+      Information for each clone library: insert-size, read index upper bound, rank and pair number cutoff for a reliable link. This file can be revised manually for scaffolding tuning.
    b. *.readOnContig
       Reads' locations on contigs. Here contigs are referred by their edge index. Howerver about half of them are not listed in the *.contig file for their reverse-complementary counterparts are included already.
    c. *.readInGap
-      This file includes reads that could be located in gaps between contigs. This information will be used to close gaps in scaffolds if "-F" is set. 
-``
+      This file includes reads that could be located in gaps between contigs. This information will be used to close gaps in scaffolds if "-F" is set.
+</pre>
 
 ## 4. Output files from the command "scaff"
-``
+<pre>
    a. *.newContigIndex
       Contigs are sorted according their length before scaffolding. Their new index are listed in this file.  This is useful if one wants to corresponds contigs in *.contig with those in *.links.
    b. *.links
@@ -257,4 +257,4 @@ b=/path/**LIBNAMEA**/reads_in_file.bam
       Contigs that form bubble structures in scaffolds. Every two contigs form a bubble and the contig with higher coverage will be kept in scaffold.
    i. *.scafStatistics
       Statistic information of final scaffold and contig.
-``
+</pre>
