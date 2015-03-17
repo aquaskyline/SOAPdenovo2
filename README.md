@@ -133,6 +133,7 @@ SOAPdenovo will use the pair-end libraries with insert size from smaller to larg
 
 # APPENDIX A: an example.config 
 
+``
 #maximal read length
 max_rd_len=100
 [LIB]
@@ -194,10 +195,12 @@ f1=/path/**LIBNAMEA**/fasta_read_1.fa
 f2=/path/**LIBNAMEA**/fasta_read_2.fa
 p=/path/**LIBNAMEA**/pairs_in_one_file.fa
 b=/path/**LIBNAMEA**/reads_in_file.bam
+``
 
 # Appendix B: output files
 
 ## 1. Output files from the command "pregraph"
+``
    a. *.kmerFreq
       Each row shows the number of Kmers with a frequency equals the row number. Note that those peaks of frequencies which are the integral multiple of 63 are due to the data structure.
    b. *.edge 
@@ -210,8 +213,10 @@ b=/path/**LIBNAMEA**/reads_in_file.bam
       Kmers at the ends of edges.
    g. *.preGraphBasic
       Some basic information about the pre-graph: number of vertex, K value, number of edges, maximum read length etc.
+``
 
 ## 2. Output files from the command "contig"
+``
    a. *.contig
       Contig information: corresponding edge index, length, kmer coverage, whether it's tip and the sequence. Either a contig or its reverse complementry counterpart is included. Each reverse complementary contig index is indicated in the *.ContigIndex file.
    b. *.Arc
@@ -220,16 +225,20 @@ b=/path/**LIBNAMEA**/reads_in_file.bam
       Some information for each edge in graph: length, Kmers at both ends, index difference between the reverse-complementary edge and this one.
    d. *.ContigIndex
       Each record gives information about each contig in the *.contig: it's edge index, length, the index difference between its reverse-complementary counterpart and itself.
+``
 
 ## 3. Output files from the command "map"
+``
    a. *.peGrads
       Information for each clone library: insert-size, read index upper bound, rank and pair number cutoff for a reliable link. This file can be revised manually for scaffolding tuning. 
    b. *.readOnContig
       Reads' locations on contigs. Here contigs are referred by their edge index. Howerver about half of them are not listed in the *.contig file for their reverse-complementary counterparts are included already.
    c. *.readInGap
       This file includes reads that could be located in gaps between contigs. This information will be used to close gaps in scaffolds if "-F" is set. 
+``
 
 ## 4. Output files from the command "scaff"
+``
    a. *.newContigIndex
       Contigs are sorted according their length before scaffolding. Their new index are listed in this file.  This is useful if one wants to corresponds contigs in *.contig with those in *.links.
    b. *.links
@@ -248,3 +257,4 @@ b=/path/**LIBNAMEA**/reads_in_file.bam
       Contigs that form bubble structures in scaffolds. Every two contigs form a bubble and the contig with higher coverage will be kept in scaffold.
    i. *.scafStatistics
       Statistic information of final scaffold and contig.
+``
