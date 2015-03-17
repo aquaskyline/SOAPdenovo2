@@ -21,6 +21,8 @@ For big genome projects with deep sequencing, the data is usually organized as m
 The configuration file has a section for global information, and then multiple library sections. Right now only "max_rd_len" is included in the global information section. Any read longer than max_rd_len will be cut to this length.
 
 The library information and the information of sequencing data generated from the library should be organized in the corresponding library section. Each library section starts with tag [LIB] and includes the following items:
+
+<pre>
 1) avg_ins
    This value indicates the average insert size of this library or the peak value position in the insert size distribution figure.
 2) reverse_seq
@@ -36,6 +38,7 @@ Illumima GA produces two types of paired-end libraries: a) forward-reverse, gene
    This parameter is the cutoff value of pair number for a reliable connection between two contigs or pre-scaffolds. The minimum number for paired-end reads and mate-pair reads is 3 and 5 respectively.
 7) map_len
    This takes effect in the "map" step and is the minimun alignment length between a read and a contig required for a reliable read location. The minimum length for paired-end reads and mate-pair reads is 32 and 35 respectively.
+</pre>
 
 The assembler accepts read file in three kinds of formats: FASTA, FASTQ and BAM. Mate-pair relationship could be indicated in two ways: two sequence files with reads in the same order belonging to a pair, or two adjacent reads in a single file (FASTA only) belonging to a pair. If a read in bam file fails platform/vendor quality checks(the flag field 0x0200 is set), itself and it's paired read would be ignored.
 
@@ -45,6 +48,7 @@ All the above items in each library section are optional. The assembler assigns 
 
 ### 2. Get started
 Once the configuration file is available, a typical way to run the assembler is:
+<pre>
 ${bin} all -s config_file -K 63 -R -o graph_prefix 1>ass.log 2>ass.err
 
 User can also choose to run the assembly process step by step as:
@@ -61,10 +65,12 @@ ${bin} map -s config_file -g graph_prefix 1>map.log 2>map.err
 
 step4:
 ${bin} scaff -g graph_prefix -F 1>scaff.log 2>scaff.err
+</pre>
 
 ## 3.Options
 
 ### 3.1 Options for all (pregraph-contig-map-scaff)
+<pre>
   -s <string>    configFile: the config file of solexa reads
   -o <string>    outputGraph: prefix of output graph file name
   -K <int>       kmer(min 13, max 63/127): kmer size, [23]
@@ -91,8 +97,10 @@ ${bin} scaff -g graph_prefix -F 1>scaff.log 2>scaff.err
   -B <float>     bubbleCoverage: remove contig with lower cvoerage in bubble structure if both contigs' coverage are smaller than bubbleCoverage*avgCvg, [0.6]
   -N <int>       genomeSize: genome size for statistics, [0]
   -V (optional)  output visualization information of assembly, [NO]
+</pre>
 
 ### 3.2 Options for sparse_pregraph
+<pre>
   Usage: ./SOAPdenovo2 sparse_pregraph -s configFile -K kmer -z genomeSize -o outputGraph [-g maxKmerEdgeLength -d kmerFreqCutoff -e kmerEdgeFreqCutoff -R -r runMode -p n_cpu]
   -s <string>     configFile: the config file of solexa reads
   -K <int>        kmer(min 13, max 63/127): kmer size, [23]
@@ -104,14 +112,17 @@ ${bin} scaff -g graph_prefix -F 1>scaff.log 2>scaff.err
   -r <int>        runMode: 0 build graph & build edge and preArc, 1 load graph by prefix & build edge and preArc, 2 build graph only, 3 build edges only, 4 build preArcs only [0]
   -p <int>        n_cpu: number of cpu for use,[8]
   -o <int>        outputGraph: prefix of output graph file name
+</pre>
 
 ## 4. Output files
 
 ### 4.1 These files are output as assembly results:
+<pre>
 a. *.contig
   contig sequences without using mate pair information.
 b. *.scafSeq
   scaffold sequences (final contig sequences can be extracted by breaking down scaffold sequences at gap regions).
+</pre>
 
 ### 4.2 There are some other files that provide useful information for advanced users, which are listed in Appendix B.
 
