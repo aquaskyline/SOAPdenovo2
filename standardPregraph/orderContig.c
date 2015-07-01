@@ -3202,7 +3202,7 @@ void ScafStat ( int len_cut, char * graphfile )
 	Singleton_Seq[Scaffold_Number] = 0;
 	Nucleotide = fgetc ( fp );
 
-	while ( Nucleotide != EOF )
+	while ( Nucleotide != (char) EOF ) /* Bug Fix */
 	{
 		if ( Nucleotide == '>' )
 		{
@@ -3529,7 +3529,7 @@ void ScafStat ( int len_cut, char * graphfile )
 	Singleton_Seq[Scaffold_Number] = 0;
 	Nucleotide = fgetc ( fp2 );
 
-	while ( Nucleotide != EOF )
+	while ( Nucleotide != (char) EOF ) /* Bug Fix */
 	{
 		if ( Nucleotide == '>' )
 		{

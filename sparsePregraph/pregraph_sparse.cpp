@@ -24,6 +24,8 @@
 #include "stdinc.h"
 #include "core.h"
 
+#include <unistd.h>
+
 #include "multi_threads.h"
 #include "build_graph.h"
 #include "build_edge.h"

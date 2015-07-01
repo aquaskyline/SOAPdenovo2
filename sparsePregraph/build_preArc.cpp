@@ -27,6 +27,8 @@
 #include "global.h"
 #include "multi_threads.h"
 
+#include <unistd.h>
+
 #include <math.h>
 #include "bam.h"
 #include "faidx.h"
