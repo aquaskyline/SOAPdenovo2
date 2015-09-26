@@ -25,6 +25,8 @@
 #include "build_graph.h"
 #include "stdinc.h"
 
+#include <unistd.h>
+
 #include "build_preArc.h"
 
 void creatThrds ( pthread_t * threads, PARAMETER * paras )
