@@ -1,5 +1,13 @@
 # Manual of SOAPdenovo2
 
+## What's next of SOAPdenovo2
+
+MEGAHIT is the formal successor of SOAPdenovo2
+
+MEGAHIT: An ultra-fast single-node solution for large and complex metagenomics assembly via succinct de Bruijn graph
+http://www.ncbi.nlm.nih.gov/pubmed/25609793
+https://github.com/voutcn/megahit
+
 ## Introduction
 
 SOAPdenovo is a novel short-read assembly method that can build a de novo draft assembly for the human-sized genomes. The program is specially designed to assemble Illumina GA short reads. It creates new opportunities for building reference sequences and carrying out accurate analyses of unexplored genomes in a cost effective way.
