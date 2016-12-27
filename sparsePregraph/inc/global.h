@@ -47,17 +47,17 @@ extern int run_mode;
 
 extern int thrd_num_s;
 
-extern size_t * edge_cnt_total ; //used int lock strategy
-extern size_t * bucket_count_total ; //used in lock strategy
+extern size_t *edge_cnt_total ;  //used int lock strategy
+extern size_t *bucket_count_total ;  //used in lock strategy
 
 
 //for io thread @see io_func.h
-extern string * seq_t;
+extern string *seq_t;
 extern int io_ready;
 extern int read_num;
 
-extern string * read_buf0;
-extern string * read_buf1;
+extern string *read_buf0;
+extern string *read_buf1;
 extern int io_stat0; //must be one, if io_stat0 =0 ,the io thread will work immediately
 extern int io_stat1;
 
@@ -67,17 +67,17 @@ extern int max_rd_len;
 extern int min_rd_len;
 
 //for the lock strategy ...
-extern pthread_spinlock_t * locks;
+extern pthread_spinlock_t *locks;
 
 
-extern unsigned int * mark_on_edge;
-extern pthread_spinlock_t * s_locks;
-extern struct edge_path_buffer ** path_buffer;
+extern unsigned int *mark_on_edge;
+extern pthread_spinlock_t *s_locks;
+extern struct edge_path_buffer **path_buffer;
 extern unsigned long long buff_size;
 extern unsigned int max_path_length; //max_path_length-1 is the real max path length, because the first int of buffer record the path length
 
-extern FILE * mark_fp ; //
-extern FILE * path_fp ; //
+extern FILE *mark_fp ;  //
+extern FILE *path_fp ;  //
 extern pthread_mutex_t file_lock;//
 
 extern int debug;

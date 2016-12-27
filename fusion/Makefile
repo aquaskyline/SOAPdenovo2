@@ -12,7 +12,7 @@ LIBS = -lm -lpthread
 INCDIRS = -Iinc/
 CFLAGS = ${CCOPT} ${INCDIRS}
 
-all: clean SOAPdenovo-fusion
+all: SOAPdenovo-fusion
 SRCS1 = searchPath.c scaffold.c check.c seq.c bundle.c potential.c\
 	loadGraph.c mem_manager.c attachPEinfo.c newhash.c\
 	output_scaffold.c orderContig.c connect.c hashFunction.c\

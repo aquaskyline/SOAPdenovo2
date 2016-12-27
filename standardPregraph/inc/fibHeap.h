@@ -23,23 +23,23 @@
 #ifndef _FIBHEAP_H_
 #define _FIBHEAP_H_
 
-FibHeap * newFibHeap();
+FibHeap *newFibHeap();
 
-FibHeapNode * insertNodeIntoHeap ( FibHeap * heap, Coordinate key,
-                                   unsigned int node );
+FibHeapNode *insertNodeIntoHeap ( FibHeap *heap, Coordinate key,
+                                  unsigned int node );
 
-Coordinate minKeyOfHeap ( FibHeap * heap );
+Coordinate minKeyOfHeap ( FibHeap *heap );
 
-Coordinate replaceKeyInHeap ( FibHeap * heap, FibHeapNode * node,
+Coordinate replaceKeyInHeap ( FibHeap *heap, FibHeapNode *node,
                               Coordinate newKey );
 
-void replaceValueInHeap ( FibHeapNode * node, unsigned int newValue );
+void replaceValueInHeap ( FibHeapNode *node, unsigned int newValue );
 
-unsigned int removeNextNodeFromHeap ( FibHeap * heap );
+unsigned int removeNextNodeFromHeap ( FibHeap *heap );
 
-void * destroyNodeInHeap ( FibHeapNode * node, FibHeap * heap );
+void *destroyNodeInHeap ( FibHeapNode *node, FibHeap *heap );
 
-void destroyHeap ( FibHeap * heap );
+void destroyHeap ( FibHeap *heap );
 
-boolean IsHeapEmpty ( FibHeap * heap );
+boolean IsHeapEmpty ( FibHeap *heap );
 #endif

@@ -23,9 +23,9 @@
 #define _CONVERT_SOAPDENOVO_H
 
 
-void convert ( char * sparse_edge_file, int K_size, char * output_prefix );
+void convert ( char *sparse_edge_file, int K_size, char *output_prefix );
 
-void convert_kmer ( kmer_t2 * sparse_kmer, int K_size );
+void convert_kmer ( kmer_t2 *sparse_kmer, int K_size );
 
 #endif
 

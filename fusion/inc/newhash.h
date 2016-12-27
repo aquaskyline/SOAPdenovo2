@@ -33,87 +33,87 @@
 
 typedef struct kmer_st
 {
-	Kmer seq;
-	ubyte4 l_links;                     // sever as edgeID since make_edge
-	ubyte4 r_links:4*EDGE_BIT_SIZE;
-	ubyte4 linear:1;
-	ubyte4 deleted:1;
-	ubyte4 checked:1;
-	ubyte4 single:1;
-	ubyte4 twin:2;
-	ubyte4 inEdge:2;
+  Kmer seq;
+  ubyte4 l_links;                     // sever as edgeID since make_edge
+  ubyte4 r_links: 4 * EDGE_BIT_SIZE;
+  ubyte4 linear: 1;
+  ubyte4 deleted: 1;
+  ubyte4 checked: 1;
+  ubyte4 single: 1;
+  ubyte4 twin: 2;
+  ubyte4 inEdge: 2;
 } kmer_t;
 
 typedef struct kmerSet_st
 {
-	kmer_t *array;
-	ubyte4 *flags;
-	ubyte8 size;
-	ubyte8 count;
-	ubyte8 max;
-	double load_factor;
-	ubyte8 iter_ptr;
-	
-	ubyte8 searchCnt;
-	ubyte8 foundCnt;
-	ubyte8 delCnt;
-	ubyte8 searchSpcSeedCnt;
-	ubyte8 getSpcSeedCnt;
-	ubyte8 levelGet[3];
-	
+  kmer_t *array;
+  ubyte4 *flags;
+  ubyte8 size;
+  ubyte8 count;
+  ubyte8 max;
+  double load_factor;
+  ubyte8 iter_ptr;
+
+  ubyte8 searchCnt;
+  ubyte8 foundCnt;
+  ubyte8 delCnt;
+  ubyte8 searchSpcSeedCnt;
+  ubyte8 getSpcSeedCnt;
+  ubyte8 levelGet[3];
+
 } KmerSet;
 
 typedef struct kmer_pt
 {
-	kmer_t *node;
-	Kmer kmer;
-	boolean isSmaller;
-	struct kmer_pt *next;
-}KMER_PT;
+  kmer_t *node;
+  Kmer kmer;
+  boolean isSmaller;
+  struct kmer_pt *next;
+} KMER_PT;
 
 //////////////////////////////////////////////////////////////// spaced seed
 
 typedef struct spaced_base
 {
-	ubyte2 spaced_bases:14;
-	//ubyte2 repeat:1;
-	//ubyte4 edgeID;
-	kmer_t *large_kmer;
-	struct spaced_base *next;
-}spcBase;
+  ubyte2 spaced_bases: 14;
+  //ubyte2 repeat:1;
+  //ubyte4 edgeID;
+  kmer_t *large_kmer;
+  struct spaced_base *next;
+} spcBase;
 
 typedef struct spaced_kmer
 {
-	Kmer seq;
-	struct spaced_base *start;
-	ubyte4 spaced_base_num;
-}spcKmer;
+  Kmer seq;
+  struct spaced_base *start;
+  ubyte4 spaced_base_num;
+} spcKmer;
 
 typedef struct spaced_kmer_set
 {
-	spcKmer *array;
-	ubyte4 *flags;
-	ubyte8 size;
-	ubyte8 count;
-	ubyte8 max;
-	double load_factor;
+  spcKmer *array;
+  ubyte4 *flags;
+  ubyte8 size;
+  ubyte8 count;
+  ubyte8 max;
+  double load_factor;
 } spcKmerSet;
 
-extern spcKmerSet* init_spckmerset(ubyte8 init_size, float load_factor);
+extern spcKmerSet *init_spckmerset(ubyte8 init_size, float load_factor);
 extern void buildSpcKmerSet(KmerSet *set, spcKmerSet *spaced_kset);
 extern int search_spckmerset(spcKmerSet *set, ubyte8 seq, spcKmer **rs);
 extern int put_spckmerset(spcKmerSet *set, Kmer spc_kmer, ubyte2 spaced_bases, kmer_t *node);
 
 //////////////////////////////////////////////////////////////// spaced seed END
 
-extern KmerSet* init_kmerset(ubyte8 init_size, float load_factor);
+extern KmerSet *init_kmerset(ubyte8 init_size, float load_factor);
 extern int search_kmerset(KmerSet *set, ubyte8 seq, kmer_t **rs);
-extern int put_kmerset(KmerSet *set, ubyte8 seq, ubyte left, ubyte right,kmer_t **kmer_p);
+extern int put_kmerset(KmerSet *set, ubyte8 seq, ubyte left, ubyte right, kmer_t **kmer_p);
 extern byte8 count_kmerset(KmerSet *set);
-extern void free_Sets(KmerSet **KmerSets,int num);
+extern void free_Sets(KmerSet **KmerSets, int num);
 extern void free_kmerset(KmerSet *set);
-extern void dislink2nextUncertain(kmer_t *node,char ch,boolean smaller);
-extern void dislink2prevUncertain(kmer_t *node,char ch,boolean smaller);
+extern void dislink2nextUncertain(kmer_t *node, char ch, boolean smaller);
+extern void dislink2prevUncertain(kmer_t *node, char ch, boolean smaller);
 
 extern int count_branch2prev(kmer_t *node);
 extern int count_branch2next(kmer_t *node);

@@ -57,55 +57,55 @@ typedef __uint128_t u128b;
 
 typedef struct u256b
 {
-	u128b low;
-	u128b high;
+  u128b low;
+  u128b high;
 } U256b;
 #else
 #endif
 
 typedef struct kmer_st
 {
-	Kmer seq;       //kmer set
-	ubyte4 l_links;                     // sever as edgeID since make_edge
-	ubyte4 r_links: 4 * EDGE_BIT_SIZE;
-	ubyte4 linear: 1;
-	ubyte4 deleted: 1;
-	ubyte4 checked: 1;
-	ubyte4 single: 1;
-	ubyte4 twin: 2;
-	ubyte4 inEdge: 2;
+  Kmer seq;       //kmer set
+  ubyte4 l_links;                     // sever as edgeID since make_edge
+  ubyte4 r_links: 4 * EDGE_BIT_SIZE;
+  ubyte4 linear: 1;
+  ubyte4 deleted: 1;
+  ubyte4 checked: 1;
+  ubyte4 single: 1;
+  ubyte4 twin: 2;
+  ubyte4 inEdge: 2;
 } kmer_t;
 
 typedef struct kmerSet_st
 {
-	kmer_t * array; //kmer set
-	ubyte4 * flags; //mark the element pos that exist in array
-	ubyte8 size;
-	ubyte8 count;
-	ubyte8 max;
-	float load_factor;
-	ubyte8 iter_ptr;    //iter in set
+  kmer_t *array;  //kmer set
+  ubyte4 *flags;  //mark the element pos that exist in array
+  ubyte8 size;
+  ubyte8 count;
+  ubyte8 max;
+  float load_factor;
+  ubyte8 iter_ptr;    //iter in set
 } KmerSet;
 
 typedef struct kmer_pt
 {
-	kmer_t * node;
-	Kmer kmer;
-	boolean isSmaller;
-	struct kmer_pt * next;
+  kmer_t *node;
+  Kmer kmer;
+  boolean isSmaller;
+  struct kmer_pt *next;
 } KMER_PT;
 
-extern KmerSet * init_kmerset ( ubyte8 init_size, float load_factor );
-extern int search_kmerset ( KmerSet * set, Kmer seq, kmer_t ** rs );
-extern int put_kmerset ( KmerSet * set, Kmer seq, ubyte left, ubyte right, kmer_t ** kmer_p );
-extern byte8 count_kmerset ( KmerSet * set );
-extern void free_Sets ( KmerSet ** KmerSets, int num );
-extern void free_kmerset ( KmerSet * set );
-extern void dislink2nextUncertain ( kmer_t * node, char ch, boolean smaller );
-extern void dislink2prevUncertain ( kmer_t * node, char ch, boolean smaller );
+extern KmerSet *init_kmerset ( ubyte8 init_size, float load_factor );
+extern int search_kmerset ( KmerSet *set, Kmer seq, kmer_t **rs );
+extern int put_kmerset ( KmerSet *set, Kmer seq, ubyte left, ubyte right, kmer_t **kmer_p );
+extern byte8 count_kmerset ( KmerSet *set );
+extern void free_Sets ( KmerSet **KmerSets, int num );
+extern void free_kmerset ( KmerSet *set );
+extern void dislink2nextUncertain ( kmer_t *node, char ch, boolean smaller );
+extern void dislink2prevUncertain ( kmer_t *node, char ch, boolean smaller );
 
-extern int count_branch2prev ( kmer_t * node );
-extern int count_branch2next ( kmer_t * node );
+extern int count_branch2prev ( kmer_t *node );
+extern int count_branch2next ( kmer_t *node );
 extern char firstCharInKmer ( Kmer kmer );
 
 #endif

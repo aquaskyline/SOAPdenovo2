@@ -9,9 +9,9 @@ CC=             gcc
 GCCVERSIONMAJOR := $(shell expr `$(CC) -dumpversion | cut -f1 -d.` \>= 4)
 GCCVERSIONMINOR := $(shell expr `$(CC) -dumpversion | cut -f2 -d.` \>= 4)
 ifdef debug
-CFLAGS=         -O0 -g -fomit-frame-pointer #-mcrc32
+CFLAGS=         -O0 -g -fomit-frame-pointer #-msse4.2
 else
-CFLAGS=         -O3 -fomit-frame-pointer -w #-mcrc32
+CFLAGS=         -O3 -fomit-frame-pointer -w #-msse4.2
 endif
 DFLAGS=         
 OBJS=		arc.o attachPEinfo.o bubble.o check.o compactEdge.o \
@@ -67,7 +67,7 @@ endif
 		@printf "Compiling $<...                                     \r"
 		@$(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $< || echo "Error in command: $(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $<"
 
-all:		clean $(OBJS)
+all:		$(OBJS)
 		@printf "$(PROG) objects generated.                          \n"
 
 .PHONY:all clean install

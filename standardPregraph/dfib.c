@@ -41,207 +41,207 @@
 #include "extfunc2.h"
 
 #define HEAPBLOCKSIZE 1000
-static int dfh_comparedata ( DFibHeap * h, Time key, unsigned int data, DFibHeapNode * b );
-static DFibHeapNode * allocateDFibHeapNode ( DFibHeap * heap )
+static int dfh_comparedata ( DFibHeap *h, Time key, unsigned int data, DFibHeapNode *b );
+static DFibHeapNode *allocateDFibHeapNode ( DFibHeap *heap )
 {
-	return ( DFibHeapNode * ) getItem ( heap->nodeMemory );
+  return ( DFibHeapNode * ) getItem ( heap->nodeMemory );
 };
 
-static void deallocateDFibHeapNode ( DFibHeapNode * a, DFibHeap * heap )
+static void deallocateDFibHeapNode ( DFibHeapNode *a, DFibHeap *heap )
 {
-	returnItem ( heap->nodeMemory, a );
+  returnItem ( heap->nodeMemory, a );
 }
 
-IDnum dfibheap_getSize ( DFibHeap * heap )
+IDnum dfibheap_getSize ( DFibHeap *heap )
 {
-	return heap->dfh_n;
+  return heap->dfh_n;
 }
 
 #define swap(type, a, b)        \
-	do {            \
-		type c;     \
-		c = a;      \
-		a = b;      \
-		b = c;      \
-	} while (0)     \
-		 
+  do {            \
+      type c;     \
+      c = a;      \
+      a = b;      \
+      b = c;      \
+    } while (0)     \
+     
 #define INT_BITS        (sizeof(IDnum) * 8)
 
 static inline IDnum ceillog2 ( IDnum a )
 {
-	IDnum oa;
-	IDnum i;
-	IDnum b;
-	IDnum cons;
-	oa = a;
-	b = INT_BITS / 2;
-	i = 0;
+  IDnum oa;
+  IDnum i;
+  IDnum b;
+  IDnum cons;
+  oa = a;
+  b = INT_BITS / 2;
+  i = 0;
 
-	while ( b )
-	{
-		i = ( i << 1 );
-		cons = ( ( IDnum ) 1 ) << b;
+  while ( b )
+    {
+      i = ( i << 1 );
+      cons = ( ( IDnum ) 1 ) << b;
 
-		if ( a >= cons )
-		{
-			a /= cons;
-			i = i | 1;
-		}
-		else
-		{
-			a &= cons - 1;
-		}
+      if ( a >= cons )
+        {
+          a /= cons;
+          i = i | 1;
+        }
+      else
+        {
+          a &= cons - 1;
+        }
 
-		b /= 2;
-	}
+      b /= 2;
+    }
 
-	if ( ( ( ( IDnum ) 1 << i ) ) == oa )
-	{
-		return i;
-	}
-	else
-	{
-		return i + 1;
-	}
+  if ( ( ( ( IDnum ) 1 << i ) ) == oa )
+    {
+      return i;
+    }
+  else
+    {
+      return i + 1;
+    }
 }
 
 /*
  * Public Heap Functions
  */
-DFibHeap * dfh_makekeyheap ()
+DFibHeap *dfh_makekeyheap ()
 {
-	DFibHeap * n;
+  DFibHeap *n;
 
-	if ( ( n = malloc ( sizeof * n ) ) == NULL )
-	{
-		return NULL;
-	}
+  if ( ( n = malloc ( sizeof * n ) ) == NULL )
+    {
+      return NULL;
+    }
 
-	n->nodeMemory = createMem_manager ( HEAPBLOCKSIZE, sizeof ( DFibHeapNode ) );
-	n->dfh_n = 0;
-	n->dfh_Dl = -1;
-	n->dfh_cons = NULL;
-	n->dfh_min = NULL;
-	n->dfh_root = NULL;
-	return n;
+  n->nodeMemory = createMem_manager ( HEAPBLOCKSIZE, sizeof ( DFibHeapNode ) );
+  n->dfh_n = 0;
+  n->dfh_Dl = -1;
+  n->dfh_cons = NULL;
+  n->dfh_min = NULL;
+  n->dfh_root = NULL;
+  return n;
 }
 
-void dfh_deleteheap ( DFibHeap * h )
+void dfh_deleteheap ( DFibHeap *h )
 {
-	fprintf ( stderr, "DFibHeap: %lld node(s) allocated.\n", h->nodeMemory->counter );
-	freeMem_manager ( h->nodeMemory );
-	h->nodeMemory = NULL;
+  fprintf ( stderr, "DFibHeap: %lld node(s) allocated.\n", h->nodeMemory->counter );
+  freeMem_manager ( h->nodeMemory );
+  h->nodeMemory = NULL;
 
-	if ( h->dfh_cons != NULL )
-	{
-		free ( h->dfh_cons );
-	}
+  if ( h->dfh_cons != NULL )
+    {
+      free ( h->dfh_cons );
+    }
 
-	free ( h );
+  free ( h );
 }
 
 /*
  * Public Key Heap Functions
  */
-DFibHeapNode * dfh_insertkey ( DFibHeap * h, Time key, unsigned int data )
+DFibHeapNode *dfh_insertkey ( DFibHeap *h, Time key, unsigned int data )
 {
-	DFibHeapNode * x;
+  DFibHeapNode *x;
 
-	if ( ( x = dfhe_newelem ( h ) ) == NULL )
-	{
-		return NULL;
-	}
+  if ( ( x = dfhe_newelem ( h ) ) == NULL )
+    {
+      return NULL;
+    }
 
-	/* just insert on root list, and make sure it's not the new min */
-	x->dfhe_data = data;
-	x->dfhe_key = key;
-	dfh_insertel ( h, x );
-	return x;
+  /* just insert on root list, and make sure it's not the new min */
+  x->dfhe_data = data;
+  x->dfhe_key = key;
+  dfh_insertel ( h, x );
+  return x;
 }
 
-Time dfh_replacekey ( DFibHeap * h, DFibHeapNode * x, Time key )
+Time dfh_replacekey ( DFibHeap *h, DFibHeapNode *x, Time key )
 {
-	Time ret;
-	ret = x->dfhe_key;
-	( void ) dfh_replacekeydata ( h, x, key, x->dfhe_data );
-	return ret;
+  Time ret;
+  ret = x->dfhe_key;
+  ( void ) dfh_replacekeydata ( h, x, key, x->dfhe_data );
+  return ret;
 }
 
-unsigned int minInDHeap ( DFibHeap * h )
+unsigned int minInDHeap ( DFibHeap *h )
 {
-	if ( h->dfh_min )
-	{
-		return h->dfh_min->dfhe_data;
-	}
-	else
-	{
-		return 0;
-	}
+  if ( h->dfh_min )
+    {
+      return h->dfh_min->dfhe_data;
+    }
+  else
+    {
+      return 0;
+    }
 }
 
-boolean HasMin ( DFibHeap * h )
+boolean HasMin ( DFibHeap *h )
 {
-	if ( h->dfh_min )
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
+  if ( h->dfh_min )
+    {
+      return 1;
+    }
+  else
+    {
+      return 0;
+    }
 }
 
-unsigned int dfh_replacekeydata ( DFibHeap * h, DFibHeapNode * x, Time key, unsigned int data )
+unsigned int dfh_replacekeydata ( DFibHeap *h, DFibHeapNode *x, Time key, unsigned int data )
 {
-	unsigned int odata;
-	Time okey;
-	DFibHeapNode * y;
-	int r;
-	odata = x->dfhe_data;
-	okey = x->dfhe_key;
+  unsigned int odata;
+  Time okey;
+  DFibHeapNode *y;
+  int r;
+  odata = x->dfhe_data;
+  okey = x->dfhe_key;
 
-	/*
-	 * we can increase a key by deleting and reinserting, that
-	 * requires O(lgn) time.
-	 */
-	if ( ( r = dfh_comparedata ( h, key, data, x ) ) > 0 )
-	{
-		/* XXX - bad code! */
-		abort ();
-	}
+  /*
+   * we can increase a key by deleting and reinserting, that
+   * requires O(lgn) time.
+   */
+  if ( ( r = dfh_comparedata ( h, key, data, x ) ) > 0 )
+    {
+      /* XXX - bad code! */
+      abort ();
+    }
 
-	x->dfhe_data = data;
-	x->dfhe_key = key;
+  x->dfhe_data = data;
+  x->dfhe_key = key;
 
-	/* because they are equal, we don't have to do anything */
-	if ( r == 0 )
-	{
-		return odata;
-	}
+  /* because they are equal, we don't have to do anything */
+  if ( r == 0 )
+    {
+      return odata;
+    }
 
-	y = x->dfhe_p;
+  y = x->dfhe_p;
 
-	if ( okey == key )
-	{
-		return odata;
-	}
+  if ( okey == key )
+    {
+      return odata;
+    }
 
-	if ( y != NULL && dfh_compare ( h, x, y ) <= 0 )
-	{
-		dfh_cut ( h, x, y );
-		dfh_cascading_cut ( h, y );
-	}
+  if ( y != NULL && dfh_compare ( h, x, y ) <= 0 )
+    {
+      dfh_cut ( h, x, y );
+      dfh_cascading_cut ( h, y );
+    }
 
-	/*
-	 * the = is so that the call from dfh_delete will delete the proper
-	 * element.
-	 */
-	if ( dfh_compare ( h, x, h->dfh_min ) <= 0 )
-	{
-		h->dfh_min = x;
-	}
+  /*
+   * the = is so that the call from dfh_delete will delete the proper
+   * element.
+   */
+  if ( dfh_compare ( h, x, h->dfh_min ) <= 0 )
+    {
+      h->dfh_min = x;
+    }
 
-	return odata;
+  return odata;
 }
 
 /*
@@ -252,343 +252,345 @@ unsigned int dfh_replacekeydata ( DFibHeap * h, DFibHeapNode * x, Time key, unsi
  *  NULL    failed for some reason
  *  ptr token to use for manipulation of data
  */
-unsigned int dfh_extractmin ( DFibHeap * h )
+unsigned int dfh_extractmin ( DFibHeap *h )
 {
-	DFibHeapNode * z;
-	unsigned int ret;
-	ret = 0;
+  DFibHeapNode *z;
+  unsigned int ret;
+  ret = 0;
 
-	if ( h->dfh_min != NULL )
-	{
-		z = dfh_extractminel ( h );
-		ret = z->dfhe_data;
-		deallocateDFibHeapNode ( z, h );
-	}
+  if ( h->dfh_min != NULL )
+    {
+      z = dfh_extractminel ( h );
+      ret = z->dfhe_data;
+      deallocateDFibHeapNode ( z, h );
+    }
 
-	return ret;
+  return ret;
 }
 
-unsigned int dfh_replacedata ( DFibHeapNode * x, unsigned int data )
+unsigned int dfh_replacedata ( DFibHeapNode *x, unsigned int data )
 {
-	unsigned int odata = x->dfhe_data;
-	//printf("replace node value %d with %d\n",x->dfhe_data,data);
-	x->dfhe_data = data;
-	return odata;
+  unsigned int odata = x->dfhe_data;
+  //printf("replace node value %d with %d\n",x->dfhe_data,data);
+  x->dfhe_data = data;
+  return odata;
 }
 
-unsigned int dfh_delete ( DFibHeap * h, DFibHeapNode * x )
+unsigned int dfh_delete ( DFibHeap *h, DFibHeapNode *x )
 {
-	unsigned int k;
-	//printf("destroy node %d in dheap\n",x->dfhe_data);
-	k = x->dfhe_data;
-	dfh_replacekey ( h, x, INT_MIN );
-	dfh_extractmin ( h );
-	return k;
+  unsigned int k;
+  //printf("destroy node %d in dheap\n",x->dfhe_data);
+  k = x->dfhe_data;
+  dfh_replacekey ( h, x, INT_MIN );
+  dfh_extractmin ( h );
+  return k;
 }
 
 /*
  * begin of private element fuctions
  */
-static DFibHeapNode * dfh_extractminel ( DFibHeap * h )
+static DFibHeapNode *dfh_extractminel ( DFibHeap *h )
 {
-	DFibHeapNode * ret;
-	DFibHeapNode * x, *y, *orig;
-	ret = h->dfh_min;
-	orig = NULL;
+  DFibHeapNode *ret;
+  DFibHeapNode *x, *y, *orig;
+  ret = h->dfh_min;
+  orig = NULL;
 
-	/* put all the children on the root list */
-	/* for true consistancy, we should use dfhe_remove */
-	for ( x = ret->dfhe_child; x != orig && x != NULL; )
-	{
-		if ( orig == NULL )
-		{
-			orig = x;
-		}
+  /* put all the children on the root list */
+  /* for true consistancy, we should use dfhe_remove */
+  for ( x = ret->dfhe_child; x != orig && x != NULL; )
+    {
+      if ( orig == NULL )
+        {
+          orig = x;
+        }
 
-		y = x->dfhe_right;
-		x->dfhe_p = NULL;
-		dfh_insertrootlist ( h, x );
-		x = y;
-	}
+      y = x->dfhe_right;
+      x->dfhe_p = NULL;
+      dfh_insertrootlist ( h, x );
+      x = y;
+    }
 
-	/* remove minimum from root list */
-	dfh_removerootlist ( h, ret );
-	h->dfh_n--;
+  /* remove minimum from root list */
+  dfh_removerootlist ( h, ret );
+  h->dfh_n--;
 
-	/* if we aren't empty, consolidate the heap */
-	if ( h->dfh_n == 0 )
-	{
-		h->dfh_min = NULL;
-	}
-	else
-	{
-		h->dfh_min = ret->dfhe_right;
-		dfh_consolidate ( h );
-	}
+  /* if we aren't empty, consolidate the heap */
+  if ( h->dfh_n == 0 )
+    {
+      h->dfh_min = NULL;
+    }
+  else
+    {
+      h->dfh_min = ret->dfhe_right;
+      dfh_consolidate ( h );
+    }
 
-	return ret;
+  return ret;
 }
 
-static void dfh_insertrootlist ( DFibHeap * h, DFibHeapNode * x )
+static void dfh_insertrootlist ( DFibHeap *h, DFibHeapNode *x )
 {
-	if ( h->dfh_root == NULL )
-	{
-		h->dfh_root = x;
-		x->dfhe_left = x;
-		x->dfhe_right = x;
-		return;
-	}
+  if ( h->dfh_root == NULL )
+    {
+      h->dfh_root = x;
+      x->dfhe_left = x;
+      x->dfhe_right = x;
+      return;
+    }
 
-	dfhe_insertafter ( h->dfh_root, x );
+  dfhe_insertafter ( h->dfh_root, x );
 }
 
-static void dfh_removerootlist ( DFibHeap * h, DFibHeapNode * x )
+static void dfh_removerootlist ( DFibHeap *h, DFibHeapNode *x )
 {
-	if ( x->dfhe_left == x )
-	{
-		h->dfh_root = NULL;
-	}
-	else
-	{
-		h->dfh_root = dfhe_remove ( x );
-	}
+  if ( x->dfhe_left == x )
+    {
+      h->dfh_root = NULL;
+    }
+  else
+    {
+      h->dfh_root = dfhe_remove ( x );
+    }
 }
 
-static void dfh_consolidate ( DFibHeap * h )
+static void dfh_consolidate ( DFibHeap *h )
 {
-	DFibHeapNode ** a;
-	DFibHeapNode * w;
-	DFibHeapNode * y;
-	DFibHeapNode * x;
-	IDnum i;
-	IDnum d;
-	IDnum D;
-	dfh_checkcons ( h );
-	/* assign a the value of h->dfh_cons so I don't have to rewrite code */
-	D = h->dfh_Dl + 1;
-	a = h->dfh_cons;
+  DFibHeapNode **a;
+  DFibHeapNode *w;
+  DFibHeapNode *y;
+  DFibHeapNode *x;
+  IDnum i;
+  IDnum d;
+  IDnum D;
+  dfh_checkcons ( h );
+  /* assign a the value of h->dfh_cons so I don't have to rewrite code */
+  D = h->dfh_Dl + 1;
+  a = h->dfh_cons;
 
-	for ( i = 0; i < D; i++ )
-	{
-		a[i] = NULL;
-	}
+  for ( i = 0; i < D; i++ )
+    {
+      a[i] = NULL;
+    }
 
-	while ( ( w = h->dfh_root ) != NULL )
-	{
-		x = w;
-		dfh_removerootlist ( h, w );
-		d = x->dfhe_degree;
+  while ( ( w = h->dfh_root ) != NULL )
+    {
+      x = w;
+      dfh_removerootlist ( h, w );
+      d = x->dfhe_degree;
 
-		/* XXX - assert that d < D */
-		while ( a[d] != NULL )
-		{
-			y = a[d];
+      /* XXX - assert that d < D */
+      while ( a[d] != NULL )
+        {
+          y = a[d];
 
-			if ( dfh_compare ( h, x, y ) > 0 )
-			{
-				swap ( DFibHeapNode *, x, y );
-			}
+          if ( dfh_compare ( h, x, y ) > 0 )
+            {
+              swap ( DFibHeapNode *, x, y );
+            }
 
-			dfh_heaplink ( h, y, x );
-			a[d] = NULL;
-			d++;
-		}
+          dfh_heaplink ( h, y, x );
+          a[d] = NULL;
+          d++;
+        }
 
-		a[d] = x;
-	}
+      a[d] = x;
+    }
 
-	h->dfh_min = NULL;
+  h->dfh_min = NULL;
 
-	for ( i = 0; i < D; i++ )
-		if ( a[i] != NULL )
-		{
-			dfh_insertrootlist ( h, a[i] );
+  for ( i = 0; i < D; i++ )
+    if ( a[i] != NULL )
+      {
+        dfh_insertrootlist ( h, a[i] );
 
-			if ( h->dfh_min == NULL || dfh_compare ( h, a[i], h->dfh_min ) < 0 )
-			{
-				h->dfh_min = a[i];
-			}
-		}
+        if ( h->dfh_min == NULL || dfh_compare ( h, a[i], h->dfh_min ) < 0 )
+          {
+            h->dfh_min = a[i];
+          }
+      }
 }
 
-static void dfh_heaplink ( DFibHeap * h, DFibHeapNode * y, DFibHeapNode * x )
+static void dfh_heaplink ( DFibHeap *h, DFibHeapNode *y, DFibHeapNode *x )
 {
-	/* make y a child of x */
-	if ( x->dfhe_child == NULL )
-	{
-		x->dfhe_child = y;
-	}
-	else
-	{
-		dfhe_insertbefore ( x->dfhe_child, y );
-	}
+  /* make y a child of x */
+  if ( x->dfhe_child == NULL )
+    {
+      x->dfhe_child = y;
+    }
+  else
+    {
+      dfhe_insertbefore ( x->dfhe_child, y );
+    }
 
-	y->dfhe_p = x;
-	x->dfhe_degree++;
-	y->dfhe_mark = 0;
+  y->dfhe_p = x;
+  x->dfhe_degree++;
+  y->dfhe_mark = 0;
 }
 
-static void dfh_cut ( DFibHeap * h, DFibHeapNode * x, DFibHeapNode * y )
+static void dfh_cut ( DFibHeap *h, DFibHeapNode *x, DFibHeapNode *y )
 {
-	dfhe_remove ( x );
-	y->dfhe_degree--;
-	dfh_insertrootlist ( h, x );
-	x->dfhe_p = NULL;
-	x->dfhe_mark = 0;
+  dfhe_remove ( x );
+  y->dfhe_degree--;
+  dfh_insertrootlist ( h, x );
+  x->dfhe_p = NULL;
+  x->dfhe_mark = 0;
 }
 
-static void dfh_cascading_cut ( DFibHeap * h, DFibHeapNode * y )
+static void dfh_cascading_cut ( DFibHeap *h, DFibHeapNode *y )
 {
-	DFibHeapNode * z;
+  DFibHeapNode *z;
 
-	while ( ( z = y->dfhe_p ) != NULL )
-	{
-		if ( y->dfhe_mark == 0 )
-		{
-			y->dfhe_mark = 1;
-			return;
-		}
-		else
-		{
-			dfh_cut ( h, y, z );
-			y = z;
-		}
-	}
+  while ( ( z = y->dfhe_p ) != NULL )
+    {
+      if ( y->dfhe_mark == 0 )
+        {
+          y->dfhe_mark = 1;
+          return;
+        }
+      else
+        {
+          dfh_cut ( h, y, z );
+          y = z;
+        }
+    }
 }
 
 /*
  * begining of handling elements of dfibheap
  */
-static DFibHeapNode * dfhe_newelem ( DFibHeap * h )
+static DFibHeapNode *dfhe_newelem ( DFibHeap *h )
 {
-	DFibHeapNode * e;
+  DFibHeapNode *e;
 
-	if ( ( e = allocateDFibHeapNode ( h ) ) == NULL )
-	{
-		return NULL;
-	}
+  if ( ( e = allocateDFibHeapNode ( h ) ) == NULL )
+    {
+      return NULL;
+    }
 
-	e->dfhe_degree = 0;
-	e->dfhe_mark = 0;
-	e->dfhe_p = NULL;
-	e->dfhe_child = NULL;
-	e->dfhe_left = e;
-	e->dfhe_right = e;
-	e->dfhe_data = 0;
-	return e;
+  e->dfhe_degree = 0;
+  e->dfhe_mark = 0;
+  e->dfhe_p = NULL;
+  e->dfhe_child = NULL;
+  e->dfhe_left = e;
+  e->dfhe_right = e;
+  e->dfhe_data = 0;
+  return e;
 }
 
-static void dfhe_insertafter ( DFibHeapNode * a, DFibHeapNode * b )
+static void dfhe_insertafter ( DFibHeapNode *a, DFibHeapNode *b )
 {
-	if ( a == a->dfhe_right )
-	{
-		a->dfhe_right = b;
-		a->dfhe_left = b;
-		b->dfhe_right = a;
-		b->dfhe_left = a;
-	}
-	else
-	{
-		b->dfhe_right = a->dfhe_right;
-		a->dfhe_right->dfhe_left = b;
-		a->dfhe_right = b;
-		b->dfhe_left = a;
-	}
+  if ( a == a->dfhe_right )
+    {
+      a->dfhe_right = b;
+      a->dfhe_left = b;
+      b->dfhe_right = a;
+      b->dfhe_left = a;
+    }
+  else
+    {
+      b->dfhe_right = a->dfhe_right;
+      a->dfhe_right->dfhe_left = b;
+      a->dfhe_right = b;
+      b->dfhe_left = a;
+    }
 }
 
-static inline void dfhe_insertbefore ( DFibHeapNode * a, DFibHeapNode * b )
+static inline void dfhe_insertbefore ( DFibHeapNode *a, DFibHeapNode *b )
 {
-	dfhe_insertafter ( a->dfhe_left, b );
+  dfhe_insertafter ( a->dfhe_left, b );
 }
 
-static DFibHeapNode * dfhe_remove ( DFibHeapNode * x )
+static DFibHeapNode *dfhe_remove ( DFibHeapNode *x )
 {
-	DFibHeapNode * ret;
+  DFibHeapNode *ret;
 
-	if ( x == x->dfhe_left )
-	{
-		ret = NULL;
-	}
-	else
-	{
-		ret = x->dfhe_left;
-	}
+  if ( x == x->dfhe_left )
+    {
+      ret = NULL;
+    }
+  else
+    {
+      ret = x->dfhe_left;
+    }
 
-	/* fix the parent pointer */
-	if ( x->dfhe_p != NULL && x->dfhe_p->dfhe_child == x )
-	{
-		x->dfhe_p->dfhe_child = ret;
-	}
+  /* fix the parent pointer */
+  if ( x->dfhe_p != NULL && x->dfhe_p->dfhe_child == x )
+    {
+      x->dfhe_p->dfhe_child = ret;
+    }
 
-	x->dfhe_right->dfhe_left = x->dfhe_left;
-	x->dfhe_left->dfhe_right = x->dfhe_right;
-	/* clear out hanging pointers */
-	x->dfhe_p = NULL;
-	x->dfhe_left = x;
-	x->dfhe_right = x;
-	return ret;
+  x->dfhe_right->dfhe_left = x->dfhe_left;
+  x->dfhe_left->dfhe_right = x->dfhe_right;
+  /* clear out hanging pointers */
+  x->dfhe_p = NULL;
+  x->dfhe_left = x;
+  x->dfhe_right = x;
+  return ret;
 }
 
-static void dfh_checkcons ( DFibHeap * h )
+static void dfh_checkcons ( DFibHeap *h )
 {
-	IDnum oDl;
+  IDnum oDl;
 
-	/* make sure we have enough memory allocated to "reorganize" */
-	if ( h->dfh_Dl == -1 || h->dfh_n > ( 1 << h->dfh_Dl ) )
-	{
-		oDl = h->dfh_Dl;
+  /* make sure we have enough memory allocated to "reorganize" */
+  if ( h->dfh_Dl == -1 || h->dfh_n > ( 1 << h->dfh_Dl ) )
+    {
+      oDl = h->dfh_Dl;
 
-		if ( ( h->dfh_Dl = ceillog2 ( h->dfh_n ) + 1 ) < 8 )
-		{
-			h->dfh_Dl = 8;
-		}
+      if ( ( h->dfh_Dl = ceillog2 ( h->dfh_n ) + 1 ) < 8 )
+        {
+          h->dfh_Dl = 8;
+        }
 
-		if ( oDl != h->dfh_Dl )
-			{ h->dfh_cons = ( DFibHeapNode ** ) realloc ( h->dfh_cons, sizeof * h->dfh_cons * ( h->dfh_Dl + 1 ) ); }
+      if ( oDl != h->dfh_Dl )
+        {
+          h->dfh_cons = ( DFibHeapNode ** ) realloc ( h->dfh_cons, sizeof * h->dfh_cons * ( h->dfh_Dl + 1 ) );
+        }
 
-		if ( h->dfh_cons == NULL )
-		{
-			abort ();
-		}
-	}
+      if ( h->dfh_cons == NULL )
+        {
+          abort ();
+        }
+    }
 }
 
-static int dfh_compare ( DFibHeap * h, DFibHeapNode * a, DFibHeapNode * b )
+static int dfh_compare ( DFibHeap *h, DFibHeapNode *a, DFibHeapNode *b )
 {
-	if ( a->dfhe_key < b->dfhe_key )
-	{
-		return -1;
-	}
+  if ( a->dfhe_key < b->dfhe_key )
+    {
+      return -1;
+    }
 
-	if ( a->dfhe_key == b->dfhe_key )
-	{
-		return 0;
-	}
+  if ( a->dfhe_key == b->dfhe_key )
+    {
+      return 0;
+    }
 
-	return 1;
+  return 1;
 }
 
-static int dfh_comparedata ( DFibHeap * h, Time key, unsigned int data, DFibHeapNode * b )
+static int dfh_comparedata ( DFibHeap *h, Time key, unsigned int data, DFibHeapNode *b )
 {
-	DFibHeapNode a;
-	a.dfhe_key = key;
-	a.dfhe_data = data;
-	return dfh_compare ( h, &a, b );
+  DFibHeapNode a;
+  a.dfhe_key = key;
+  a.dfhe_data = data;
+  return dfh_compare ( h, &a, b );
 }
 
-static void dfh_insertel ( DFibHeap * h, DFibHeapNode * x )
+static void dfh_insertel ( DFibHeap *h, DFibHeapNode *x )
 {
-	dfh_insertrootlist ( h, x );
+  dfh_insertrootlist ( h, x );
 
-	if ( h->dfh_min == NULL || x->dfhe_key < h->dfh_min->dfhe_key )
-	{
-		h->dfh_min = x;
-	}
+  if ( h->dfh_min == NULL || x->dfhe_key < h->dfh_min->dfhe_key )
+    {
+      h->dfh_min = x;
+    }
 
-	h->dfh_n++;
+  h->dfh_n++;
 }
 
-Time dfibheap_el_getKey ( DFibHeapNode * node )
+Time dfibheap_el_getKey ( DFibHeapNode *node )
 {
-	return node->dfhe_key;
+  return node->dfhe_key;
 }

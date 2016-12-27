@@ -1,8 +1,8 @@
 CC=            g++
 ifdef debug
-CFLAGS=         -O0 -g -fomit-frame-pointer #-mcrc32
+CFLAGS=         -O0 -g -fomit-frame-pointer
 else
-CFLAGS=         -O3 -fomit-frame-pointer -w #-mcrc32
+CFLAGS=         -O3 -fomit-frame-pointer -w
 endif
 
 DFLAGS=         
@@ -55,7 +55,7 @@ endif
 		@printf "Compiling $<...                               \r"
 		@$(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $< || echo "Error in command: $(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $<"
 
-all:		clean $(OBJS) 
+all:		$(OBJS) 
 		@printf "$(PROG) objects generated.                    \n"
 #pregraph_sparse
 

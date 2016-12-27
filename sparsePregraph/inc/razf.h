@@ -66,10 +66,10 @@ typedef struct _gz_header_s _gz_header;
 
 typedef struct
 {
-	uint32_t * cell_offsets; // i
-	int64_t * bin_offsets; // i / BIN_SIZE
-	int size;
-	int cap;
+  uint32_t *cell_offsets;  // i
+  int64_t *bin_offsets;  // i / BIN_SIZE
+  int size;
+  int cap;
 } ZBlockIndex;
 /* When storing index, output bytes in Big-Endian everywhere */
 
@@ -79,56 +79,56 @@ typedef struct
 
 typedef struct RandomAccessZFile
 {
-	char mode; /* 'w' : write mode; 'r' : read mode */
-	int file_type;
-	/* plain file or rz file, razf_read support plain file as input too, in this case, razf_read work as buffered fread */
+  char mode; /* 'w' : write mode; 'r' : read mode */
+  int file_type;
+  /* plain file or rz file, razf_read support plain file as input too, in this case, razf_read work as buffered fread */
 #ifdef _USE_KNETFILE
-	union
-	{
-		knetFile * fpr;
-		int fpw;
-	} x;
+  union
+  {
+    knetFile *fpr;
+    int fpw;
+  } x;
 #else
-	int filedes; /* the file descriptor */
+  int filedes; /* the file descriptor */
 #endif
-	z_stream * stream;
-	ZBlockIndex * index;
-	int64_t in, out, end, src_end;
-	/* in: n bytes total in; out: n bytes total out; */
-	/* end: the end of all data blocks, while the start of index; src_end: the true end position in uncompressed file */
-	int buf_flush; // buffer should be flush, suspend inflate util buffer is empty
-	int64_t block_pos, block_off, next_block_pos;
-	/* block_pos: the start postiion of current block  in compressed file */
-	/* block_off: tell how many bytes have been read from current block */
-	void * inbuf, *outbuf;
-	int header_size;
-	gz_header * header;
-	/* header is used to transfer inflate_state->mode from HEAD to TYPE after call inflateReset */
-	int buf_off, buf_len;
-	int z_err, z_eof;
-	int seekable;
-	/* Indice where the source is seekable */
-	int load_index;
-	/* set has_index to 0 in mode 'w', then index will be discarded */
+  z_stream *stream;
+  ZBlockIndex *index;
+  int64_t in, out, end, src_end;
+  /* in: n bytes total in; out: n bytes total out; */
+  /* end: the end of all data blocks, while the start of index; src_end: the true end position in uncompressed file */
+  int buf_flush; // buffer should be flush, suspend inflate util buffer is empty
+  int64_t block_pos, block_off, next_block_pos;
+  /* block_pos: the start postiion of current block  in compressed file */
+  /* block_off: tell how many bytes have been read from current block */
+  void *inbuf, *outbuf;
+  int header_size;
+  gz_header *header;
+  /* header is used to transfer inflate_state->mode from HEAD to TYPE after call inflateReset */
+  int buf_off, buf_len;
+  int z_err, z_eof;
+  int seekable;
+  /* Indice where the source is seekable */
+  int load_index;
+  /* set has_index to 0 in mode 'w', then index will be discarded */
 } RAZF;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	RAZF * razf_dopen ( int data_fd, const char * mode );
-	RAZF * razf_open ( const char * fn, const char * mode );
-	int razf_write ( RAZF * rz, const void * data, int size );
-	int razf_read ( RAZF * rz, void * data, int size );
-	int64_t razf_seek ( RAZF * rz, int64_t pos, int where );
-	void razf_close ( RAZF * rz );
+RAZF *razf_dopen ( int data_fd, const char *mode );
+RAZF *razf_open ( const char *fn, const char *mode );
+int razf_write ( RAZF *rz, const void *data, int size );
+int razf_read ( RAZF *rz, void *data, int size );
+int64_t razf_seek ( RAZF *rz, int64_t pos, int where );
+void razf_close ( RAZF *rz );
 
 #define razf_tell(rz) ((rz)->out)
 
-	RAZF * razf_open2 ( const char * filename, const char * mode );
-	RAZF * razf_dopen2 ( int fd, const char * mode );
-	uint64_t razf_tell2 ( RAZF * rz );
-	int64_t razf_seek2 ( RAZF * rz, uint64_t voffset, int where );
+RAZF *razf_open2 ( const char *filename, const char *mode );
+RAZF *razf_dopen2 ( int fd, const char *mode );
+uint64_t razf_tell2 ( RAZF *rz );
+int64_t razf_seek2 ( RAZF *rz, uint64_t voffset, int where );
 
 #ifdef __cplusplus
 }

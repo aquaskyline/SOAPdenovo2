@@ -24,54 +24,54 @@
 
 // Constructor
 // Memory allocated
-FibHeap * newFibHeap ()
+FibHeap *newFibHeap ()
 {
-	return fh_makekeyheap ();
+  return fh_makekeyheap ();
 }
 
 // Add new node into heap with a key, and a pointer to the specified node
-FibHeapNode * insertNodeIntoHeap ( FibHeap * heap, Coordinate key, unsigned int node )
+FibHeapNode *insertNodeIntoHeap ( FibHeap *heap, Coordinate key, unsigned int node )
 {
-	return fh_insertkey ( heap, key, node );
+  return fh_insertkey ( heap, key, node );
 }
 
 // Returns smallest key in heap
-Coordinate minKeyOfHeap ( FibHeap * heap )
+Coordinate minKeyOfHeap ( FibHeap *heap )
 {
-	return fh_minkey ( heap );
+  return fh_minkey ( heap );
 }
 
 // Replaces the key for a given node
-Coordinate replaceKeyInHeap ( FibHeap * heap, FibHeapNode * node, Coordinate newKey )
+Coordinate replaceKeyInHeap ( FibHeap *heap, FibHeapNode *node, Coordinate newKey )
 {
-	return fh_replacekey ( heap, node, newKey );
+  return fh_replacekey ( heap, node, newKey );
 }
 
 // Removes the node with the shortest key, then returns it.
-unsigned int removeNextNodeFromHeap ( FibHeap * heap )
+unsigned int removeNextNodeFromHeap ( FibHeap *heap )
 {
-	return ( unsigned int ) fh_extractmin ( heap );
+  return ( unsigned int ) fh_extractmin ( heap );
 }
 
-boolean IsHeapEmpty ( FibHeap * heap )
+boolean IsHeapEmpty ( FibHeap *heap )
 {
-	return fh_isempty ( heap );
+  return fh_isempty ( heap );
 }
 
 // Destructor
-void destroyHeap ( FibHeap * heap )
+void destroyHeap ( FibHeap *heap )
 {
-	fh_deleteheap ( heap );
+  fh_deleteheap ( heap );
 }
 
 // Replace the node pointed to by a heap node
-void replaceValueInHeap ( FibHeapNode * node, unsigned int newValue )
+void replaceValueInHeap ( FibHeapNode *node, unsigned int newValue )
 {
-	fh_replacedata ( node, newValue );
+  fh_replacedata ( node, newValue );
 }
 
 // Remove unwanted node
-void destroyNodeInHeap ( FibHeapNode * node, FibHeap * heap )
+void destroyNodeInHeap ( FibHeapNode *node, FibHeap *heap )
 {
-	fh_delete ( heap, node );
+  fh_delete ( heap, node );
 }

@@ -19,13 +19,15 @@ FILE *ckopen(char *name, char *mode);
 
 FILE *ckopen(char *name, char *mode)
 {
-	FILE *fp;
+  FILE *fp;
 
-	if ((fp = fopen(name, mode)) == NULL)	{
-		printf("Cannot open file %s.\n", name);
-		exit(-1);
-	}
-	return(fp);
+  if ((fp = fopen(name, mode)) == NULL)
+    {
+      printf("Cannot open file %s.\n", name);
+      exit(-1);
+    }
+
+  return(fp);
 }
 
 
@@ -33,14 +35,16 @@ FILE *ckopen(char *name, char *mode)
 
 void *ckalloc(unsigned long long amount)
 {
-	void *p;
+  void *p;
 
-	if ((p = (void *) calloc( 1, (unsigned long long) amount)) == NULL && amount != 0)	{
-		printf("not enought memory");
-		fflush(stdout);
-                exit(-1);
-	}
-	return(p);
+  if ((p = (void *) calloc( 1, (unsigned long long) amount)) == NULL && amount != 0)
+    {
+      printf("not enought memory");
+      fflush(stdout);
+      exit(-1);
+    }
+
+  return(p);
 }
 
 
@@ -50,6 +54,7 @@ void *ckrealloc(void *p, size_t new_size, size_t old_size)
   void *q;
 
   q = realloc((void *) p, new_size);
+
   if (new_size == 0 || q != (void *) 0)
     return q;
 

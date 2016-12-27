@@ -44,36 +44,36 @@
  * specific node operations
  */
 
-static DFibHeapNode * dfhe_newelem ( DFibHeap * );
-static void dfhe_insertafter ( DFibHeapNode * a, DFibHeapNode * b );
-static inline void dfhe_insertbefore ( DFibHeapNode * a, DFibHeapNode * b );
-static DFibHeapNode * dfhe_remove ( DFibHeapNode * a );
+static DFibHeapNode *dfhe_newelem ( DFibHeap * );
+static void dfhe_insertafter ( DFibHeapNode *a, DFibHeapNode *b );
+static inline void dfhe_insertbefore ( DFibHeapNode *a, DFibHeapNode *b );
+static DFibHeapNode *dfhe_remove ( DFibHeapNode *a );
 
 /*
  * global heap operations
  */
 struct dfibheap
 {
-	MEM_MANAGER * nodeMemory;
-	IDnum dfh_n;
-	IDnum dfh_Dl;
-	DFibHeapNode ** dfh_cons;
-	DFibHeapNode * dfh_min;
-	DFibHeapNode * dfh_root;
+  MEM_MANAGER *nodeMemory;
+  IDnum dfh_n;
+  IDnum dfh_Dl;
+  DFibHeapNode **dfh_cons;
+  DFibHeapNode *dfh_min;
+  DFibHeapNode *dfh_root;
 };
 
 static void dfh_insertrootlist ( DFibHeap *, DFibHeapNode * );
 static void dfh_removerootlist ( DFibHeap *, DFibHeapNode * );
 static void dfh_consolidate ( DFibHeap * );
-static void dfh_heaplink ( DFibHeap * h, DFibHeapNode * y, DFibHeapNode * x );
+static void dfh_heaplink ( DFibHeap *h, DFibHeapNode *y, DFibHeapNode *x );
 static void dfh_cut ( DFibHeap *, DFibHeapNode *, DFibHeapNode * );
 static void dfh_cascading_cut ( DFibHeap *, DFibHeapNode * );
-static DFibHeapNode * dfh_extractminel ( DFibHeap * );
-static void dfh_checkcons ( DFibHeap * h );
-static int dfh_compare ( DFibHeap * h, DFibHeapNode * a, DFibHeapNode * b );
-static int dfh_comparedata ( DFibHeap * h, Time key,
-                             unsigned int data, DFibHeapNode * b );
-static void dfh_insertel ( DFibHeap * h, DFibHeapNode * x );
+static DFibHeapNode *dfh_extractminel ( DFibHeap * );
+static void dfh_checkcons ( DFibHeap *h );
+static int dfh_compare ( DFibHeap *h, DFibHeapNode *a, DFibHeapNode *b );
+static int dfh_comparedata ( DFibHeap *h, Time key,
+                             unsigned int data, DFibHeapNode *b );
+static void dfh_insertel ( DFibHeap *h, DFibHeapNode *x );
 
 
 /*

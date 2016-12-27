@@ -43,17 +43,17 @@ typedef Coordinate ( *voidcmp ) ( unsigned int , unsigned int );
 
 /* functions for key heaps */
 boolean fh_isempty ( FibHeap * );
-FibHeap * fh_makekeyheap ( void );
-FibHeapNode * fh_insertkey ( FibHeap *, Coordinate, unsigned int );
+FibHeap *fh_makekeyheap ( void );
+FibHeapNode *fh_insertkey ( FibHeap *, Coordinate, unsigned int );
 Coordinate fh_minkey ( FibHeap * );
 Coordinate fh_replacekey ( FibHeap *, FibHeapNode *, Coordinate );
 unsigned int fh_replacekeydata ( FibHeap *, FibHeapNode *, Coordinate, unsigned int );
 
 /* functions for unsigned int * heaps */
-FibHeap * fh_makeheap ( void );
+FibHeap *fh_makeheap ( void );
 voidcmp fh_setcmp ( FibHeap *, voidcmp );
 unsigned int fh_setneginf ( FibHeap *, unsigned int );
-FibHeapNode * fh_insert ( FibHeap *, unsigned int );
+FibHeapNode *fh_insert ( FibHeap *, unsigned int );
 
 /* shared functions */
 unsigned int fh_extractmin ( FibHeap * );
@@ -61,6 +61,6 @@ unsigned int fh_min ( FibHeap * );
 unsigned int fh_replacedata ( FibHeapNode *, unsigned int );
 unsigned int fh_delete ( FibHeap *, FibHeapNode * );
 void fh_deleteheap ( FibHeap * );
-FibHeap * fh_union ( FibHeap *, FibHeap * );
+FibHeap *fh_union ( FibHeap *, FibHeap * );
 
 #endif              /* _FIB_H_ */

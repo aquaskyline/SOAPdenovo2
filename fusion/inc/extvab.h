@@ -1,16 +1,16 @@
-/*************************************************************************** 
- * Title:          extvab.h 
- * Author:         Hongmei Zhu 
- * Created:        Jun. 2007 
- * Last modified:  May. 2009 
- * 
- * All Rights Reserved 
- * See file LICENSE for details. 
- ***************************************************************************/ 
+/***************************************************************************
+ * Title:          extvab.h
+ * Author:         Hongmei Zhu
+ * Created:        Jun. 2007
+ * Last modified:  May. 2009
+ *
+ * All Rights Reserved
+ * See file LICENSE for details.
+ ***************************************************************************/
 /*** global variables ****/
 extern int overlaplen;
 extern int inGraph;
-extern long long n_ban; 
+extern long long n_ban;
 extern Kmer WORDFILTER;
 extern boolean globalFlag;
 extern int thrd_num;
@@ -19,8 +19,8 @@ extern int verbosity;
 extern char verboseStr[verboseBufSize];
 
 /**** reads info *****/
-extern long long n_solexa; 
-extern long long prevNum; 
+extern long long n_solexa;
+extern long long prevNum;
 extern int ins_size_var;
 extern PE_INFO *pes;
 extern int maxReadLen;
@@ -76,8 +76,8 @@ extern int fillGap;
 /**** used for searchPath *****/
 extern int maxSteps;
 extern int num_trace;
-extern unsigned int**found_routes;
-extern unsigned int*so_far;
+extern unsigned int **found_routes;
+extern unsigned int *so_far;
 extern int max_n_routes;
 extern boolean maskRep;
 extern int GLDiff;

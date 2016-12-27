@@ -41,8 +41,8 @@
 #include "def2.h" //#include "globals.h"
 
 /* functions for key heaps */
-DFibHeap * dfh_makekeyheap ( void );
-DFibHeapNode * dfh_insertkey ( DFibHeap *, Time, unsigned int );
+DFibHeap *dfh_makekeyheap ( void );
+DFibHeapNode *dfh_insertkey ( DFibHeap *, Time, unsigned int );
 Time dfh_replacekey ( DFibHeap *, DFibHeapNode *, Time );
 unsigned int dfh_replacekeydata ( DFibHeap *, DFibHeapNode *, Time, unsigned int );
 

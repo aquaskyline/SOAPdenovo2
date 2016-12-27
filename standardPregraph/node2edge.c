@@ -37,13 +37,13 @@ static int edge_c, edgeCounter;         // current edge count number for both st
 static preEDGE temp_edge;              // for temp use in merge_V2()
 static char edge_seq[100000];       //use this static 'edge_seq ' as an temp seq in merge_V2() for speed ..
 
-static void make_edge ( gzFile * fp );
-static void merge_linearV2 ( char bal_edge, STACK * nStack, int count, gzFile * fp );
-static int check_iden_kmerList ( STACK * stack1, STACK * stack2 );
+static void make_edge ( gzFile *fp );
+static void merge_linearV2 ( char bal_edge, STACK *nStack, int count, gzFile *fp );
+static int check_iden_kmerList ( STACK *stack1, STACK *stack2 );
 
 //for stack
-static STACK * nodeStack;           //the stack for storing linear nodes
-static STACK * bal_nodeStack;       // the stack for storing the reverse complemental nodes ..
+static STACK *nodeStack;            //the stack for storing linear nodes
+static STACK *bal_nodeStack;        // the stack for storing the reverse complemental nodes ..
 
 
 /*************************************************
@@ -58,15 +58,15 @@ Output:
 Return:
     None.
 *************************************************/
-void kmer2edges ( char * outfile )
+void kmer2edges ( char *outfile )
 {
-	gzFile * fp;
-	char temp[256];
-	sprintf ( temp, "%s.edge.gz", outfile );
-	fp = gzopen ( temp, "w" );
-	make_edge ( fp );
-	gzclose ( fp );
-	num_ed = edge_c;
+  gzFile *fp;
+  char temp[256];
+  sprintf ( temp, "%s.edge.gz", outfile );
+  fp = gzopen ( temp, "w" );
+  make_edge ( fp );
+  gzclose ( fp );
+  num_ed = edge_c;
 }
 
 /*************************************************
@@ -83,138 +83,138 @@ Output:
 Return:
     None.
 *************************************************/
-static void stringBeads ( KMER_PT * firstBead, char nextch, int * node_c )
+static void stringBeads ( KMER_PT *firstBead, char nextch, int *node_c )
 {
-	boolean smaller, found;
-	Kmer tempKmer, bal_word;
-	Kmer word = firstBead->kmer;
-	ubyte8 hash_ban;
-	kmer_t * outgoing_node;
-	int nodeCounter = 1, setPicker;
-	char ch;
-	unsigned char flag;
-	KMER_PT * temp_pt, *prev_pt = firstBead;
-	word = prev_pt->kmer;
-	nodeCounter = 1;
-	word = nextKmer ( word, nextch );
-	bal_word = reverseComplement ( word, overlaplen );
+  boolean smaller, found;
+  Kmer tempKmer, bal_word;
+  Kmer word = firstBead->kmer;
+  ubyte8 hash_ban;
+  kmer_t *outgoing_node;
+  int nodeCounter = 1, setPicker;
+  char ch;
+  unsigned char flag;
+  KMER_PT *temp_pt, *prev_pt = firstBead;
+  word = prev_pt->kmer;
+  nodeCounter = 1;
+  word = nextKmer ( word, nextch );
+  bal_word = reverseComplement ( word, overlaplen );
 
-	if ( KmerLarger ( word, bal_word ) )
-	{
-		tempKmer = bal_word;
-		bal_word = word;
-		word = tempKmer;
-		smaller = 0;
-	}
-	else
-	{
-		smaller = 1;
-	}
+  if ( KmerLarger ( word, bal_word ) )
+    {
+      tempKmer = bal_word;
+      bal_word = word;
+      word = tempKmer;
+      smaller = 0;
+    }
+  else
+    {
+      smaller = 1;
+    }
 
-	hash_ban = hash_kmer ( word );
-	setPicker = hash_ban % thrd_num;
-	found = search_kmerset ( KmerSets[setPicker], word, &outgoing_node );
+  hash_ban = hash_kmer ( word );
+  setPicker = hash_ban % thrd_num;
+  found = search_kmerset ( KmerSets[setPicker], word, &outgoing_node );
 
-	while ( found && ( outgoing_node->linear ) ) // for every node in this line
-	{
-		nodeCounter++;
-		temp_pt = ( KMER_PT * ) stackPush ( nodeStack );
-		temp_pt->node = outgoing_node;
-		temp_pt->isSmaller = smaller;
+  while ( found && ( outgoing_node->linear ) ) // for every node in this line
+    {
+      nodeCounter++;
+      temp_pt = ( KMER_PT * ) stackPush ( nodeStack );
+      temp_pt->node = outgoing_node;
+      temp_pt->isSmaller = smaller;
 
-		if ( smaller )
-		{
-			temp_pt->kmer = word;
-		}
-		else
-		{
-			temp_pt->kmer = bal_word;
-		}
+      if ( smaller )
+        {
+          temp_pt->kmer = word;
+        }
+      else
+        {
+          temp_pt->kmer = bal_word;
+        }
 
-		prev_pt = temp_pt;
+      prev_pt = temp_pt;
 
-		if ( smaller )
-		{
-			for ( ch = 0; ch < 4; ch++ )
-			{
-				flag = get_kmer_right_cov ( *outgoing_node, ch );
+      if ( smaller )
+        {
+          for ( ch = 0; ch < 4; ch++ )
+            {
+              flag = get_kmer_right_cov ( *outgoing_node, ch );
 
-				if ( flag )
-				{
-					break;
-				}
-			}
+              if ( flag )
+                {
+                  break;
+                }
+            }
 
-			word = nextKmer ( prev_pt->kmer, ch );
-			bal_word = reverseComplement ( word, overlaplen );
+          word = nextKmer ( prev_pt->kmer, ch );
+          bal_word = reverseComplement ( word, overlaplen );
 
-			if ( KmerLarger ( word, bal_word ) )
-			{
-				tempKmer = bal_word;
-				bal_word = word;
-				word = tempKmer;
-				smaller = 0;
-			}
-			else
-			{
-				smaller = 1;
-			}
+          if ( KmerLarger ( word, bal_word ) )
+            {
+              tempKmer = bal_word;
+              bal_word = word;
+              word = tempKmer;
+              smaller = 0;
+            }
+          else
+            {
+              smaller = 1;
+            }
 
-			hash_ban = hash_kmer ( word );
-			setPicker = hash_ban % thrd_num;
-			found = search_kmerset ( KmerSets[setPicker], word, &outgoing_node );
-		}
-		else
-		{
-			for ( ch = 0; ch < 4; ch++ )
-			{
-				flag = get_kmer_left_cov ( *outgoing_node, ch );
+          hash_ban = hash_kmer ( word );
+          setPicker = hash_ban % thrd_num;
+          found = search_kmerset ( KmerSets[setPicker], word, &outgoing_node );
+        }
+      else
+        {
+          for ( ch = 0; ch < 4; ch++ )
+            {
+              flag = get_kmer_left_cov ( *outgoing_node, ch );
 
-				if ( flag )
-				{
-					break;
-				}
-			}
+              if ( flag )
+                {
+                  break;
+                }
+            }
 
-			word = nextKmer ( prev_pt->kmer, int_comp ( ch ) );
-			bal_word = reverseComplement ( word, overlaplen );
+          word = nextKmer ( prev_pt->kmer, int_comp ( ch ) );
+          bal_word = reverseComplement ( word, overlaplen );
 
-			if ( KmerLarger ( word, bal_word ) )
-			{
-				tempKmer = bal_word;
-				bal_word = word;
-				word = tempKmer;
-				smaller = 0;
-			}
-			else
-			{
-				smaller = 1;
-			}
+          if ( KmerLarger ( word, bal_word ) )
+            {
+              tempKmer = bal_word;
+              bal_word = word;
+              word = tempKmer;
+              smaller = 0;
+            }
+          else
+            {
+              smaller = 1;
+            }
 
-			hash_ban = hash_kmer ( word );
-			setPicker = hash_ban % thrd_num;
-			found = search_kmerset ( KmerSets[setPicker], word, &outgoing_node );
-		}
-	}
+          hash_ban = hash_kmer ( word );
+          setPicker = hash_ban % thrd_num;
+          found = search_kmerset ( KmerSets[setPicker], word, &outgoing_node );
+        }
+    }
 
-	if ( outgoing_node ) //this is always true
-	{
-		nodeCounter++;
-		temp_pt = ( KMER_PT * ) stackPush ( nodeStack );
-		temp_pt->node = outgoing_node;
-		temp_pt->isSmaller = smaller;
+  if ( outgoing_node ) //this is always true
+    {
+      nodeCounter++;
+      temp_pt = ( KMER_PT * ) stackPush ( nodeStack );
+      temp_pt->node = outgoing_node;
+      temp_pt->isSmaller = smaller;
 
-		if ( smaller )
-		{
-			temp_pt->kmer = word;
-		}
-		else
-		{
-			temp_pt->kmer = bal_word;
-		}
-	}
+      if ( smaller )
+        {
+          temp_pt->kmer = word;
+        }
+      else
+        {
+          temp_pt->kmer = bal_word;
+        }
+    }
 
-	*node_c = nodeCounter;
+  *node_c = nodeCounter;
 }
 
 /*************************************************
@@ -234,121 +234,121 @@ Output:
 Return:
     0.
 *************************************************/
-static int startEdgeFromNode ( kmer_t * node1, gzFile * fp )
+static int startEdgeFromNode ( kmer_t *node1, gzFile *fp )
 {
-	int node_c, palindrome;
-	unsigned char flag;
-	KMER_PT * ite_pt, *temp_pt;
-	Kmer word1, bal_word1;
-	char ch1;
-	/*
-	if (node1->linear || node1->deleted)
-	{
-	    return 0;
-	}
-	//   */
-	// ignore floating loop
-	word1 = node1->seq;
-	bal_word1 = reverseComplement ( word1, overlaplen );
+  int node_c, palindrome;
+  unsigned char flag;
+  KMER_PT *ite_pt, *temp_pt;
+  Kmer word1, bal_word1;
+  char ch1;
+  /*
+  if (node1->linear || node1->deleted)
+  {
+      return 0;
+  }
+  //   */
+  // ignore floating loop
+  word1 = node1->seq;
+  bal_word1 = reverseComplement ( word1, overlaplen );
 
-	// linear structure
-	for ( ch1 = 0; ch1 < 4; ch1++ ) // for every node on outgoing list
-	{
-		flag = get_kmer_right_cov ( *node1, ch1 );
+  // linear structure
+  for ( ch1 = 0; ch1 < 4; ch1++ ) // for every node on outgoing list
+    {
+      flag = get_kmer_right_cov ( *node1, ch1 );
 
-		if ( !flag )
-		{
-			continue;
-		}
+      if ( !flag )
+        {
+          continue;
+        }
 
-		emptyStack ( nodeStack );
-		temp_pt = ( KMER_PT * ) stackPush ( nodeStack );
-		temp_pt->node = node1;
-		temp_pt->isSmaller = 1;
-		temp_pt->kmer = word1;
-		stringBeads ( temp_pt, ch1, &node_c );
+      emptyStack ( nodeStack );
+      temp_pt = ( KMER_PT * ) stackPush ( nodeStack );
+      temp_pt->node = node1;
+      temp_pt->isSmaller = 1;
+      temp_pt->kmer = word1;
+      stringBeads ( temp_pt, ch1, &node_c );
 
-		//printf("%d nodes\n",node_c);
-		if ( node_c < 2 )
-		{
-			fprintf ( stderr, "%d nodes in this line!!!!!!!!!!!\n", node_c );
-		}
-		else
-		{
-			//make a reverse complement node list
-			stackBackup ( nodeStack );
-			emptyStack ( bal_nodeStack );
+      //printf("%d nodes\n",node_c);
+      if ( node_c < 2 )
+        {
+          fprintf ( stderr, "%d nodes in this line!!!!!!!!!!!\n", node_c );
+        }
+      else
+        {
+          //make a reverse complement node list
+          stackBackup ( nodeStack );
+          emptyStack ( bal_nodeStack );
 
-			while ( ( ite_pt = ( KMER_PT * ) stackPop ( nodeStack ) ) != NULL )
-			{
-				temp_pt = ( KMER_PT * ) stackPush ( bal_nodeStack );
-				temp_pt->kmer = reverseComplement ( ite_pt->kmer, overlaplen );
-			}
+          while ( ( ite_pt = ( KMER_PT * ) stackPop ( nodeStack ) ) != NULL )
+            {
+              temp_pt = ( KMER_PT * ) stackPush ( bal_nodeStack );
+              temp_pt->kmer = reverseComplement ( ite_pt->kmer, overlaplen );
+            }
 
-			stackRecover ( nodeStack );
-			palindrome = check_iden_kmerList ( nodeStack, bal_nodeStack );
-			stackRecover ( nodeStack );
+          stackRecover ( nodeStack );
+          palindrome = check_iden_kmerList ( nodeStack, bal_nodeStack );
+          stackRecover ( nodeStack );
 
-			if ( palindrome )
-			{
-				merge_linearV2 ( 0, nodeStack, node_c, fp );
-			}
-			else
-			{
-				merge_linearV2 ( 1, nodeStack, node_c, fp );
-			}
-		}
-	}           //every possible outgoing edges
+          if ( palindrome )
+            {
+              merge_linearV2 ( 0, nodeStack, node_c, fp );
+            }
+          else
+            {
+              merge_linearV2 ( 1, nodeStack, node_c, fp );
+            }
+        }
+    }           //every possible outgoing edges
 
-	for ( ch1 = 0; ch1 < 4; ch1++ ) // for every node on incoming list
-	{
-		flag = get_kmer_left_cov ( *node1, ch1 );
+  for ( ch1 = 0; ch1 < 4; ch1++ ) // for every node on incoming list
+    {
+      flag = get_kmer_left_cov ( *node1, ch1 );
 
-		if ( !flag )
-		{
-			continue;
-		}
+      if ( !flag )
+        {
+          continue;
+        }
 
-		emptyStack ( nodeStack );
-		temp_pt = ( KMER_PT * ) stackPush ( nodeStack );
-		temp_pt->node = node1;
-		temp_pt->isSmaller = 0;
-		temp_pt->kmer = bal_word1;
-		stringBeads ( temp_pt, int_comp ( ch1 ), &node_c );
+      emptyStack ( nodeStack );
+      temp_pt = ( KMER_PT * ) stackPush ( nodeStack );
+      temp_pt->node = node1;
+      temp_pt->isSmaller = 0;
+      temp_pt->kmer = bal_word1;
+      stringBeads ( temp_pt, int_comp ( ch1 ), &node_c );
 
-		if ( node_c < 2 )
-		{
-			fprintf ( stderr, "%d nodes in this line!!!!!!!!!!!\n", node_c );
-		}
-		else
-		{
-			//make a reverse complement node list
-			stackBackup ( nodeStack );
-			emptyStack ( bal_nodeStack );
+      if ( node_c < 2 )
+        {
+          fprintf ( stderr, "%d nodes in this line!!!!!!!!!!!\n", node_c );
+        }
+      else
+        {
+          //make a reverse complement node list
+          stackBackup ( nodeStack );
+          emptyStack ( bal_nodeStack );
 
-			while ( ( ite_pt = ( KMER_PT * ) stackPop ( nodeStack ) ) != NULL )
-			{
-				temp_pt = ( KMER_PT * ) stackPush ( bal_nodeStack );
-				temp_pt->kmer = reverseComplement ( ite_pt->kmer, overlaplen );
-			}
+          while ( ( ite_pt = ( KMER_PT * ) stackPop ( nodeStack ) ) != NULL )
+            {
+              temp_pt = ( KMER_PT * ) stackPush ( bal_nodeStack );
+              temp_pt->kmer = reverseComplement ( ite_pt->kmer, overlaplen );
+            }
 
-			stackRecover ( nodeStack );
-			palindrome = check_iden_kmerList ( nodeStack, bal_nodeStack );
-			stackRecover ( nodeStack );
+          stackRecover ( nodeStack );
+          palindrome = check_iden_kmerList ( nodeStack, bal_nodeStack );
+          stackRecover ( nodeStack );
 
-			if ( palindrome )
-			{
-				merge_linearV2 ( 0, nodeStack, node_c, fp );
-				//printf("edge is palindrome with length %d\n",temp_edge.length);
-			}
-			else
-			{
-				merge_linearV2 ( 1, nodeStack, node_c, fp );
-			}
-		}
-	}           //every possible incoming edges
+          if ( palindrome )
+            {
+              merge_linearV2 ( 0, nodeStack, node_c, fp );
+              //printf("edge is palindrome with length %d\n",temp_edge.length);
+            }
+          else
+            {
+              merge_linearV2 ( 1, nodeStack, node_c, fp );
+            }
+        }
+    }           //every possible incoming edges
 
-	return 0;
+  return 0;
 }
 
 /*************************************************
@@ -363,51 +363,51 @@ Output:
 Return:
     None.
 *************************************************/
-void make_edge ( gzFile * fp )
+void make_edge ( gzFile *fp )
 {
-	int i = 0;
-	kmer_t * node1;
-	KmerSet * set;
-	KmerSetsPatch = ( KmerSet ** ) ckalloc ( thrd_num * sizeof ( KmerSet * ) );
+  int i = 0;
+  kmer_t *node1;
+  KmerSet *set;
+  KmerSetsPatch = ( KmerSet ** ) ckalloc ( thrd_num * sizeof ( KmerSet * ) );
 
-	for ( i = 0; i < thrd_num; i++ )
-	{
-		KmerSetsPatch[i] = init_kmerset ( 1000, K_LOAD_FACTOR );
-	}
+  for ( i = 0; i < thrd_num; i++ )
+    {
+      KmerSetsPatch[i] = init_kmerset ( 1000, K_LOAD_FACTOR );
+    }
 
-	nodeStack = ( STACK * ) createStack ( KMERPTBLOCKSIZE, sizeof ( KMER_PT ) );
-	bal_nodeStack = ( STACK * ) createStack ( KMERPTBLOCKSIZE, sizeof ( KMER_PT ) );
-	edge_c = nodeCounter = 0;
-	edgeCounter = 0;
+  nodeStack = ( STACK * ) createStack ( KMERPTBLOCKSIZE, sizeof ( KMER_PT ) );
+  bal_nodeStack = ( STACK * ) createStack ( KMERPTBLOCKSIZE, sizeof ( KMER_PT ) );
+  edge_c = nodeCounter = 0;
+  edgeCounter = 0;
 
-	for ( i = 0; i < thrd_num; i++ )
-	{
-		set = KmerSets[i];
-		set->iter_ptr = 0;
+  for ( i = 0; i < thrd_num; i++ )
+    {
+      set = KmerSets[i];
+      set->iter_ptr = 0;
 
-		while ( set->iter_ptr < set->size )
-		{
-			if ( !is_kmer_entity_null ( set->flags, set->iter_ptr ) )
-			{
-				node1 = set->array + set->iter_ptr;
+      while ( set->iter_ptr < set->size )
+        {
+          if ( !is_kmer_entity_null ( set->flags, set->iter_ptr ) )
+            {
+              node1 = set->array + set->iter_ptr;
 
-				//              /*
-				if ( !node1->linear && !node1->deleted )
-				{
-					startEdgeFromNode ( node1, fp );
-				}
+              //              /*
+              if ( !node1->linear && !node1->deleted )
+                {
+                  startEdgeFromNode ( node1, fp );
+                }
 
-				//              */
-				//              startEdgeFromNode (node1, fp);
-			}
+              //              */
+              //              startEdgeFromNode (node1, fp);
+            }
 
-			set->iter_ptr++;
-		}
-	}
+          set->iter_ptr++;
+        }
+    }
 
-	fprintf ( stderr, "%d (%d) edge(s) and %d extra node(s) constructed.\n", edge_c, edgeCounter, nodeCounter );
-	freeStack ( nodeStack );
-	freeStack ( bal_nodeStack );
+  fprintf ( stderr, "%d (%d) edge(s) and %d extra node(s) constructed.\n", edge_c, edgeCounter, nodeCounter );
+  freeStack ( nodeStack );
+  freeStack ( bal_nodeStack );
 }
 
 
@@ -427,185 +427,185 @@ Output:
 Return:
     None.
 *************************************************/
-static void merge_linearV2 ( char bal_edge, STACK * nStack, int count, gzFile * fp )
+static void merge_linearV2 ( char bal_edge, STACK *nStack, int count, gzFile *fp )
 {
-	int length, char_index;
-	preEDGE * newedge;
-	kmer_t * del_node, *longNode;
-	char * tightSeq, firstCh;
-	long long symbol = 0;
-	int len_tSeq;
-	Kmer wordplus, bal_wordplus;
-	ubyte8 hash_ban;
-	KMER_PT * last_np = ( KMER_PT * ) stackPop ( nStack );
-	KMER_PT * second_last_np = ( KMER_PT * ) stackPop ( nStack );
-	KMER_PT * first_np, *second_np = NULL;
-	KMER_PT * temp;
-	boolean found;
-	int setPicker;
-	length = count - 1;
-	len_tSeq = length;
+  int length, char_index;
+  preEDGE *newedge;
+  kmer_t *del_node, *longNode;
+  char *tightSeq, firstCh;
+  long long symbol = 0;
+  int len_tSeq;
+  Kmer wordplus, bal_wordplus;
+  ubyte8 hash_ban;
+  KMER_PT *last_np = ( KMER_PT * ) stackPop ( nStack );
+  KMER_PT *second_last_np = ( KMER_PT * ) stackPop ( nStack );
+  KMER_PT *first_np, *second_np = NULL;
+  KMER_PT *temp;
+  boolean found;
+  int setPicker;
+  length = count - 1;
+  len_tSeq = length;
 
-	if ( len_tSeq >= edge_length_limit )
-	{
-		tightSeq = ( char * ) ckalloc ( len_tSeq * sizeof ( char ) );
-	}
-	else
-	{
-		tightSeq = edge_seq;
-	}
+  if ( len_tSeq >= edge_length_limit )
+    {
+      tightSeq = ( char * ) ckalloc ( len_tSeq * sizeof ( char ) );
+    }
+  else
+    {
+      tightSeq = edge_seq;
+    }
 
-	char_index = length - 1;
-	newedge = &temp_edge;
-	newedge->to_node = last_np->kmer;
-	newedge->length = length;
-	newedge->bal_edge = bal_edge;
-	tightSeq[char_index--] = lastCharInKmer ( last_np->kmer );
-	firstCh = firstCharInKmer ( second_last_np->kmer );
-	dislink2prevUncertain ( last_np->node, firstCh, last_np->isSmaller );
-	stackRecover ( nStack );
+  char_index = length - 1;
+  newedge = &temp_edge;
+  newedge->to_node = last_np->kmer;
+  newedge->length = length;
+  newedge->bal_edge = bal_edge;
+  tightSeq[char_index--] = lastCharInKmer ( last_np->kmer );
+  firstCh = firstCharInKmer ( second_last_np->kmer );
+  dislink2prevUncertain ( last_np->node, firstCh, last_np->isSmaller );
+  stackRecover ( nStack );
 
-	while ( nStack->item_c > 1 )
-	{
-		second_np = ( KMER_PT * ) stackPop ( nStack );
-	}
+  while ( nStack->item_c > 1 )
+    {
+      second_np = ( KMER_PT * ) stackPop ( nStack );
+    }
 
-	first_np = ( KMER_PT * ) stackPop ( nStack );
-	//unlink first node to the second one
-	dislink2nextUncertain ( first_np->node, lastCharInKmer ( second_np->kmer ), first_np->isSmaller );
-	//printf("from %llx, to %llx\n",first_np->node->seq,last_np->node->seq);
-	//now temp is the last node in line, out_node is the second last node in line
-	newedge->from_node = first_np->kmer;
+  first_np = ( KMER_PT * ) stackPop ( nStack );
+  //unlink first node to the second one
+  dislink2nextUncertain ( first_np->node, lastCharInKmer ( second_np->kmer ), first_np->isSmaller );
+  //printf("from %llx, to %llx\n",first_np->node->seq,last_np->node->seq);
+  //now temp is the last node in line, out_node is the second last node in line
+  newedge->from_node = first_np->kmer;
 
-	//create a long kmer for edge with length 1
-	if ( length == 1 )
-	{
-		nodeCounter++;
-		wordplus = KmerPlus ( newedge->from_node, lastCharInKmer ( newedge->to_node ) );
-		bal_wordplus = reverseComplement ( wordplus, overlaplen + 1 );
-		/*
-		   Kmer temp = KmerPlus(reverseComplement(newedge->to_node,overlaplen),
-		   lastCharInKmer(reverseComplement(newedge->from_node,overlaplen)));
-		   fprintf(stderr,"(%llx %llx) (%llx %llx) (%llx %llx)\n",
-		   wordplus.high,wordplus.low,temp.high,temp.low,
-		   bal_wordplus.high,bal_wordplus.low);
-		 */
-		edge_c++;
-		edgeCounter++;
+  //create a long kmer for edge with length 1
+  if ( length == 1 )
+    {
+      nodeCounter++;
+      wordplus = KmerPlus ( newedge->from_node, lastCharInKmer ( newedge->to_node ) );
+      bal_wordplus = reverseComplement ( wordplus, overlaplen + 1 );
+      /*
+         Kmer temp = KmerPlus(reverseComplement(newedge->to_node,overlaplen),
+         lastCharInKmer(reverseComplement(newedge->from_node,overlaplen)));
+         fprintf(stderr,"(%llx %llx) (%llx %llx) (%llx %llx)\n",
+         wordplus.high,wordplus.low,temp.high,temp.low,
+         bal_wordplus.high,bal_wordplus.low);
+       */
+      edge_c++;
+      edgeCounter++;
 
-		if ( KmerSmaller ( wordplus, bal_wordplus ) )
-		{
-			hash_ban = hash_kmer ( wordplus );
-			setPicker = hash_ban % thrd_num;
-			found = put_kmerset ( KmerSetsPatch[setPicker], wordplus, 4, 4, &longNode );
+      if ( KmerSmaller ( wordplus, bal_wordplus ) )
+        {
+          hash_ban = hash_kmer ( wordplus );
+          setPicker = hash_ban % thrd_num;
+          found = put_kmerset ( KmerSetsPatch[setPicker], wordplus, 4, 4, &longNode );
 
-			if ( found )
-			{
-				fprintf ( stderr, "LongNode " );
-				PrintKmer ( stderr, wordplus );
-				fprintf ( stderr, " already exist.\n" );
-				/*
-				#ifdef MER127
-				fprintf (stderr,"longNode %llx %llx %llx %llx already exist\n", wordplus.high1, wordplus.low1, wordplus.high2, wordplus.low2);
-				#else
-				fprintf (stderr,"longNode %llx %llx already exist\n", wordplus.high, wordplus.low);
-				#endif
-				*/
-			}
+          if ( found )
+            {
+              fprintf ( stderr, "LongNode " );
+              PrintKmer ( stderr, wordplus );
+              fprintf ( stderr, " already exist.\n" );
+              /*
+              #ifdef MER127
+              fprintf (stderr,"longNode %llx %llx %llx %llx already exist\n", wordplus.high1, wordplus.low1, wordplus.high2, wordplus.low2);
+              #else
+              fprintf (stderr,"longNode %llx %llx already exist\n", wordplus.high, wordplus.low);
+              #endif
+              */
+            }
 
-			longNode->l_links = edge_c;
-			longNode->twin = ( unsigned char ) ( bal_edge + 1 );
-		}
-		else
-		{
-			hash_ban = hash_kmer ( bal_wordplus );
-			setPicker = hash_ban % thrd_num;
-			found = put_kmerset ( KmerSetsPatch[setPicker], bal_wordplus, 4, 4, &longNode );
+          longNode->l_links = edge_c;
+          longNode->twin = ( unsigned char ) ( bal_edge + 1 );
+        }
+      else
+        {
+          hash_ban = hash_kmer ( bal_wordplus );
+          setPicker = hash_ban % thrd_num;
+          found = put_kmerset ( KmerSetsPatch[setPicker], bal_wordplus, 4, 4, &longNode );
 
-			if ( found )
-			{
-				fprintf ( stderr, "LongNode " );
-				PrintKmer ( stderr, wordplus );
-				fprintf ( stderr, " already exist.\n" );
-				/*
-				#ifdef MER127
-				fprintf (stderr,"longNode %llx %llx %llx %llx already exist\n", wordplus.high1, wordplus.low1, wordplus.high2, wordplus.low2);
-				#else
-				fprintf (stderr,"longNode %llx %llx already exist\n", bal_wordplus.high, bal_wordplus.low);
-				#endif
-				*/
-			}
+          if ( found )
+            {
+              fprintf ( stderr, "LongNode " );
+              PrintKmer ( stderr, wordplus );
+              fprintf ( stderr, " already exist.\n" );
+              /*
+              #ifdef MER127
+              fprintf (stderr,"longNode %llx %llx %llx %llx already exist\n", wordplus.high1, wordplus.low1, wordplus.high2, wordplus.low2);
+              #else
+              fprintf (stderr,"longNode %llx %llx already exist\n", bal_wordplus.high, bal_wordplus.low);
+              #endif
+              */
+            }
 
-			longNode->l_links = edge_c + bal_edge;
-			longNode->twin = ( unsigned char ) ( -bal_edge + 1 );
-		}
-	}
-	else
-	{
-		edge_c++;
-		edgeCounter++;
-	}
+          longNode->l_links = edge_c + bal_edge;
+          longNode->twin = ( unsigned char ) ( -bal_edge + 1 );
+        }
+    }
+  else
+    {
+      edge_c++;
+      edgeCounter++;
+    }
 
-	stackRecover ( nStack );
-	//mark all  the internal nodes
-	temp = ( KMER_PT * ) stackPop ( nStack );
+  stackRecover ( nStack );
+  //mark all  the internal nodes
+  temp = ( KMER_PT * ) stackPop ( nStack );
 
-	while ( nStack->item_c > 1 )
-	{
-		temp = ( KMER_PT * ) stackPop ( nStack );
-		del_node = temp->node;
-		del_node->inEdge = 1;
-		symbol += get_kmer_left_covs ( *del_node );
-		tightSeq[char_index--] = lastCharInKmer ( temp->kmer );
-	}
+  while ( nStack->item_c > 1 )
+    {
+      temp = ( KMER_PT * ) stackPop ( nStack );
+      del_node = temp->node;
+      del_node->inEdge = 1;
+      symbol += get_kmer_left_covs ( *del_node );
+      tightSeq[char_index--] = lastCharInKmer ( temp->kmer );
+    }
 
-	stackRecover ( nStack );
-	temp = ( KMER_PT * ) stackPop ( nStack );
+  stackRecover ( nStack );
+  temp = ( KMER_PT * ) stackPop ( nStack );
 
-	while ( nStack->item_c > 1 )
-	{
-		temp = ( KMER_PT * ) stackPop ( nStack );
-		del_node = temp->node;
-		del_node->inEdge = 1;
+  while ( nStack->item_c > 1 )
+    {
+      temp = ( KMER_PT * ) stackPop ( nStack );
+      del_node = temp->node;
+      del_node->inEdge = 1;
 
-		if ( temp->isSmaller )
-		{
-			del_node->l_links = edge_c;
-			del_node->twin = ( unsigned char ) ( bal_edge + 1 );
-		}
-		else
-		{
-			del_node->l_links = edge_c + bal_edge;
-			del_node->twin = ( unsigned char ) ( -bal_edge + 1 );
-		}
-	}
+      if ( temp->isSmaller )
+        {
+          del_node->l_links = edge_c;
+          del_node->twin = ( unsigned char ) ( bal_edge + 1 );
+        }
+      else
+        {
+          del_node->l_links = edge_c + bal_edge;
+          del_node->twin = ( unsigned char ) ( -bal_edge + 1 );
+        }
+    }
 
-	newedge->seq = tightSeq;
+  newedge->seq = tightSeq;
 
-	if ( length > 1 )
-	{
-		newedge->cvg = symbol / ( length - 1 ) * 10 > MaxEdgeCov ? MaxEdgeCov : symbol / ( length - 1 ) * 10;
-	}
-	else
-	{
-		newedge->cvg = 0;
-	}
+  if ( length > 1 )
+    {
+      newedge->cvg = symbol / ( length - 1 ) * 10 > MaxEdgeCov ? MaxEdgeCov : symbol / ( length - 1 ) * 10;
+    }
+  else
+    {
+      newedge->cvg = 0;
+    }
 
-	output_1edge ( newedge, fp );
+  output_1edge ( newedge, fp );
 
-	if ( len_tSeq >= edge_length_limit )
-	{
-		free ( ( void * ) tightSeq );
-	}
+  if ( len_tSeq >= edge_length_limit )
+    {
+      free ( ( void * ) tightSeq );
+    }
 
-	edge_c += bal_edge;
+  edge_c += bal_edge;
 
-	if ( edge_c % 10000000 == 0 )
-	{
-		fprintf ( stderr, "--- %d edge(s) built.\n", edge_c );
-	}
+  if ( edge_c % 10000000 == 0 )
+    {
+      fprintf ( stderr, "--- %d edge(s) built.\n", edge_c );
+    }
 
-	return;
+  return;
 }
 
 /*************************************************
@@ -621,29 +621,29 @@ Output:
 Return:
     1 if the two statcks are equal.
 *************************************************/
-static int check_iden_kmerList ( STACK * stack1, STACK * stack2 )
+static int check_iden_kmerList ( STACK *stack1, STACK *stack2 )
 {
-	KMER_PT * ite1, *ite2;
+  KMER_PT *ite1, *ite2;
 
-	if ( !stack1->item_c || !stack2->item_c ) // one of them is empty
-	{
-		return 0;
-	}
+  if ( !stack1->item_c || !stack2->item_c ) // one of them is empty
+    {
+      return 0;
+    }
 
-	while ( ( ite1 = ( KMER_PT * ) stackPop ( stack1 ) ) != NULL && ( ite2 = ( KMER_PT * ) stackPop ( stack2 ) ) != NULL )
-	{
-		if ( !KmerEqual ( ite1->kmer, ite2->kmer ) )
-		{
-			return 0;
-		}
-	}
+  while ( ( ite1 = ( KMER_PT * ) stackPop ( stack1 ) ) != NULL && ( ite2 = ( KMER_PT * ) stackPop ( stack2 ) ) != NULL )
+    {
+      if ( !KmerEqual ( ite1->kmer, ite2->kmer ) )
+        {
+          return 0;
+        }
+    }
 
-	if ( stack1->item_c || stack2->item_c ) // one of them is not empty
-	{
-		return 0;
-	}
-	else
-	{
-		return 1;
-	}
+  if ( stack1->item_c || stack2->item_c ) // one of them is not empty
+    {
+      return 0;
+    }
+  else
+    {
+      return 1;
+    }
 }

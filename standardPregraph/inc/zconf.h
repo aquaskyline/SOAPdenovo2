@@ -275,13 +275,13 @@ typedef uInt  FAR uIntf;
 typedef uLong FAR uLongf;
 
 #ifdef STDC
-typedef void const * voidpc;
-typedef void FAR  * voidpf;
-typedef void    *   voidp;
+typedef void const *voidpc;
+typedef void FAR   *voidpf;
+typedef void       *voidp;
 #else
-typedef Byte const * voidpc;
-typedef Byte FAR  * voidpf;
-typedef Byte    *   voidp;
+typedef Byte const *voidpc;
+typedef Byte FAR   *voidpf;
+typedef Byte       *voidp;
 #endif
 
 #if 0           /* HAVE_UNISTD_H -- this line is updated by ./configure */

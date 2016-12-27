@@ -36,18 +36,18 @@ int run_mode = 0;
 
 int thrd_num_s = 8;
 
-size_t * edge_cnt_total = NULL; //used int lock strategy
-size_t * bucket_count_total = NULL; //used in lock strategy
+size_t *edge_cnt_total = NULL;  //used int lock strategy
+size_t *bucket_count_total = NULL;  //used in lock strategy
 
 
 //for io thread @see io_func.h
 //for io thread
-string * seq_t = NULL;
+string *seq_t = NULL;
 int io_ready;       //0 ready to work 1 working 2 *seq_t ready 3 end reading signal
 int read_num = 0;   //the read num in *seq_t
 
-string * read_buf0 = NULL;
-string * read_buf1 = NULL;
+string *read_buf0 = NULL;
+string *read_buf1 = NULL;
 int io_stat0 = 1; //must be one, if io_stat0 =0 ,the io thread will work immediately
 int io_stat1 = 1;
 
@@ -58,19 +58,19 @@ int min_rd_len = 100000;
 
 
 //for the hashing lock strategy ...
-pthread_spinlock_t * locks;
+pthread_spinlock_t *locks;
 
 
 
 // solving tiny repeats, temporarily using global vars to implements this feature
-unsigned int * mark_on_edge = NULL;
-pthread_spinlock_t * s_locks = NULL;
-struct edge_path_buffer ** path_buffer = NULL;
+unsigned int *mark_on_edge = NULL;
+pthread_spinlock_t *s_locks = NULL;
+struct edge_path_buffer **path_buffer = NULL;
 unsigned long long buff_size = 1024;
 unsigned int max_path_length = 128; //max_path_length-1 is the real max path length, because the first int of buffer record the path length
 
-FILE * mark_fp = NULL; //
-FILE * path_fp = NULL; //
+FILE *mark_fp = NULL;  //
+FILE *path_fp = NULL;  //
 pthread_mutex_t file_lock;//
 
 int debug = 0 ;

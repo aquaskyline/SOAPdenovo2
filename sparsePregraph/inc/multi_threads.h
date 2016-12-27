@@ -26,21 +26,21 @@
 
 typedef struct parameter
 {
-	unsigned char threadID;
-	struct hashtable2 * ht;
-	struct preArc_array * preArcs; //for building preArc ...
-	struct vertex_hash2 * v_ht; //for building preArc ...
-	int cut_off_len;
-	int K_size;
-	int gap;
-	unsigned char * mainSignal;
-	unsigned char * selfSignal;
+  unsigned char threadID;
+  struct hashtable2 *ht;
+  struct preArc_array *preArcs;  //for building preArc ...
+  struct vertex_hash2 *v_ht;  //for building preArc ...
+  int cut_off_len;
+  int K_size;
+  int gap;
+  unsigned char *mainSignal;
+  unsigned char *selfSignal;
 } PARAMETER;
 
-void creatThrds ( pthread_t * threads, PARAMETER * paras );
-void * threadRoutine ( void * para );
-void thread_wait ( pthread_t * threads );
-void sendWorkSignal ( unsigned char SIG, unsigned char * thrdSignals );
+void creatThrds ( pthread_t *threads, PARAMETER *paras );
+void *threadRoutine ( void *para );
+void thread_wait ( pthread_t *threads );
+void sendWorkSignal ( unsigned char SIG, unsigned char *thrdSignals );
 
 #endif
 

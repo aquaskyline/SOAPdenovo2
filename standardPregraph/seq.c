@@ -47,21 +47,21 @@ Return:
     None.
 *************************************************/
 
-void printTightString ( char * tightSeq, int len )
+void printTightString ( char *tightSeq, int len )
 {
-	int i;
+  int i;
 
-	for ( i = 0; i < len; i++ )
-	{
-		fprintf ( stderr, "%c", int2base ( ( int ) getCharInTightString ( tightSeq, i ) ) );
+  for ( i = 0; i < len; i++ )
+    {
+      fprintf ( stderr, "%c", int2base ( ( int ) getCharInTightString ( tightSeq, i ) ) );
 
-		if ( ( i + 1 ) % 100 == 0 && i < len - 1 )
-		{
-			fprintf ( stderr, "\n" );
-		}
-	}
+      if ( ( i + 1 ) % 100 == 0 && i < len - 1 )
+        {
+          fprintf ( stderr, "\n" );
+        }
+    }
 
-	fprintf ( stderr, "\n" );
+  fprintf ( stderr, "\n" );
 }
 
 /*************************************************
@@ -78,29 +78,32 @@ Output:
 Return:
     None.
 *************************************************/
-void writeChar2tightString ( char nt, char * tightSeq, int pos )
+void writeChar2tightString ( char nt, char *tightSeq, int pos )
 {
-	char * byte = tightSeq + pos / 4;
+  char *byte = tightSeq + pos / 4;
 
-	switch ( pos % 4 )
-	{
-		case 0:
-			*byte &= 63;
-			*byte += nt << 6;
-			return;
-		case 1:
-			*byte &= 207;
-			*byte += nt << 4;
-			return;
-		case 2:
-			*byte &= 243;
-			*byte += nt << 2;
-			return;
-		case 3:
-			*byte &= 252;
-			*byte += nt;
-			return;
-	}
+  switch ( pos % 4 )
+    {
+    case 0:
+      *byte &= 63;
+      *byte += nt << 6;
+      return;
+
+    case 1:
+      *byte &= 207;
+      *byte += nt << 4;
+      return;
+
+    case 2:
+      *byte &= 243;
+      *byte += nt << 2;
+      return;
+
+    case 3:
+      *byte &= 252;
+      *byte += nt;
+      return;
+    }
 }
 
 /*************************************************
@@ -116,23 +119,26 @@ Output:
 Return:
     The target base.
 *************************************************/
-char getCharInTightString ( char * tightSeq, int pos )
+char getCharInTightString ( char *tightSeq, int pos )
 {
-	char * byte = tightSeq + pos / 4;
+  char *byte = tightSeq + pos / 4;
 
-	switch ( pos % 4 )
-	{
-		case 3:
-			return ( *byte & 3 );
-		case 2:
-			return ( *byte & 12 ) >> 2;
-		case 1:
-			return ( *byte & 48 ) >> 4;
-		case 0:
-			return ( *byte & 192 ) >> 6;
-	}
+  switch ( pos % 4 )
+    {
+    case 3:
+      return ( *byte & 3 );
 
-	return 0;
+    case 2:
+      return ( *byte & 12 ) >> 2;
+
+    case 1:
+      return ( *byte & 48 ) >> 4;
+
+    case 0:
+      return ( *byte & 192 ) >> 6;
+    }
+
+  return 0;
 }
 
 /*************************************************
@@ -148,21 +154,21 @@ Output:
 Return:
     None.
 *************************************************/
-void reverseComplementSeq ( char * seq, int len, char * bal_seq )
+void reverseComplementSeq ( char *seq, int len, char *bal_seq )
 {
-	int i, index = 0;
+  int i, index = 0;
 
-	if ( len < 1 )
-	{
-		return;
-	}
+  if ( len < 1 )
+    {
+      return;
+    }
 
-	for ( i = len - 1; i >= 0; i-- )
-	{
-		bal_seq[index++] = int_comp ( seq[i] );
-	}
+  for ( i = len - 1; i >= 0; i-- )
+    {
+      bal_seq[index++] = int_comp ( seq[i] );
+    }
 
-	return;
+  return;
 }
 
 /*************************************************
@@ -178,36 +184,36 @@ Output:
 Return:
     The reversed complement of sequence "seq".
 *************************************************/
-char * compl_int_seq ( char * seq, int len )
+char *compl_int_seq ( char *seq, int len )
 {
-	char * bal_seq = NULL, c, bal_c;
-	int i, index;
+  char *bal_seq = NULL, c, bal_c;
+  int i, index;
 
-	if ( len < 1 )
-	{
-		return bal_seq;
-	}
+  if ( len < 1 )
+    {
+      return bal_seq;
+    }
 
-	bal_seq = ( char * ) ckalloc ( len * sizeof ( char ) );
-	index = 0;
+  bal_seq = ( char * ) ckalloc ( len * sizeof ( char ) );
+  index = 0;
 
-	for ( i = len - 1; i >= 0; i-- )
-	{
-		c = seq[i];
+  for ( i = len - 1; i >= 0; i-- )
+    {
+      c = seq[i];
 
-		if ( c < 4 )
-		{
-			bal_c = int_comp ( c );
-		}       //3-c;
-		else
-		{
-			bal_c = c;
-		}
+      if ( c < 4 )
+        {
+          bal_c = int_comp ( c );
+        }       //3-c;
+      else
+        {
+          bal_c = c;
+        }
 
-		bal_seq[index++] = bal_c;
-	}
+      bal_seq[index++] = bal_c;
+    }
 
-	return bal_seq;
+  return bal_seq;
 }
 
 /*************************************************
@@ -223,18 +229,18 @@ Output:
 Return:
     The integer.
 *************************************************/
-long long trans_seq ( char * seq, int len )
+long long trans_seq ( char *seq, int len )
 {
-	int i;
-	long long res;
-	res = 0;
+  int i;
+  long long res;
+  res = 0;
 
-	for ( i = 0; i < len; i++ )
-	{
-		res = res * 4 + seq[i];
-	}
+  for ( i = 0; i < len; i++ )
+    {
+      res = res * 4 + seq[i];
+    }
 
-	return ( res );
+  return ( res );
 }
 
 /*

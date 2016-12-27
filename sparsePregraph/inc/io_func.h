@@ -29,16 +29,16 @@
 
 struct io_para_main
 {
-	int read_buf_sz;
-	vector<string> *in_filenames_vt;
+  int read_buf_sz;
+  vector<string> *in_filenames_vt;
 
 };
 
 void sendIOWorkSignal();
-void * run_io_thread_main ( void * arg );
-void filter_N ( string & seq_s, int & bad_flag );
-void read_lib ( vector<string> &filenames, char * lib_file );
-void * open_file_robust ( const char * filetype, const char * path, const char * mode );
+void *run_io_thread_main ( void *arg );
+void filter_N ( string &seq_s, int &bad_flag );
+void read_lib ( vector<string> &filenames, char *lib_file );
+void *open_file_robust ( const char *filetype, const char *path, const char *mode );
 
 #endif
 

@@ -26,17 +26,17 @@
 #include "extfunc.h"
 #include "extvab.h"
 
-void copySeq ( char * targetS, char * sourceS, int pos, int length )
+void copySeq ( char *targetS, char *sourceS, int pos, int length )
 {
-	char ch;
-	int i, index;
-	index = pos;
+  char ch;
+  int i, index;
+  index = pos;
 
-	for ( i = 0; i < length; i++ )
-	{
-		ch = getCharInTightString ( sourceS, i );
-		writeChar2tightString ( ch, targetS, index++ );
-	}
+  for ( i = 0; i < length; i++ )
+    {
+      ch = getCharInTightString ( sourceS, i );
+      writeChar2tightString ( ch, targetS, index++ );
+    }
 }
 
 /*************************************************
@@ -55,189 +55,197 @@ Return:
 *************************************************/
 void linearUpdateConnection ( unsigned int e1, unsigned int e2, int indicate )
 {
-	unsigned int bal_ed;
-	ARC * parc;
+  unsigned int bal_ed;
+  ARC *parc;
 
-	if ( !indicate )
-	{
-		edge_array[e1].to_vt = edge_array[e2].to_vt;
-		bal_ed = getTwinEdge ( e1 );
-		parc = edge_array[e2].arcs;
+  if ( !indicate )
+    {
+      edge_array[e1].to_vt = edge_array[e2].to_vt;
+      bal_ed = getTwinEdge ( e1 );
+      parc = edge_array[e2].arcs;
 
-		while ( parc )
-		{
-			parc->bal_arc->to_ed = bal_ed;
-			parc = parc->next;
-		}
+      while ( parc )
+        {
+          parc->bal_arc->to_ed = bal_ed;
+          parc = parc->next;
+        }
 
-		edge_array[e1].arcs = edge_array[e2].arcs;
-		edge_array[e2].arcs = NULL;
+      edge_array[e1].arcs = edge_array[e2].arcs;
+      edge_array[e2].arcs = NULL;
 
-		if ( edge_array[e1].length || edge_array[e2].length )
-			{ edge_array[e1].cvg = ( edge_array[e1].cvg * edge_array[e1].length + edge_array[e2].cvg * edge_array[e2].length ) / ( edge_array[e1].length + edge_array[e2].length ); }
+      if ( edge_array[e1].length || edge_array[e2].length )
+        {
+          edge_array[e1].cvg = ( edge_array[e1].cvg * edge_array[e1].length + edge_array[e2].cvg * edge_array[e2].length ) / ( edge_array[e1].length + edge_array[e2].length );
+        }
 
-		edge_array[e2].deleted = 1;
-	}
-	else
-	{
-		//all the arcs pointing to e1 switch to e2
-		parc = edge_array[getTwinEdge ( e1 )].arcs;
+      edge_array[e2].deleted = 1;
+    }
+  else
+    {
+      //all the arcs pointing to e1 switch to e2
+      parc = edge_array[getTwinEdge ( e1 )].arcs;
 
-		while ( parc )
-		{
-			parc->bal_arc->to_ed = e2;
-			parc = parc->next;
-		}
+      while ( parc )
+        {
+          parc->bal_arc->to_ed = e2;
+          parc = parc->next;
+        }
 
-		edge_array[e1].arcs = NULL;
-		edge_array[e2].from_vt = edge_array[e1].from_vt;
+      edge_array[e1].arcs = NULL;
+      edge_array[e2].from_vt = edge_array[e1].from_vt;
 
-		if ( edge_array[e1].length || edge_array[e2].length )
-			{ edge_array[e2].cvg = ( edge_array[e1].cvg * edge_array[e1].length + edge_array[e2].cvg * edge_array[e2].length ) / ( edge_array[e1].length + edge_array[e2].length ); }
+      if ( edge_array[e1].length || edge_array[e2].length )
+        {
+          edge_array[e2].cvg = ( edge_array[e1].cvg * edge_array[e1].length + edge_array[e2].cvg * edge_array[e2].length ) / ( edge_array[e1].length + edge_array[e2].length );
+        }
 
-		edge_array[e1].deleted = 1;
-	}
+      edge_array[e1].deleted = 1;
+    }
 }
 
-static void printEdgeSeq ( FILE * fp, char * tightSeq, int len )
+static void printEdgeSeq ( FILE *fp, char *tightSeq, int len )
 {
-	int i;
+  int i;
 
-	for ( i = 0; i < len; i++ )
-	{
-		fprintf ( fp, "%c", int2base ( ( int ) getCharInTightString ( tightSeq, i ) ) );
+  for ( i = 0; i < len; i++ )
+    {
+      fprintf ( fp, "%c", int2base ( ( int ) getCharInTightString ( tightSeq, i ) ) );
 
-		if ( ( i + overlaplen + 1 ) % 100 == 0 && i < len - 1 )
-		{
-			fprintf ( fp, "\n" );
-		}
-	}
+      if ( ( i + overlaplen + 1 ) % 100 == 0 && i < len - 1 )
+        {
+          fprintf ( fp, "\n" );
+        }
+    }
 
-	fprintf ( fp, "\n" );
+  fprintf ( fp, "\n" );
 }
 void allpathUpdateEdge ( unsigned int e1, unsigned int e2, int indicate, boolean last )
 {
-	int tightLen;
-	char * tightSeq = NULL;
+  int tightLen;
+  char *tightSeq = NULL;
 
-	if ( edge_array[e1].cvg == 0 )
-	{
-		edge_array[e1].cvg = edge_array[e2].cvg;
-	}
+  if ( edge_array[e1].cvg == 0 )
+    {
+      edge_array[e1].cvg = edge_array[e2].cvg;
+    }
 
-	if ( edge_array[e2].cvg == 0 )
-	{
-		edge_array[e2].cvg = edge_array[e1].cvg;
-	}
+  if ( edge_array[e2].cvg == 0 )
+    {
+      edge_array[e2].cvg = edge_array[e1].cvg;
+    }
 
-	/*
-	   if(edge_array[e1].length&&edge_array[e2].length){
-	   fprintf(stderr,">e1\n");
-	   printEdgeSeq(stderr,edge_array[e1].seq,edge_array[e1].length);
-	   fprintf(stderr,">e2\n");
-	   printEdgeSeq(stderr,edge_array[e2].seq,edge_array[e2].length);
-	   } */
-	unsigned int cvgsum = edge_array[e1].cvg * edge_array[e1].length + edge_array[e2].cvg * edge_array[e2].length;
-	tightLen = edge_array[e1].length + edge_array[e2].length;
+  /*
+     if(edge_array[e1].length&&edge_array[e2].length){
+     fprintf(stderr,">e1\n");
+     printEdgeSeq(stderr,edge_array[e1].seq,edge_array[e1].length);
+     fprintf(stderr,">e2\n");
+     printEdgeSeq(stderr,edge_array[e2].seq,edge_array[e2].length);
+     } */
+  unsigned int cvgsum = edge_array[e1].cvg * edge_array[e1].length + edge_array[e2].cvg * edge_array[e2].length;
+  tightLen = edge_array[e1].length + edge_array[e2].length;
 
-	if ( tightLen )
-	{
-		tightSeq = ( char * ) ckalloc ( ( tightLen / 4 + 1 ) * sizeof ( char ) );
-	}
+  if ( tightLen )
+    {
+      tightSeq = ( char * ) ckalloc ( ( tightLen / 4 + 1 ) * sizeof ( char ) );
+    }
 
-	tightLen = 0;
+  tightLen = 0;
 
-	if ( edge_array[e1].length )
-	{
-		copySeq ( tightSeq, edge_array[e1].seq, 0, edge_array[e1].length );
-		tightLen = edge_array[e1].length;
+  if ( edge_array[e1].length )
+    {
+      copySeq ( tightSeq, edge_array[e1].seq, 0, edge_array[e1].length );
+      tightLen = edge_array[e1].length;
 
-		if ( edge_array[e1].seq )
-		{
-			free ( ( void * ) edge_array[e1].seq );
-			edge_array[e1].seq = NULL;
-		}
-		else
-		{
-			fprintf ( stderr, "AllpathUpdateEdge: edge %d with length %d, but without seq.\n", e1, edge_array[e1].length );
-		}
-	}
+      if ( edge_array[e1].seq )
+        {
+          free ( ( void * ) edge_array[e1].seq );
+          edge_array[e1].seq = NULL;
+        }
+      else
+        {
+          fprintf ( stderr, "AllpathUpdateEdge: edge %d with length %d, but without seq.\n", e1, edge_array[e1].length );
+        }
+    }
 
-	if ( edge_array[e2].length )
-	{
-		copySeq ( tightSeq, edge_array[e2].seq, tightLen, edge_array[e2].length );
-		tightLen += edge_array[e2].length;
+  if ( edge_array[e2].length )
+    {
+      copySeq ( tightSeq, edge_array[e2].seq, tightLen, edge_array[e2].length );
+      tightLen += edge_array[e2].length;
 
-		if ( edge_array[e2].seq )
-		{
-			free ( ( void * ) edge_array[e2].seq );
-			edge_array[e2].seq = NULL;
-		}
-		else
-		{
-			fprintf ( stderr, "AllpathUpdateEdge: edge %d with length %d, but without seq.\n", e2, edge_array[e2].length );
-		}
-	}
+      if ( edge_array[e2].seq )
+        {
+          free ( ( void * ) edge_array[e2].seq );
+          edge_array[e2].seq = NULL;
+        }
+      else
+        {
+          fprintf ( stderr, "AllpathUpdateEdge: edge %d with length %d, but without seq.\n", e2, edge_array[e2].length );
+        }
+    }
 
-	/*
-	   if(edge_array[e1].length&&edge_array[e2].length){
-	   fprintf(stderr,">e1+e2\n");
-	   printEdgeSeq(stderr,tightSeq,tightLen);
-	   }
-	 */
-	//edge_array[e2].extend_len = tightLen-edge_array[e2].length;
-	//the sequence of e1 is to be updated
-	if ( !indicate )
-	{
-		edge_array[e2].length = 0;  //e1 is removed from the graph
-		edge_array[e1].to_vt = edge_array[e2].to_vt;    //e2 is part of e1 now
-		edge_array[e1].length = tightLen;
-		edge_array[e1].seq = tightSeq;
+  /*
+     if(edge_array[e1].length&&edge_array[e2].length){
+     fprintf(stderr,">e1+e2\n");
+     printEdgeSeq(stderr,tightSeq,tightLen);
+     }
+   */
+  //edge_array[e2].extend_len = tightLen-edge_array[e2].length;
+  //the sequence of e1 is to be updated
+  if ( !indicate )
+    {
+      edge_array[e2].length = 0;  //e1 is removed from the graph
+      edge_array[e1].to_vt = edge_array[e2].to_vt;    //e2 is part of e1 now
+      edge_array[e1].length = tightLen;
+      edge_array[e1].seq = tightSeq;
 
-		if ( tightLen )
-		{
-			edge_array[e1].cvg = cvgsum / tightLen;
-		}
+      if ( tightLen )
+        {
+          edge_array[e1].cvg = cvgsum / tightLen;
+        }
 
-		if ( last )
-			{ edge_array[e1].cvg = edge_array[e1].cvg > 0 ? edge_array[e1].cvg : 1; }
+      if ( last )
+        {
+          edge_array[e1].cvg = edge_array[e1].cvg > 0 ? edge_array[e1].cvg : 1;
+        }
 
-		//      edge_array[e1].cvg = edge_array[e1].cvg > 0 ? edge_array[e1].cvg : 1;
-	}
-	else
-	{
-		edge_array[e1].length = 0;  //e1 is removed from the graph
-		edge_array[e2].from_vt = edge_array[e1].from_vt;    //e1 is part of e2 now
-		edge_array[e2].length = tightLen;
-		edge_array[e2].seq = tightSeq;
+      //      edge_array[e1].cvg = edge_array[e1].cvg > 0 ? edge_array[e1].cvg : 1;
+    }
+  else
+    {
+      edge_array[e1].length = 0;  //e1 is removed from the graph
+      edge_array[e2].from_vt = edge_array[e1].from_vt;    //e1 is part of e2 now
+      edge_array[e2].length = tightLen;
+      edge_array[e2].seq = tightSeq;
 
-		if ( tightLen )
-		{
-			edge_array[e2].cvg = cvgsum / tightLen;
-		}
+      if ( tightLen )
+        {
+          edge_array[e2].cvg = cvgsum / tightLen;
+        }
 
-		if ( last )
-			{ edge_array[e2].cvg = edge_array[e2].cvg > 0 ? edge_array[e2].cvg : 1; }
+      if ( last )
+        {
+          edge_array[e2].cvg = edge_array[e2].cvg > 0 ? edge_array[e2].cvg : 1;
+        }
 
-		//      edge_array[e2].cvg = edge_array[e2].cvg > 0 ? edge_array[e2].cvg : 1;
-	}
+      //      edge_array[e2].cvg = edge_array[e2].cvg > 0 ? edge_array[e2].cvg : 1;
+    }
 }
 
 static void debugging ( unsigned int i )
 {
-	ARC * parc;
-	parc = edge_array[i].arcs;
+  ARC *parc;
+  parc = edge_array[i].arcs;
 
-	if ( !parc )
-	{
-		fprintf ( stderr, "No downward connection for %d.\n", i );
-	}
+  if ( !parc )
+    {
+      fprintf ( stderr, "No downward connection for %d.\n", i );
+    }
 
-	while ( parc )
-	{
-		fprintf ( stderr, "%d -> %d\n", i, parc->to_ed );
-		parc = parc->next;
-	}
+  while ( parc )
+    {
+      fprintf ( stderr, "%d -> %d\n", i, parc->to_ed );
+      parc = parc->next;
+    }
 }
 
 /*************************************************
@@ -255,81 +263,83 @@ Return:
 *************************************************/
 void linearConcatenate ( boolean isIter, boolean last )
 {
-	unsigned int i;
-	int conc_c = 1;
-	int counter;
-	unsigned int from_ed, to_ed, bal_ed;
-	ARC * parc, *parc2;
-	unsigned int bal_fe;
-	int donot1 = 0;
-	int round = 1;
+  unsigned int i;
+  int conc_c = 1;
+  int counter;
+  unsigned int from_ed, to_ed, bal_ed;
+  ARC *parc, *parc2;
+  unsigned int bal_fe;
+  int donot1 = 0;
+  int round = 1;
 
-	//debugging(30514);
-	while ( conc_c )
-	{
-		conc_c = 0;
-		counter = 0;
-		donot1 = 0;
+  //debugging(30514);
+  while ( conc_c )
+    {
+      conc_c = 0;
+      counter = 0;
+      donot1 = 0;
 
-		for ( i = 1; i <= num_ed; i++ ) //num_ed
-		{
-			if ( edge_array[i].deleted || EdSameAsTwin ( i ) )
-			{
-				continue;
-			}
+      for ( i = 1; i <= num_ed; i++ ) //num_ed
+        {
+          if ( edge_array[i].deleted || EdSameAsTwin ( i ) )
+            {
+              continue;
+            }
 
-			if ( edge_array[i].length > 0 )
-			{
-				counter++;
-			}
+          if ( edge_array[i].length > 0 )
+            {
+              counter++;
+            }
 
-			parc = edge_array[i].arcs;
+          parc = edge_array[i].arcs;
 
-			if ( !parc || parc->next )
-			{
-				continue;
-			}
+          if ( !parc || parc->next )
+            {
+              continue;
+            }
 
-			to_ed = parc->to_ed;
-			bal_ed = getTwinEdge ( to_ed );
-			parc2 = edge_array[bal_ed].arcs;
+          to_ed = parc->to_ed;
+          bal_ed = getTwinEdge ( to_ed );
+          parc2 = edge_array[bal_ed].arcs;
 
-			if ( bal_ed == to_ed || !parc2 || parc2->next )
-			{
-				continue;
-			}
+          if ( bal_ed == to_ed || !parc2 || parc2->next )
+            {
+              continue;
+            }
 
-			from_ed = i;
+          from_ed = i;
 
-			if ( from_ed == to_ed || from_ed == bal_ed )
-			{
-				continue;
-			}
+          if ( from_ed == to_ed || from_ed == bal_ed )
+            {
+              continue;
+            }
 
-			if ( parc->multiplicity <= arcfilter )
-			{
-				donot1++;
-				continue;
-			}
+          if ( parc->multiplicity <= arcfilter )
+            {
+              donot1++;
+              continue;
+            }
 
-			//linear connection found
-			conc_c++;
-			linearUpdateConnection ( from_ed, to_ed, 0 );
-			allpathUpdateEdge ( from_ed, to_ed, 0, last );
-			bal_fe = getTwinEdge ( from_ed );
-			linearUpdateConnection ( bal_ed, bal_fe, 1 );
-			allpathUpdateEdge ( bal_ed, bal_fe, 1, last );
-			/*
-			   if(from_ed==6589||to_ed==6589)
-			   printf("%d <- %d (%d)\n",from_ed,to_ed,i);
-			   if(bal_fe==6589||bal_ed==6589)
-			   printf("%d <- %d (%d)\n",bal_fe,bal_ed,i);
-			 */
-		}
+          //linear connection found
+          conc_c++;
+          linearUpdateConnection ( from_ed, to_ed, 0 );
+          allpathUpdateEdge ( from_ed, to_ed, 0, last );
+          bal_fe = getTwinEdge ( from_ed );
+          linearUpdateConnection ( bal_ed, bal_fe, 1 );
+          allpathUpdateEdge ( bal_ed, bal_fe, 1, last );
+          /*
+             if(from_ed==6589||to_ed==6589)
+             printf("%d <- %d (%d)\n",from_ed,to_ed,i);
+             if(bal_fe==6589||bal_ed==6589)
+             printf("%d <- %d (%d)\n",bal_fe,bal_ed,i);
+           */
+        }
 
-		fprintf ( stderr, "%d edge(s) concatenated in cycle %d.\n", conc_c, round++ );
+      fprintf ( stderr, "%d edge(s) concatenated in cycle %d.\n", conc_c, round++ );
 
-		if ( arcfilter )
-			{ fprintf ( stderr, "%d edge(s) with weight %d were not linearized.\n", donot1, arcfilter ); }
-	}
+      if ( arcfilter )
+        {
+          fprintf ( stderr, "%d edge(s) with weight %d were not linearized.\n", donot1, arcfilter );
+        }
+    }
 }

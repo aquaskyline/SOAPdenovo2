@@ -44,52 +44,52 @@
  */
 struct fibheap_el
 {
-	int fhe_degree;
-	boolean fhe_mark;
-	FibHeapNode * fhe_p;
-	FibHeapNode * fhe_child;
-	FibHeapNode * fhe_left;
-	FibHeapNode * fhe_right;
-	Coordinate fhe_key;
-	unsigned int fhe_data;
+  int fhe_degree;
+  boolean fhe_mark;
+  FibHeapNode *fhe_p;
+  FibHeapNode *fhe_child;
+  FibHeapNode *fhe_left;
+  FibHeapNode *fhe_right;
+  Coordinate fhe_key;
+  unsigned int fhe_data;
 };
 
-static FibHeapNode * fhe_newelem ( struct fibheap * );
+static FibHeapNode *fhe_newelem ( struct fibheap * );
 static void fhe_initelem ( FibHeapNode * );
-static void fhe_insertafter ( FibHeapNode * a, FibHeapNode * b );
-static inline void fhe_insertbefore ( FibHeapNode * a, FibHeapNode * b );
-static FibHeapNode * fhe_remove ( FibHeapNode * a );
+static void fhe_insertafter ( FibHeapNode *a, FibHeapNode *b );
+static inline void fhe_insertbefore ( FibHeapNode *a, FibHeapNode *b );
+static FibHeapNode *fhe_remove ( FibHeapNode *a );
 
 /*
  * global heap operations
  */
 struct fibheap
 {
-	Coordinate ( *fh_cmp_fnct ) ( unsigned int, unsigned int );
-	MEM_MANAGER * nodeMemory;
-	IDnum fh_n;
-	IDnum fh_Dl;
-	FibHeapNode ** fh_cons;
-	FibHeapNode * fh_min;
-	FibHeapNode * fh_root;
-	unsigned int fh_neginf;
-	boolean fh_keys: 1;
+  Coordinate ( *fh_cmp_fnct ) ( unsigned int, unsigned int );
+  MEM_MANAGER *nodeMemory;
+  IDnum fh_n;
+  IDnum fh_Dl;
+  FibHeapNode **fh_cons;
+  FibHeapNode *fh_min;
+  FibHeapNode *fh_root;
+  unsigned int fh_neginf;
+  boolean fh_keys: 1;
 };
 
 static void fh_initheap ( FibHeap * );
 static void fh_insertrootlist ( FibHeap *, FibHeapNode * );
 static void fh_removerootlist ( FibHeap *, FibHeapNode * );
 static void fh_consolidate ( FibHeap * );
-static void fh_heaplink ( FibHeap * h, FibHeapNode * y, FibHeapNode * x );
+static void fh_heaplink ( FibHeap *h, FibHeapNode *y, FibHeapNode *x );
 static void fh_cut ( FibHeap *, FibHeapNode *, FibHeapNode * );
 static void fh_cascading_cut ( FibHeap *, FibHeapNode * );
-static FibHeapNode * fh_extractminel ( FibHeap * );
-static void fh_checkcons ( FibHeap * h );
-static void fh_destroyheap ( FibHeap * h );
-static int fh_compare ( FibHeap * h, FibHeapNode * a, FibHeapNode * b );
-static int fh_comparedata ( FibHeap * h, Coordinate key,
-                            unsigned int data, FibHeapNode * b );
-static void fh_insertel ( FibHeap * h, FibHeapNode * x );
+static FibHeapNode *fh_extractminel ( FibHeap * );
+static void fh_checkcons ( FibHeap *h );
+static void fh_destroyheap ( FibHeap *h );
+static int fh_compare ( FibHeap *h, FibHeapNode *a, FibHeapNode *b );
+static int fh_comparedata ( FibHeap *h, Coordinate key,
+                            unsigned int data, FibHeapNode *b );
+static void fh_insertel ( FibHeap *h, FibHeapNode *x );
 
 /*
  * general functions

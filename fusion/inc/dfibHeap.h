@@ -23,21 +23,21 @@ Copyright 2007, 2008 Daniel Zerbino (zerbino@ebi.ac.uk)
 
 DFibHeap *newDFibHeap();
 
-DFibHeapNode *insertNodeIntoDHeap(DFibHeap * heap, Time key, unsigned int node);
+DFibHeapNode *insertNodeIntoDHeap(DFibHeap *heap, Time key, unsigned int node);
 
-Time replaceKeyInDHeap(DFibHeap * heap, DFibHeapNode * node, Time newKey);
+Time replaceKeyInDHeap(DFibHeap *heap, DFibHeapNode *node, Time newKey);
 
-unsigned int removeNextNodeFromDHeap(DFibHeap * heap);
+unsigned int removeNextNodeFromDHeap(DFibHeap *heap);
 
-void destroyDHeap(DFibHeap * heap);
+void destroyDHeap(DFibHeap *heap);
 
 boolean HasMin(DFibHeap *h);
 
-void replaceValueInDHeap(DFibHeapNode * node, unsigned int newValue);
+void replaceValueInDHeap(DFibHeapNode *node, unsigned int newValue);
 
-void *destroyNodeInDHeap(DFibHeapNode * node, DFibHeap * heap);
+void *destroyNodeInDHeap(DFibHeapNode *node, DFibHeap *heap);
 
-IDnum getDFibHeapSize(DFibHeap * heap);
+IDnum getDFibHeapSize(DFibHeap *heap);
 
-Time getKey(DFibHeapNode * node);
+Time getKey(DFibHeapNode *node);
 #endif

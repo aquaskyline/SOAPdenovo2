@@ -21,112 +21,112 @@
  */
 
 #include <stdinc.h>
-void * ckalloc ( unsigned long long amount );
-FILE * ckopen ( char * name, char * mode );
-FILE * ckopen ( char * name, char * mode )
+void *ckalloc ( unsigned long long amount );
+FILE *ckopen ( char *name, char *mode );
+FILE *ckopen ( char *name, char *mode )
 {
-	FILE * fp;
+  FILE *fp;
 
-	if ( ( fp = fopen ( name, mode ) ) == NULL )
-	{
-		fprintf ( stderr, "Cannot open %s. Now exit to system...\n", name );
-		exit ( -1 );
-	}
+  if ( ( fp = fopen ( name, mode ) ) == NULL )
+    {
+      fprintf ( stderr, "Cannot open %s. Now exit to system...\n", name );
+      exit ( -1 );
+    }
 
-	return ( fp );
+  return ( fp );
 }
 
-static int GetFileSize ( FILE * fp )
+static int GetFileSize ( FILE *fp )
 {
-	char c = fgetc ( fp );
+  char c = fgetc ( fp );
 
-	if ( c == EOF )
-	{
-		return 0;
-	}
+  if ( c == EOF )
+    {
+      return 0;
+    }
 
-	return 1;
+  return 1;
 }
 
-boolean check_file ( char * name )
+boolean check_file ( char *name )
 {
-	FILE * linkF;
+  FILE *linkF;
 
-	if ( strlen ( name ) > 3 && strcmp ( name + strlen ( name ) - 3, ".gz" ) == 0 )
-	{
-		char cmd[1000];
-		sprintf ( cmd, "gzip -dc %s", name );
-		linkF = popen ( cmd, "r" );
+  if ( strlen ( name ) > 3 && strcmp ( name + strlen ( name ) - 3, ".gz" ) == 0 )
+    {
+      char cmd[1000];
+      sprintf ( cmd, "gzip -dc %s", name );
+      linkF = popen ( cmd, "r" );
 
-		if ( linkF )
-		{
-			if ( GetFileSize ( linkF ) != 0 )
-			{
-				pclose ( linkF );
-				return 1;
-			}
+      if ( linkF )
+        {
+          if ( GetFileSize ( linkF ) != 0 )
+            {
+              pclose ( linkF );
+              return 1;
+            }
 
-			pclose ( linkF );
-		}
+          pclose ( linkF );
+        }
 
-		return 0;
-	}
-	else
-	{
-		linkF = fopen ( name, "r" );
+      return 0;
+    }
+  else
+    {
+      linkF = fopen ( name, "r" );
 
-		if ( linkF )
-		{
-			if ( GetFileSize ( linkF ) != 0 )
-			{
-				fclose ( linkF );
-				return 1;
-			}
+      if ( linkF )
+        {
+          if ( GetFileSize ( linkF ) != 0 )
+            {
+              fclose ( linkF );
+              return 1;
+            }
 
-			fclose ( linkF );
-		}
+          fclose ( linkF );
+        }
 
-		return 0;
-	}
+      return 0;
+    }
 }
 
 
 /* ckalloc - allocate space; check for success */
-void * ckalloc ( unsigned long long amount )
+void *ckalloc ( unsigned long long amount )
 {
-	void * p;
+  void *p;
 
-	if ( ( p = ( void * ) calloc ( 1, ( unsigned long long ) amount ) ) == NULL && amount != 0 )
-	{
-		fprintf ( stderr, "Ran out of memory while applying %lldbytes\n", amount );
-		fprintf ( stderr, "There may be errors as follows:\n" );
-		fprintf ( stderr, "1) Not enough memory.\n" );
-		fprintf ( stderr, "2) The ARRAY may be overrode.\n" );
-		fprintf ( stderr, "3) The wild pointers.\n" );
-		exit ( -1 );
-	}
+  if ( ( p = ( void * ) calloc ( 1, ( unsigned long long ) amount ) ) == NULL && amount != 0 )
+    {
+      fprintf ( stderr, "Ran out of memory while applying %lldbytes\n", amount );
+      fprintf ( stderr, "There may be errors as follows:\n" );
+      fprintf ( stderr, "1) Not enough memory.\n" );
+      fprintf ( stderr, "2) The ARRAY may be overrode.\n" );
+      fprintf ( stderr, "3) The wild pointers.\n" );
+      exit ( -1 );
+    }
 
-	return ( p );
+  return ( p );
 }
 
 
 /* reallocate memory */
-void * ckrealloc ( void * p, size_t new_size, size_t old_size )
+void *ckrealloc ( void *p, size_t new_size, size_t old_size )
 {
-	void * q;
-	q = realloc ( ( void * ) p, new_size );
+  void *q;
+  q = realloc ( ( void * ) p, new_size );
 
-	if ( new_size == 0 || q != ( void * ) 0 )
-	{
-		return q;
-	}
+  if ( new_size == 0 || q != ( void * ) 0 )
+    {
+      return q;
+    }
 
-	/* manually reallocate space */
-	q = ckalloc ( new_size );
-	/* move old memory to new space */
-	bcopy ( p, q, old_size );
-	free ( p );
-	return q;
+  /* manually reallocate space */
+  q = ckalloc ( new_size );
+  /* move old memory to new space */
+  bcopy ( p, q, old_size );
+  free ( p );
+  return q;
 }
 
 

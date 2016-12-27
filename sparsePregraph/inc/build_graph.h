@@ -29,10 +29,10 @@
 #include "core.h"
 //for called
 
-void run_process_threaded ( struct hashtable2 * ht, pthread_spinlock_t * locks, int K_size, int gap, size_t read_num, int thrd_num, int thrd_id, int round );
-void SwitchBuckets ( hashtable2 * ht2, int K_size );
-void SavingSparseKmerGraph2 ( hashtable2 * ht, char * outfile );
-void LoadingSparseKmerGraph2 ( hashtable2 * ht, char * outfile );
+void run_process_threaded ( struct hashtable2 *ht, pthread_spinlock_t *locks, int K_size, int gap, size_t read_num, int thrd_num, int thrd_id, int round );
+void SwitchBuckets ( hashtable2 *ht2, int K_size );
+void SavingSparseKmerGraph2 ( hashtable2 *ht, char *outfile );
+void LoadingSparseKmerGraph2 ( hashtable2 *ht, char *outfile );
 
 #endif
 

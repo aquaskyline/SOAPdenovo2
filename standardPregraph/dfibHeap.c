@@ -27,32 +27,32 @@
 #include "dfib.h"
 
 // Return number of elements stored in heap
-IDnum getDFibHeapSize ( DFibHeap * heap )
+IDnum getDFibHeapSize ( DFibHeap *heap )
 {
-	return dfibheap_getSize ( heap );
+  return dfibheap_getSize ( heap );
 }
 
 // Constructor
 // Memory allocated
-DFibHeap * newDFibHeap ()
+DFibHeap *newDFibHeap ()
 {
-	return dfh_makekeyheap ();
+  return dfh_makekeyheap ();
 }
 
 // Add new node into heap with a key, and a pointer to the specified node
-DFibHeapNode * insertNodeIntoDHeap ( DFibHeap * heap, Time key, unsigned int node )
+DFibHeapNode *insertNodeIntoDHeap ( DFibHeap *heap, Time key, unsigned int node )
 {
-	DFibHeapNode * res;
-	res = dfh_insertkey ( heap, key, node );
-	return res;
+  DFibHeapNode *res;
+  res = dfh_insertkey ( heap, key, node );
+  return res;
 }
 
 // Replaces the key for a given node
-Time replaceKeyInDHeap ( DFibHeap * heap, DFibHeapNode * node, Time newKey )
+Time replaceKeyInDHeap ( DFibHeap *heap, DFibHeapNode *node, Time newKey )
 {
-	Time res;
-	res = dfh_replacekey ( heap, node, newKey );
-	return res;
+  Time res;
+  res = dfh_replacekey ( heap, node, newKey );
+  return res;
 }
 
 
@@ -68,32 +68,32 @@ Output:
 Return:
     The key.
 *************************************************/
-unsigned int removeNextNodeFromDHeap ( DFibHeap * heap )
+unsigned int removeNextNodeFromDHeap ( DFibHeap *heap )
 {
-	unsigned int node;
-	node = ( unsigned int ) dfh_extractmin ( heap );
-	return node;
+  unsigned int node;
+  node = ( unsigned int ) dfh_extractmin ( heap );
+  return node;
 }
 
 // Destructor
-void destroyDHeap ( DFibHeap * heap )
+void destroyDHeap ( DFibHeap *heap )
 {
-	dfh_deleteheap ( heap );
+  dfh_deleteheap ( heap );
 }
 
 // Replace the node pointed to by a heap node
-void replaceValueInDHeap ( DFibHeapNode * node, unsigned int newValue )
+void replaceValueInDHeap ( DFibHeapNode *node, unsigned int newValue )
 {
-	dfh_replacedata ( node, newValue );
+  dfh_replacedata ( node, newValue );
 }
 
 // Remove unwanted node
-void destroyNodeInDHeap ( DFibHeapNode * node, DFibHeap * heap )
+void destroyNodeInDHeap ( DFibHeapNode *node, DFibHeap *heap )
 {
-	dfh_delete ( heap, node );
+  dfh_delete ( heap, node );
 }
 
-Time getKey ( DFibHeapNode * node )
+Time getKey ( DFibHeapNode *node )
 {
-	return dfibheap_el_getKey ( node );
+  return dfibheap_el_getKey ( node );
 }

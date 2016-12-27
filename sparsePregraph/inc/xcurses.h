@@ -54,11 +54,11 @@ extern "C"
 # define bool _bool
 #endif
 
-	/*----------------------------------------------------------------------
-	 *
-	 *  PDCurses Manifest Constants
-	 *
-	 */
+/*----------------------------------------------------------------------
+ *
+ *  PDCurses Manifest Constants
+ *
+ */
 
 #ifndef FALSE
 # define FALSE 0
@@ -76,43 +76,43 @@ extern "C"
 # define OK 0
 #endif
 
-	/*----------------------------------------------------------------------
-	 *
-	 *  PDCurses Type Declarations
-	 *
-	 */
+/*----------------------------------------------------------------------
+ *
+ *  PDCurses Type Declarations
+ *
+ */
 
-	typedef unsigned char bool;    /* PDCurses Boolean type */
+typedef unsigned char bool;    /* PDCurses Boolean type */
 
 #ifdef CHTYPE_LONG
 # if _LP64
-	typedef unsigned int chtype;
+typedef unsigned int chtype;
 # else
-	typedef unsigned long chtype;  /* 16-bit attr + 16-bit char */
+typedef unsigned long chtype;  /* 16-bit attr + 16-bit char */
 # endif
 #else
-	typedef unsigned short chtype; /* 8-bit attr + 8-bit char */
+typedef unsigned short chtype; /* 8-bit attr + 8-bit char */
 #endif
 
 #ifdef PDC_WIDE
-	typedef chtype cchar_t;
+typedef chtype cchar_t;
 #endif
 
-	typedef chtype attr_t;
+typedef chtype attr_t;
 
-	/*----------------------------------------------------------------------
-	 *
-	 *  PDCurses Mouse Interface -- SYSVR4, with extensions
-	 *
-	 */
+/*----------------------------------------------------------------------
+ *
+ *  PDCurses Mouse Interface -- SYSVR4, with extensions
+ *
+ */
 
-	typedef struct
-	{
-		int x;           /* absolute column, 0 based, measured in characters */
-		int y;           /* absolute row, 0 based, measured in characters */
-		short button[3]; /* state of each button */
-		int changes;     /* flags indicating what has changed with the mouse */
-	} MOUSE_STATUS;
+typedef struct
+{
+  int x;           /* absolute column, 0 based, measured in characters */
+  int y;           /* absolute row, 0 based, measured in characters */
+  short button[3]; /* state of each button */
+  int changes;     /* flags indicating what has changed with the mouse */
+} MOUSE_STATUS;
 
 #define BUTTON_RELEASED         0x0000
 #define BUTTON_PRESSED          0x0001
@@ -131,18 +131,18 @@ extern "C"
 #define MOUSE_X_POS             (Mouse_status.x)
 #define MOUSE_Y_POS             (Mouse_status.y)
 
-	/*
-	 * Bits associated with the .changes field:
-	 *   3         2         1         0
-	 * 210987654321098765432109876543210
-	 *                                 1 <- button 1 has changed
-	 *                                10 <- button 2 has changed
-	 *                               100 <- button 3 has changed
-	 *                              1000 <- mouse has moved
-	 *                             10000 <- mouse position report
-	 *                            100000 <- mouse wheel up
-	 *                           1000000 <- mouse wheel down
-	 */
+/*
+ * Bits associated with the .changes field:
+ *   3         2         1         0
+ * 210987654321098765432109876543210
+ *                                 1 <- button 1 has changed
+ *                                10 <- button 2 has changed
+ *                               100 <- button 3 has changed
+ *                              1000 <- mouse has moved
+ *                             10000 <- mouse position report
+ *                            100000 <- mouse wheel up
+ *                           1000000 <- mouse wheel down
+ */
 
 #define PDC_MOUSE_MOVED         0x0008
 #define PDC_MOUSE_POSITION      0x0010
@@ -157,7 +157,7 @@ extern "C"
 #define MOUSE_WHEEL_UP          (Mouse_status.changes & PDC_MOUSE_WHEEL_UP)
 #define MOUSE_WHEEL_DOWN        (Mouse_status.changes & PDC_MOUSE_WHEEL_DOWN)
 
-	/* mouse bit-masks */
+/* mouse bit-masks */
 
 #define BUTTON1_RELEASED        0x00000001L
 #define BUTTON1_PRESSED         0x00000002L
@@ -180,9 +180,9 @@ extern "C"
 #define BUTTON3_TRIPLE_CLICKED  0x00004000L
 #define BUTTON3_MOVED           0x00004000L /* PDCurses */
 
-	/* For the ncurses-compatible functions only, BUTTON4_PRESSED and
-	   BUTTON5_PRESSED are returned for mouse scroll wheel up and down;
-	   otherwise PDCurses doesn't support buttons 4 and 5 */
+/* For the ncurses-compatible functions only, BUTTON4_PRESSED and
+   BUTTON5_PRESSED are returned for mouse scroll wheel up and down;
+   otherwise PDCurses doesn't support buttons 4 and 5 */
 
 #define BUTTON4_RELEASED        0x00008000L
 #define BUTTON4_PRESSED         0x00010000L
@@ -204,17 +204,17 @@ extern "C"
 #define ALL_MOUSE_EVENTS        0x1fffffffL
 #define REPORT_MOUSE_POSITION   0x20000000L
 
-	/* ncurses mouse interface */
+/* ncurses mouse interface */
 
-	typedef unsigned long mmask_t;
+typedef unsigned long mmask_t;
 
-	typedef struct
-	{
-		short id;       /* unused, always 0 */
-		int x, y, z;    /* x, y same as MOUSE_STATUS; z unused */
-		mmask_t bstate; /* equivalent to changes + button[], but
+typedef struct
+{
+  short id;       /* unused, always 0 */
+  int x, y, z;    /* x, y same as MOUSE_STATUS; z unused */
+  mmask_t bstate; /* equivalent to changes + button[], but
                            in the same format as used for mousemask() */
-	} MEVENT;
+} MEVENT;
 
 #ifdef NCURSES_MOUSE_VERSION
 # define BUTTON_SHIFT   BUTTON_MODIFIER_SHIFT
@@ -227,103 +227,103 @@ extern "C"
 # define BUTTON_ALT     PDC_BUTTON_ALT
 #endif
 
-	/*----------------------------------------------------------------------
-	 *
-	 *  PDCurses Structure Definitions
-	 *
-	 */
+/*----------------------------------------------------------------------
+ *
+ *  PDCurses Structure Definitions
+ *
+ */
 
-	typedef struct _win       /* definition of a window */
-	{
-		int   _cury;          /* current pseudo-cursor */
-		int   _curx;
-		int   _maxy;          /* max window coordinates */
-		int   _maxx;
-		int   _begy;          /* origin on screen */
-		int   _begx;
-		int   _flags;         /* window properties */
-		chtype _attrs;        /* standard attributes and colors */
-		chtype _bkgd;         /* background, normally blank */
-		bool  _clear;         /* causes clear at next refresh */
-		bool  _leaveit;       /* leaves cursor where it is */
-		bool  _scroll;        /* allows window scrolling */
-		bool  _nodelay;       /* input character wait flag */
-		bool  _immed;         /* immediate update flag */
-		bool  _sync;          /* synchronise window ancestors */
-		bool  _use_keypad;    /* flags keypad key mode active */
-		chtype ** _y;         /* pointer to line pointer array */
-		int  * _firstch;      /* first changed character in line */
-		int  * _lastch;       /* last changed character in line */
-		int   _tmarg;         /* top of scrolling region */
-		int   _bmarg;         /* bottom of scrolling region */
-		int   _delayms;       /* milliseconds of delay for getch() */
-		int   _parx, _pary;   /* coords relative to parent (0,0) */
-		struct _win * _parent; /* subwin's pointer to parent win */
-	} WINDOW;
+typedef struct _win       /* definition of a window */
+{
+  int   _cury;          /* current pseudo-cursor */
+  int   _curx;
+  int   _maxy;          /* max window coordinates */
+  int   _maxx;
+  int   _begy;          /* origin on screen */
+  int   _begx;
+  int   _flags;         /* window properties */
+  chtype _attrs;        /* standard attributes and colors */
+  chtype _bkgd;         /* background, normally blank */
+  bool  _clear;         /* causes clear at next refresh */
+  bool  _leaveit;       /* leaves cursor where it is */
+  bool  _scroll;        /* allows window scrolling */
+  bool  _nodelay;       /* input character wait flag */
+  bool  _immed;         /* immediate update flag */
+  bool  _sync;          /* synchronise window ancestors */
+  bool  _use_keypad;    /* flags keypad key mode active */
+  chtype **_y;          /* pointer to line pointer array */
+  int   *_firstch;      /* first changed character in line */
+  int   *_lastch;       /* last changed character in line */
+  int   _tmarg;         /* top of scrolling region */
+  int   _bmarg;         /* bottom of scrolling region */
+  int   _delayms;       /* milliseconds of delay for getch() */
+  int   _parx, _pary;   /* coords relative to parent (0,0) */
+  struct _win *_parent;  /* subwin's pointer to parent win */
+} WINDOW;
 
-	/* Avoid using the SCREEN struct directly -- use the corresponding
-	   functions if possible. This struct may eventually be made private. */
+/* Avoid using the SCREEN struct directly -- use the corresponding
+   functions if possible. This struct may eventually be made private. */
 
-	typedef struct
-	{
-		bool  alive;          /* if initscr() called, and not endwin() */
-		bool  autocr;         /* if cr -> lf */
-		bool  cbreak;         /* if terminal unbuffered */
-		bool  echo;           /* if terminal echo */
-		bool  raw_inp;        /* raw input mode (v. cooked input) */
-		bool  raw_out;        /* raw output mode (7 v. 8 bits) */
-		bool  audible;        /* FALSE if the bell is visual */
-		bool  mono;           /* TRUE if current screen is mono */
-		bool  resized;        /* TRUE if TERM has been resized */
-		bool  orig_attr;      /* TRUE if we have the original colors */
-		short orig_fore;      /* original screen foreground color */
-		short orig_back;      /* original screen foreground color */
-		int   cursrow;        /* position of physical cursor */
-		int   curscol;        /* position of physical cursor */
-		int   visibility;     /* visibility of cursor */
-		int   orig_cursor;    /* original cursor size */
-		int   lines;          /* new value for LINES */
-		int   cols;           /* new value for COLS */
-		unsigned long _trap_mbe;       /* trap these mouse button events */
-		unsigned long _map_mbe_to_key; /* map mouse buttons to slk */
-		int   mouse_wait;              /* time to wait (in ms) for a
+typedef struct
+{
+  bool  alive;          /* if initscr() called, and not endwin() */
+  bool  autocr;         /* if cr -> lf */
+  bool  cbreak;         /* if terminal unbuffered */
+  bool  echo;           /* if terminal echo */
+  bool  raw_inp;        /* raw input mode (v. cooked input) */
+  bool  raw_out;        /* raw output mode (7 v. 8 bits) */
+  bool  audible;        /* FALSE if the bell is visual */
+  bool  mono;           /* TRUE if current screen is mono */
+  bool  resized;        /* TRUE if TERM has been resized */
+  bool  orig_attr;      /* TRUE if we have the original colors */
+  short orig_fore;      /* original screen foreground color */
+  short orig_back;      /* original screen foreground color */
+  int   cursrow;        /* position of physical cursor */
+  int   curscol;        /* position of physical cursor */
+  int   visibility;     /* visibility of cursor */
+  int   orig_cursor;    /* original cursor size */
+  int   lines;          /* new value for LINES */
+  int   cols;           /* new value for COLS */
+  unsigned long _trap_mbe;       /* trap these mouse button events */
+  unsigned long _map_mbe_to_key; /* map mouse buttons to slk */
+  int   mouse_wait;              /* time to wait (in ms) for a
                                       button release after a press, in
                                       order to count it as a click */
-		int   slklines;                /* lines in use by slk_init() */
-		WINDOW * slk_winptr;           /* window for slk */
-		int   linesrippedoff;          /* lines ripped off via ripoffline() */
-		int   linesrippedoffontop;     /* lines ripped off on
+  int   slklines;                /* lines in use by slk_init() */
+  WINDOW *slk_winptr;            /* window for slk */
+  int   linesrippedoff;          /* lines ripped off via ripoffline() */
+  int   linesrippedoffontop;     /* lines ripped off on
                                       top via ripoffline() */
-		int   delaytenths;             /* 1/10ths second to wait block
+  int   delaytenths;             /* 1/10ths second to wait block
                                       getch() for */
-		bool  _preserve;               /* TRUE if screen background
+  bool  _preserve;               /* TRUE if screen background
                                       to be preserved */
-		int   _restore;                /* specifies if screen background
+  int   _restore;                /* specifies if screen background
                                       to be restored, and how */
-		bool  save_key_modifiers;      /* TRUE if each key modifiers saved
+  bool  save_key_modifiers;      /* TRUE if each key modifiers saved
                                       with each key press */
-		bool  return_key_modifiers;    /* TRUE if modifier keys are
+  bool  return_key_modifiers;    /* TRUE if modifier keys are
                                       returned as "real" keys */
-		bool  key_code;                /* TRUE if last key is a special key;
+  bool  key_code;                /* TRUE if last key is a special key;
                                       used internally by get_wch() */
 #ifdef XCURSES
-		int   XcurscrSize;    /* size of Xcurscr shared memory block */
-		bool  sb_on;
-		int   sb_viewport_y;
-		int   sb_viewport_x;
-		int   sb_total_y;
-		int   sb_total_x;
-		int   sb_cur_y;
-		int   sb_cur_x;
+  int   XcurscrSize;    /* size of Xcurscr shared memory block */
+  bool  sb_on;
+  int   sb_viewport_y;
+  int   sb_viewport_x;
+  int   sb_total_y;
+  int   sb_total_x;
+  int   sb_cur_y;
+  int   sb_cur_x;
 #endif
-		short line_color;     /* color of line attributes - default -1 */
-	} SCREEN;
+  short line_color;     /* color of line attributes - default -1 */
+} SCREEN;
 
-	/*----------------------------------------------------------------------
-	 *
-	 *  PDCurses External Variables
-	 *
-	 */
+/*----------------------------------------------------------------------
+ *
+ *  PDCurses External Variables
+ *
+ */
 
 #ifdef PDC_DLL_BUILD
 # ifdef CURSES_LIBRARY
@@ -335,60 +335,60 @@ extern "C"
 # define PDCEX extern
 #endif
 
-	PDCEX  int          LINES;        /* terminal height */
-	PDCEX  int          COLS;         /* terminal width */
-	PDCEX  WINDOW    *   stdscr;      /* the default screen window */
-	PDCEX  WINDOW    *   curscr;      /* the current screen image */
-	PDCEX  SCREEN    *   SP;          /* curses variables */
-	PDCEX  MOUSE_STATUS Mouse_status;
-	PDCEX  int          COLORS;
-	PDCEX  int          COLOR_PAIRS;
-	PDCEX  int          TABSIZE;
-	PDCEX  chtype       acs_map[];    /* alternate character set map */
-	PDCEX  char         ttytype[];    /* terminal name/description */
+PDCEX  int          LINES;        /* terminal height */
+PDCEX  int          COLS;         /* terminal width */
+PDCEX  WINDOW       *stdscr;      /* the default screen window */
+PDCEX  WINDOW       *curscr;      /* the current screen image */
+PDCEX  SCREEN       *SP;          /* curses variables */
+PDCEX  MOUSE_STATUS Mouse_status;
+PDCEX  int          COLORS;
+PDCEX  int          COLOR_PAIRS;
+PDCEX  int          TABSIZE;
+PDCEX  chtype       acs_map[];    /* alternate character set map */
+PDCEX  char         ttytype[];    /* terminal name/description */
 
-	/*man-start**************************************************************
+/*man-start**************************************************************
 
-	PDCurses Text Attributes
-	========================
+PDCurses Text Attributes
+========================
 
-	Originally, PDCurses used a short (16 bits) for its chtype. To include
-	color, a number of things had to be sacrificed from the strict Unix and
-	System V support. The main problem was fitting all character attributes
-	and color into an unsigned char (all 8 bits!).
+Originally, PDCurses used a short (16 bits) for its chtype. To include
+color, a number of things had to be sacrificed from the strict Unix and
+System V support. The main problem was fitting all character attributes
+and color into an unsigned char (all 8 bits!).
 
-	Today, PDCurses by default uses a long (32 bits) for its chtype, as in
-	System V. The short chtype is still available, by undefining CHTYPE_LONG
-	and rebuilding the library.
+Today, PDCurses by default uses a long (32 bits) for its chtype, as in
+System V. The short chtype is still available, by undefining CHTYPE_LONG
+and rebuilding the library.
 
-	The following is the structure of a win->_attrs chtype:
+The following is the structure of a win->_attrs chtype:
 
-	short form:
+short form:
 
-	-------------------------------------------------
-	|15|14|13|12|11|10| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
-	-------------------------------------------------
-	  color number |  attrs |   character eg 'a'
+-------------------------------------------------
+|15|14|13|12|11|10| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0|
+-------------------------------------------------
+  color number |  attrs |   character eg 'a'
 
-	The available non-color attributes are bold, reverse and blink. Others
-	have no effect. The high order char is an index into an array of
-	physical colors (defined in color.c) -- 32 foreground/background color
-	pairs (5 bits) plus 3 bits for other attributes.
+The available non-color attributes are bold, reverse and blink. Others
+have no effect. The high order char is an index into an array of
+physical colors (defined in color.c) -- 32 foreground/background color
+pairs (5 bits) plus 3 bits for other attributes.
 
-	long form:
+long form:
 
-	----------------------------------------------------------------------------
-	|31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|..| 3| 2| 1| 0|
-	----------------------------------------------------------------------------
-	      color number      |     modifiers         |      character eg 'a'
+----------------------------------------------------------------------------
+|31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|..| 3| 2| 1| 0|
+----------------------------------------------------------------------------
+      color number      |     modifiers         |      character eg 'a'
 
-	The available non-color attributes are bold, underline, invisible,
-	right-line, left-line, protect, reverse and blink. 256 color pairs (8
-	bits), 8 bits for other attributes, and 16 bits for character data.
+The available non-color attributes are bold, underline, invisible,
+right-line, left-line, protect, reverse and blink. 256 color pairs (8
+bits), 8 bits for other attributes, and 16 bits for character data.
 
-	**man-end****************************************************************/
+**man-end****************************************************************/
 
-	/*** Video attribute macros ***/
+/*** Video attribute macros ***/
 
 #define A_NORMAL      (chtype)0
 
@@ -440,8 +440,8 @@ extern "C"
 #define ATR_MSK       A_ATTRIBUTES         /* Obsolete */
 #define ATR_NRM       A_NORMAL             /* Obsolete */
 
-	/* For use with attr_t -- X/Open says, "these shall be distinct", so
-	   this is a non-conforming implementation. */
+/* For use with attr_t -- X/Open says, "these shall be distinct", so
+   this is a non-conforming implementation. */
 
 #define WA_ALTCHARSET A_ALTCHARSET
 #define WA_BLINK      A_BLINK
@@ -460,11 +460,11 @@ extern "C"
 #define WA_TOP        A_NORMAL
 #define WA_VERTICAL   A_NORMAL
 
-	/*** Alternate character set macros ***/
+/*** Alternate character set macros ***/
 
-	/* 'w' = 32-bit chtype; acs_map[] index | A_ALTCHARSET
-	   'n' = 16-bit chtype; it gets the fallback set because no bit is
-	         available for A_ALTCHARSET */
+/* 'w' = 32-bit chtype; acs_map[] index | A_ALTCHARSET
+   'n' = 16-bit chtype; it gets the fallback set because no bit is
+         available for A_ALTCHARSET */
 
 #ifdef CHTYPE_LONG
 # define ACS_PICK(w, n) ((chtype)w | A_ALTCHARSET)
@@ -472,7 +472,7 @@ extern "C"
 # define ACS_PICK(w, n) ((chtype)n)
 #endif
 
-	/* VT100-compatible symbols -- box chars */
+/* VT100-compatible symbols -- box chars */
 
 #define ACS_ULCORNER  ACS_PICK('l', '+')
 #define ACS_LLCORNER  ACS_PICK('m', '+')
@@ -486,7 +486,7 @@ extern "C"
 #define ACS_VLINE     ACS_PICK('x', '|')
 #define ACS_PLUS      ACS_PICK('n', '+')
 
-	/* VT100-compatible symbols -- other */
+/* VT100-compatible symbols -- other */
 
 #define ACS_S1        ACS_PICK('o', '-')
 #define ACS_S9        ACS_PICK('s', '_')
@@ -496,9 +496,9 @@ extern "C"
 #define ACS_PLMINUS   ACS_PICK('g', '#')
 #define ACS_BULLET    ACS_PICK('~', 'o')
 
-	/* Teletype 5410v1 symbols -- these are defined in SysV curses, but
-	   are not well-supported by most terminals. Stick to VT100 characters
-	   for optimum portability. */
+/* Teletype 5410v1 symbols -- these are defined in SysV curses, but
+   are not well-supported by most terminals. Stick to VT100 characters
+   for optimum portability. */
 
 #define ACS_LARROW    ACS_PICK(',', '<')
 #define ACS_RARROW    ACS_PICK('+', '>')
@@ -508,8 +508,8 @@ extern "C"
 #define ACS_LANTERN   ACS_PICK('i', '*')
 #define ACS_BLOCK     ACS_PICK('0', '#')
 
-	/* That goes double for these -- undocumented SysV symbols. Don't use
-	   them. */
+/* That goes double for these -- undocumented SysV symbols. Don't use
+   them. */
 
 #define ACS_S3        ACS_PICK('p', '-')
 #define ACS_S7        ACS_PICK('r', '-')
@@ -519,7 +519,7 @@ extern "C"
 #define ACS_NEQUAL    ACS_PICK('|', '+')
 #define ACS_STERLING  ACS_PICK('}', 'L')
 
-	/* Box char aliases */
+/* Box char aliases */
 
 #define ACS_BSSB      ACS_ULCORNER
 #define ACS_SSBB      ACS_LLCORNER
@@ -533,7 +533,7 @@ extern "C"
 #define ACS_SBSB      ACS_VLINE
 #define ACS_SSSS      ACS_PLUS
 
-	/* cchar_t aliases */
+/* cchar_t aliases */
 
 #ifdef PDC_WIDE
 # define WACS_ULCORNER (&(acs_map['l']))
@@ -585,7 +585,7 @@ extern "C"
 # define WACS_SSSS     WACS_PLUS
 #endif
 
-	/*** Color macros ***/
+/*** Color macros ***/
 
 #define COLOR_BLACK   0
 
@@ -605,12 +605,12 @@ extern "C"
 
 #define COLOR_WHITE   7
 
-	/*----------------------------------------------------------------------
-	 *
-	 *  Function and Keypad Key Definitions.
-	 *  Many are just for compatibility.
-	 *
-	 */
+/*----------------------------------------------------------------------
+ *
+ *  Function and Keypad Key Definitions.
+ *  Many are just for compatibility.
+ *
+ */
 
 #define KEY_CODE_YES  0x100  /* If get_wch() gives a key code */
 
@@ -703,7 +703,7 @@ extern "C"
 #define KEY_SUSPEND   0x195  /* suspend key */
 #define KEY_UNDO      0x196  /* undo key */
 
-	/* PDCurses-specific key definitions -- PC only */
+/* PDCurses-specific key definitions -- PC only */
 
 #define ALT_0         0x197
 #define ALT_1         0x198
@@ -861,479 +861,479 @@ extern "C"
 
 #define KEY_F(n)      (KEY_F0 + (n))
 
-	/*----------------------------------------------------------------------
-	 *
-	 *  PDCurses Function Declarations
-	 *
-	 */
+/*----------------------------------------------------------------------
+ *
+ *  PDCurses Function Declarations
+ *
+ */
 
-	/* Standard */
+/* Standard */
 
-	int     addch ( const chtype );
-	int     addchnstr ( const chtype *, int );
-	int     addchstr ( const chtype * );
-	int     addnstr ( const char *, int );
-	int     addstr ( const char * );
-	int     attroff ( chtype );
-	int     attron ( chtype );
-	int     attrset ( chtype );
-	int     attr_get ( attr_t *, short *, void * );
-	int     attr_off ( attr_t, void * );
-	int     attr_on ( attr_t, void * );
-	int     attr_set ( attr_t, short, void * );
-	int     baudrate ( void );
-	int     beep ( void );
-	int     bkgd ( chtype );
-	void    bkgdset ( chtype );
-	int     border ( chtype, chtype, chtype, chtype, chtype, chtype, chtype, chtype );
-	int     box ( WINDOW *, chtype, chtype );
-	bool    can_change_color ( void );
-	int     cbreak ( void );
-	int     chgat ( int, attr_t, short, const void * );
-	int     clearok ( WINDOW *, bool );
-	int     clear ( void );
-	int     clrtobot ( void );
-	int     clrtoeol ( void );
-	int     color_content ( short, short *, short *, short * );
-	int     color_set ( short, void * );
-	int     copywin ( const WINDOW *, WINDOW *, int, int, int, int, int, int, int );
-	int     curs_set ( int );
-	int     def_prog_mode ( void );
-	int     def_shell_mode ( void );
-	int     delay_output ( int );
-	int     delch ( void );
-	int     deleteln ( void );
-	void    delscreen ( SCREEN * );
-	int     delwin ( WINDOW * );
-	WINDOW * derwin ( WINDOW *, int, int, int, int );
-	int     doupdate ( void );
-	WINDOW * dupwin ( WINDOW * );
-	int     echochar ( const chtype );
-	int     echo ( void );
-	int     endwin ( void );
-	char    erasechar ( void );
-	int     erase ( void );
-	void    filter ( void );
-	int     flash ( void );
-	int     flushinp ( void );
-	chtype  getbkgd ( WINDOW * );
-	int     getnstr ( char *, int );
-	int     getstr ( char * );
-	WINDOW * getwin ( FILE * );
-	int     halfdelay ( int );
-	bool    has_colors ( void );
-	bool    has_ic ( void );
-	bool    has_il ( void );
-	int     hline ( chtype, int );
-	void    idcok ( WINDOW *, bool );
-	int     idlok ( WINDOW *, bool );
-	void    immedok ( WINDOW *, bool );
-	int     inchnstr ( chtype *, int );
-	int     inchstr ( chtype * );
-	chtype  inch ( void );
-	int     init_color ( short, short, short, short );
-	int     init_pair ( short, short, short );
-	WINDOW * initscr ( void );
-	int     innstr ( char *, int );
-	int     insch ( chtype );
-	int     insdelln ( int );
-	int     insertln ( void );
-	int     insnstr ( const char *, int );
-	int     insstr ( const char * );
-	int     instr ( char * );
-	int     intrflush ( WINDOW *, bool );
-	bool    isendwin ( void );
-	bool    is_linetouched ( WINDOW *, int );
-	bool    is_wintouched ( WINDOW * );
-	char  * keyname ( int );
-	int     keypad ( WINDOW *, bool );
-	char    killchar ( void );
-	int     leaveok ( WINDOW *, bool );
-	char  * longname ( void );
-	int     meta ( WINDOW *, bool );
-	int     move ( int, int );
-	int     mvaddch ( int, int, const chtype );
-	int     mvaddchnstr ( int, int, const chtype *, int );
-	int     mvaddchstr ( int, int, const chtype * );
-	int     mvaddnstr ( int, int, const char *, int );
-	int     mvaddstr ( int, int, const char * );
-	int     mvchgat ( int, int, int, attr_t, short, const void * );
-	int     mvcur ( int, int, int, int );
-	int     mvdelch ( int, int );
-	int     mvderwin ( WINDOW *, int, int );
-	int     mvgetch ( int, int );
-	int     mvgetnstr ( int, int, char *, int );
-	int     mvgetstr ( int, int, char * );
-	int     mvhline ( int, int, chtype, int );
-	chtype  mvinch ( int, int );
-	int     mvinchnstr ( int, int, chtype *, int );
-	int     mvinchstr ( int, int, chtype * );
-	int     mvinnstr ( int, int, char *, int );
-	int     mvinsch ( int, int, chtype );
-	int     mvinsnstr ( int, int, const char *, int );
-	int     mvinsstr ( int, int, const char * );
-	int     mvinstr ( int, int, char * );
-	int     mvprintw ( int, int, const char *, ... );
-	int     mvscanw ( int, int, const char *, ... );
-	int     mvvline ( int, int, chtype, int );
-	int     mvwaddchnstr ( WINDOW *, int, int, const chtype *, int );
-	int     mvwaddchstr ( WINDOW *, int, int, const chtype * );
-	int     mvwaddch ( WINDOW *, int, int, const chtype );
-	int     mvwaddnstr ( WINDOW *, int, int, const char *, int );
-	int     mvwaddstr ( WINDOW *, int, int, const char * );
-	int     mvwchgat ( WINDOW *, int, int, int, attr_t, short, const void * );
-	int     mvwdelch ( WINDOW *, int, int );
-	int     mvwgetch ( WINDOW *, int, int );
-	int     mvwgetnstr ( WINDOW *, int, int, char *, int );
-	int     mvwgetstr ( WINDOW *, int, int, char * );
-	int     mvwhline ( WINDOW *, int, int, chtype, int );
-	int     mvwinchnstr ( WINDOW *, int, int, chtype *, int );
-	int     mvwinchstr ( WINDOW *, int, int, chtype * );
-	chtype  mvwinch ( WINDOW *, int, int );
-	int     mvwinnstr ( WINDOW *, int, int, char *, int );
-	int     mvwinsch ( WINDOW *, int, int, chtype );
-	int     mvwinsnstr ( WINDOW *, int, int, const char *, int );
-	int     mvwinsstr ( WINDOW *, int, int, const char * );
-	int     mvwinstr ( WINDOW *, int, int, char * );
-	int     mvwin ( WINDOW *, int, int );
-	int     mvwprintw ( WINDOW *, int, int, const char *, ... );
-	int     mvwscanw ( WINDOW *, int, int, const char *, ... );
-	int     mvwvline ( WINDOW *, int, int, chtype, int );
-	int     napms ( int );
-	WINDOW * newpad ( int, int );
-	SCREEN * newterm ( const char *, FILE *, FILE * );
-	WINDOW * newwin ( int, int, int, int );
-	int     nl ( void );
-	int     nocbreak ( void );
-	int     nodelay ( WINDOW *, bool );
-	int     noecho ( void );
-	int     nonl ( void );
-	void    noqiflush ( void );
-	int     noraw ( void );
-	int     notimeout ( WINDOW *, bool );
-	int     overlay ( const WINDOW *, WINDOW * );
-	int     overwrite ( const WINDOW *, WINDOW * );
-	int     pair_content ( short, short *, short * );
-	int     pechochar ( WINDOW *, chtype );
-	int     pnoutrefresh ( WINDOW *, int, int, int, int, int, int );
-	int     prefresh ( WINDOW *, int, int, int, int, int, int );
-	int     printw ( const char *, ... );
-	int     putwin ( WINDOW *, FILE * );
-	void    qiflush ( void );
-	int     raw ( void );
-	int     redrawwin ( WINDOW * );
-	int     refresh ( void );
-	int     reset_prog_mode ( void );
-	int     reset_shell_mode ( void );
-	int     resetty ( void );
-	int     ripoffline ( int, int ( * ) ( WINDOW *, int ) );
-	int     savetty ( void );
-	int     scanw ( const char *, ... );
-	int     scr_dump ( const char * );
-	int     scr_init ( const char * );
-	int     scr_restore ( const char * );
-	int     scr_set ( const char * );
-	int     scrl ( int );
-	int     scroll ( WINDOW * );
-	int     scrollok ( WINDOW *, bool );
-	SCREEN * set_term ( SCREEN * );
-	int     setscrreg ( int, int );
-	int     slk_attroff ( const chtype );
-	int     slk_attr_off ( const attr_t, void * );
-	int     slk_attron ( const chtype );
-	int     slk_attr_on ( const attr_t, void * );
-	int     slk_attrset ( const chtype );
-	int     slk_attr_set ( const attr_t, short, void * );
-	int     slk_clear ( void );
-	int     slk_color ( short );
-	int     slk_init ( int );
-	char  * slk_label ( int );
-	int     slk_noutrefresh ( void );
-	int     slk_refresh ( void );
-	int     slk_restore ( void );
-	int     slk_set ( int, const char *, int );
-	int     slk_touch ( void );
-	int     standend ( void );
-	int     standout ( void );
-	int     start_color ( void );
-	WINDOW * subpad ( WINDOW *, int, int, int, int );
-	WINDOW * subwin ( WINDOW *, int, int, int, int );
-	int     syncok ( WINDOW *, bool );
-	chtype  termattrs ( void );
-	attr_t  term_attrs ( void );
-	char  * termname ( void );
-	void    timeout ( int );
-	int     touchline ( WINDOW *, int, int );
-	int     touchwin ( WINDOW * );
-	int     typeahead ( int );
-	int     untouchwin ( WINDOW * );
-	void    use_env ( bool );
-	int     vidattr ( chtype );
-	int     vid_attr ( attr_t, short, void * );
-	int     vidputs ( chtype, int ( * ) ( int ) );
-	int     vid_puts ( attr_t, short, void *, int ( * ) ( int ) );
-	int     vline ( chtype, int );
-	int     vw_printw ( WINDOW *, const char *, va_list );
-	int     vwprintw ( WINDOW *, const char *, va_list );
-	int     vw_scanw ( WINDOW *, const char *, va_list );
-	int     vwscanw ( WINDOW *, const char *, va_list );
-	int     waddchnstr ( WINDOW *, const chtype *, int );
-	int     waddchstr ( WINDOW *, const chtype * );
-	int     waddch ( WINDOW *, const chtype );
-	int     waddnstr ( WINDOW *, const char *, int );
-	int     waddstr ( WINDOW *, const char * );
-	int     wattroff ( WINDOW *, chtype );
-	int     wattron ( WINDOW *, chtype );
-	int     wattrset ( WINDOW *, chtype );
-	int     wattr_get ( WINDOW *, attr_t *, short *, void * );
-	int     wattr_off ( WINDOW *, attr_t, void * );
-	int     wattr_on ( WINDOW *, attr_t, void * );
-	int     wattr_set ( WINDOW *, attr_t, short, void * );
-	void    wbkgdset ( WINDOW *, chtype );
-	int     wbkgd ( WINDOW *, chtype );
-	int     wborder ( WINDOW *, chtype, chtype, chtype, chtype,
-	                  chtype, chtype, chtype, chtype );
-	int     wchgat ( WINDOW *, int, attr_t, short, const void * );
-	int     wclear ( WINDOW * );
-	int     wclrtobot ( WINDOW * );
-	int     wclrtoeol ( WINDOW * );
-	int     wcolor_set ( WINDOW *, short, void * );
-	void    wcursyncup ( WINDOW * );
-	int     wdelch ( WINDOW * );
-	int     wdeleteln ( WINDOW * );
-	int     wechochar ( WINDOW *, const chtype );
-	int     werase ( WINDOW * );
-	int     wgetch ( WINDOW * );
-	int     wgetnstr ( WINDOW *, char *, int );
-	int     wgetstr ( WINDOW *, char * );
-	int     whline ( WINDOW *, chtype, int );
-	int     winchnstr ( WINDOW *, chtype *, int );
-	int     winchstr ( WINDOW *, chtype * );
-	chtype  winch ( WINDOW * );
-	int     winnstr ( WINDOW *, char *, int );
-	int     winsch ( WINDOW *, chtype );
-	int     winsdelln ( WINDOW *, int );
-	int     winsertln ( WINDOW * );
-	int     winsnstr ( WINDOW *, const char *, int );
-	int     winsstr ( WINDOW *, const char * );
-	int     winstr ( WINDOW *, char * );
-	int     wmove ( WINDOW *, int, int );
-	int     wnoutrefresh ( WINDOW * );
-	int     wprintw ( WINDOW *, const char *, ... );
-	int     wredrawln ( WINDOW *, int, int );
-	int     wrefresh ( WINDOW * );
-	int     wscanw ( WINDOW *, const char *, ... );
-	int     wscrl ( WINDOW *, int );
-	int     wsetscrreg ( WINDOW *, int, int );
-	int     wstandend ( WINDOW * );
-	int     wstandout ( WINDOW * );
-	void    wsyncdown ( WINDOW * );
-	void    wsyncup ( WINDOW * );
-	void    wtimeout ( WINDOW *, int );
-	int     wtouchln ( WINDOW *, int, int, int );
-	int     wvline ( WINDOW *, chtype, int );
+int     addch ( const chtype );
+int     addchnstr ( const chtype *, int );
+int     addchstr ( const chtype * );
+int     addnstr ( const char *, int );
+int     addstr ( const char * );
+int     attroff ( chtype );
+int     attron ( chtype );
+int     attrset ( chtype );
+int     attr_get ( attr_t *, short *, void * );
+int     attr_off ( attr_t, void * );
+int     attr_on ( attr_t, void * );
+int     attr_set ( attr_t, short, void * );
+int     baudrate ( void );
+int     beep ( void );
+int     bkgd ( chtype );
+void    bkgdset ( chtype );
+int     border ( chtype, chtype, chtype, chtype, chtype, chtype, chtype, chtype );
+int     box ( WINDOW *, chtype, chtype );
+bool    can_change_color ( void );
+int     cbreak ( void );
+int     chgat ( int, attr_t, short, const void * );
+int     clearok ( WINDOW *, bool );
+int     clear ( void );
+int     clrtobot ( void );
+int     clrtoeol ( void );
+int     color_content ( short, short *, short *, short * );
+int     color_set ( short, void * );
+int     copywin ( const WINDOW *, WINDOW *, int, int, int, int, int, int, int );
+int     curs_set ( int );
+int     def_prog_mode ( void );
+int     def_shell_mode ( void );
+int     delay_output ( int );
+int     delch ( void );
+int     deleteln ( void );
+void    delscreen ( SCREEN * );
+int     delwin ( WINDOW * );
+WINDOW *derwin ( WINDOW *, int, int, int, int );
+int     doupdate ( void );
+WINDOW *dupwin ( WINDOW * );
+int     echochar ( const chtype );
+int     echo ( void );
+int     endwin ( void );
+char    erasechar ( void );
+int     erase ( void );
+void    filter ( void );
+int     flash ( void );
+int     flushinp ( void );
+chtype  getbkgd ( WINDOW * );
+int     getnstr ( char *, int );
+int     getstr ( char * );
+WINDOW *getwin ( FILE * );
+int     halfdelay ( int );
+bool    has_colors ( void );
+bool    has_ic ( void );
+bool    has_il ( void );
+int     hline ( chtype, int );
+void    idcok ( WINDOW *, bool );
+int     idlok ( WINDOW *, bool );
+void    immedok ( WINDOW *, bool );
+int     inchnstr ( chtype *, int );
+int     inchstr ( chtype * );
+chtype  inch ( void );
+int     init_color ( short, short, short, short );
+int     init_pair ( short, short, short );
+WINDOW *initscr ( void );
+int     innstr ( char *, int );
+int     insch ( chtype );
+int     insdelln ( int );
+int     insertln ( void );
+int     insnstr ( const char *, int );
+int     insstr ( const char * );
+int     instr ( char * );
+int     intrflush ( WINDOW *, bool );
+bool    isendwin ( void );
+bool    is_linetouched ( WINDOW *, int );
+bool    is_wintouched ( WINDOW * );
+char   *keyname ( int );
+int     keypad ( WINDOW *, bool );
+char    killchar ( void );
+int     leaveok ( WINDOW *, bool );
+char   *longname ( void );
+int     meta ( WINDOW *, bool );
+int     move ( int, int );
+int     mvaddch ( int, int, const chtype );
+int     mvaddchnstr ( int, int, const chtype *, int );
+int     mvaddchstr ( int, int, const chtype * );
+int     mvaddnstr ( int, int, const char *, int );
+int     mvaddstr ( int, int, const char * );
+int     mvchgat ( int, int, int, attr_t, short, const void * );
+int     mvcur ( int, int, int, int );
+int     mvdelch ( int, int );
+int     mvderwin ( WINDOW *, int, int );
+int     mvgetch ( int, int );
+int     mvgetnstr ( int, int, char *, int );
+int     mvgetstr ( int, int, char * );
+int     mvhline ( int, int, chtype, int );
+chtype  mvinch ( int, int );
+int     mvinchnstr ( int, int, chtype *, int );
+int     mvinchstr ( int, int, chtype * );
+int     mvinnstr ( int, int, char *, int );
+int     mvinsch ( int, int, chtype );
+int     mvinsnstr ( int, int, const char *, int );
+int     mvinsstr ( int, int, const char * );
+int     mvinstr ( int, int, char * );
+int     mvprintw ( int, int, const char *, ... );
+int     mvscanw ( int, int, const char *, ... );
+int     mvvline ( int, int, chtype, int );
+int     mvwaddchnstr ( WINDOW *, int, int, const chtype *, int );
+int     mvwaddchstr ( WINDOW *, int, int, const chtype * );
+int     mvwaddch ( WINDOW *, int, int, const chtype );
+int     mvwaddnstr ( WINDOW *, int, int, const char *, int );
+int     mvwaddstr ( WINDOW *, int, int, const char * );
+int     mvwchgat ( WINDOW *, int, int, int, attr_t, short, const void * );
+int     mvwdelch ( WINDOW *, int, int );
+int     mvwgetch ( WINDOW *, int, int );
+int     mvwgetnstr ( WINDOW *, int, int, char *, int );
+int     mvwgetstr ( WINDOW *, int, int, char * );
+int     mvwhline ( WINDOW *, int, int, chtype, int );
+int     mvwinchnstr ( WINDOW *, int, int, chtype *, int );
+int     mvwinchstr ( WINDOW *, int, int, chtype * );
+chtype  mvwinch ( WINDOW *, int, int );
+int     mvwinnstr ( WINDOW *, int, int, char *, int );
+int     mvwinsch ( WINDOW *, int, int, chtype );
+int     mvwinsnstr ( WINDOW *, int, int, const char *, int );
+int     mvwinsstr ( WINDOW *, int, int, const char * );
+int     mvwinstr ( WINDOW *, int, int, char * );
+int     mvwin ( WINDOW *, int, int );
+int     mvwprintw ( WINDOW *, int, int, const char *, ... );
+int     mvwscanw ( WINDOW *, int, int, const char *, ... );
+int     mvwvline ( WINDOW *, int, int, chtype, int );
+int     napms ( int );
+WINDOW *newpad ( int, int );
+SCREEN *newterm ( const char *, FILE *, FILE * );
+WINDOW *newwin ( int, int, int, int );
+int     nl ( void );
+int     nocbreak ( void );
+int     nodelay ( WINDOW *, bool );
+int     noecho ( void );
+int     nonl ( void );
+void    noqiflush ( void );
+int     noraw ( void );
+int     notimeout ( WINDOW *, bool );
+int     overlay ( const WINDOW *, WINDOW * );
+int     overwrite ( const WINDOW *, WINDOW * );
+int     pair_content ( short, short *, short * );
+int     pechochar ( WINDOW *, chtype );
+int     pnoutrefresh ( WINDOW *, int, int, int, int, int, int );
+int     prefresh ( WINDOW *, int, int, int, int, int, int );
+int     printw ( const char *, ... );
+int     putwin ( WINDOW *, FILE * );
+void    qiflush ( void );
+int     raw ( void );
+int     redrawwin ( WINDOW * );
+int     refresh ( void );
+int     reset_prog_mode ( void );
+int     reset_shell_mode ( void );
+int     resetty ( void );
+int     ripoffline ( int, int ( * ) ( WINDOW *, int ) );
+int     savetty ( void );
+int     scanw ( const char *, ... );
+int     scr_dump ( const char * );
+int     scr_init ( const char * );
+int     scr_restore ( const char * );
+int     scr_set ( const char * );
+int     scrl ( int );
+int     scroll ( WINDOW * );
+int     scrollok ( WINDOW *, bool );
+SCREEN *set_term ( SCREEN * );
+int     setscrreg ( int, int );
+int     slk_attroff ( const chtype );
+int     slk_attr_off ( const attr_t, void * );
+int     slk_attron ( const chtype );
+int     slk_attr_on ( const attr_t, void * );
+int     slk_attrset ( const chtype );
+int     slk_attr_set ( const attr_t, short, void * );
+int     slk_clear ( void );
+int     slk_color ( short );
+int     slk_init ( int );
+char   *slk_label ( int );
+int     slk_noutrefresh ( void );
+int     slk_refresh ( void );
+int     slk_restore ( void );
+int     slk_set ( int, const char *, int );
+int     slk_touch ( void );
+int     standend ( void );
+int     standout ( void );
+int     start_color ( void );
+WINDOW *subpad ( WINDOW *, int, int, int, int );
+WINDOW *subwin ( WINDOW *, int, int, int, int );
+int     syncok ( WINDOW *, bool );
+chtype  termattrs ( void );
+attr_t  term_attrs ( void );
+char   *termname ( void );
+void    timeout ( int );
+int     touchline ( WINDOW *, int, int );
+int     touchwin ( WINDOW * );
+int     typeahead ( int );
+int     untouchwin ( WINDOW * );
+void    use_env ( bool );
+int     vidattr ( chtype );
+int     vid_attr ( attr_t, short, void * );
+int     vidputs ( chtype, int ( * ) ( int ) );
+int     vid_puts ( attr_t, short, void *, int ( * ) ( int ) );
+int     vline ( chtype, int );
+int     vw_printw ( WINDOW *, const char *, va_list );
+int     vwprintw ( WINDOW *, const char *, va_list );
+int     vw_scanw ( WINDOW *, const char *, va_list );
+int     vwscanw ( WINDOW *, const char *, va_list );
+int     waddchnstr ( WINDOW *, const chtype *, int );
+int     waddchstr ( WINDOW *, const chtype * );
+int     waddch ( WINDOW *, const chtype );
+int     waddnstr ( WINDOW *, const char *, int );
+int     waddstr ( WINDOW *, const char * );
+int     wattroff ( WINDOW *, chtype );
+int     wattron ( WINDOW *, chtype );
+int     wattrset ( WINDOW *, chtype );
+int     wattr_get ( WINDOW *, attr_t *, short *, void * );
+int     wattr_off ( WINDOW *, attr_t, void * );
+int     wattr_on ( WINDOW *, attr_t, void * );
+int     wattr_set ( WINDOW *, attr_t, short, void * );
+void    wbkgdset ( WINDOW *, chtype );
+int     wbkgd ( WINDOW *, chtype );
+int     wborder ( WINDOW *, chtype, chtype, chtype, chtype,
+                  chtype, chtype, chtype, chtype );
+int     wchgat ( WINDOW *, int, attr_t, short, const void * );
+int     wclear ( WINDOW * );
+int     wclrtobot ( WINDOW * );
+int     wclrtoeol ( WINDOW * );
+int     wcolor_set ( WINDOW *, short, void * );
+void    wcursyncup ( WINDOW * );
+int     wdelch ( WINDOW * );
+int     wdeleteln ( WINDOW * );
+int     wechochar ( WINDOW *, const chtype );
+int     werase ( WINDOW * );
+int     wgetch ( WINDOW * );
+int     wgetnstr ( WINDOW *, char *, int );
+int     wgetstr ( WINDOW *, char * );
+int     whline ( WINDOW *, chtype, int );
+int     winchnstr ( WINDOW *, chtype *, int );
+int     winchstr ( WINDOW *, chtype * );
+chtype  winch ( WINDOW * );
+int     winnstr ( WINDOW *, char *, int );
+int     winsch ( WINDOW *, chtype );
+int     winsdelln ( WINDOW *, int );
+int     winsertln ( WINDOW * );
+int     winsnstr ( WINDOW *, const char *, int );
+int     winsstr ( WINDOW *, const char * );
+int     winstr ( WINDOW *, char * );
+int     wmove ( WINDOW *, int, int );
+int     wnoutrefresh ( WINDOW * );
+int     wprintw ( WINDOW *, const char *, ... );
+int     wredrawln ( WINDOW *, int, int );
+int     wrefresh ( WINDOW * );
+int     wscanw ( WINDOW *, const char *, ... );
+int     wscrl ( WINDOW *, int );
+int     wsetscrreg ( WINDOW *, int, int );
+int     wstandend ( WINDOW * );
+int     wstandout ( WINDOW * );
+void    wsyncdown ( WINDOW * );
+void    wsyncup ( WINDOW * );
+void    wtimeout ( WINDOW *, int );
+int     wtouchln ( WINDOW *, int, int, int );
+int     wvline ( WINDOW *, chtype, int );
 
-	/* Wide-character functions */
-
-#ifdef PDC_WIDE
-	int     addnwstr ( const wchar_t *, int );
-	int     addwstr ( const wchar_t * );
-	int     add_wch ( const cchar_t * );
-	int     add_wchnstr ( const cchar_t *, int );
-	int     add_wchstr ( const cchar_t * );
-	int     border_set ( const cchar_t *, const cchar_t *, const cchar_t *,
-	                     const cchar_t *, const cchar_t *, const cchar_t *,
-	                     const cchar_t *, const cchar_t * );
-	int     box_set ( WINDOW *, const cchar_t *, const cchar_t * );
-	int     echo_wchar ( const cchar_t * );
-	int     erasewchar ( wchar_t * );
-	int     getbkgrnd ( cchar_t * );
-	int     getcchar ( const cchar_t *, wchar_t *, attr_t *, short *, void * );
-	int     getn_wstr ( wint_t *, int );
-	int     get_wch ( wint_t * );
-	int     get_wstr ( wint_t * );
-	int     hline_set ( const cchar_t *, int );
-	int     innwstr ( wchar_t *, int );
-	int     ins_nwstr ( const wchar_t *, int );
-	int     ins_wch ( const cchar_t * );
-	int     ins_wstr ( const wchar_t * );
-	int     inwstr ( wchar_t * );
-	int     in_wch ( cchar_t * );
-	int     in_wchnstr ( cchar_t *, int );
-	int     in_wchstr ( cchar_t * );
-	char  * key_name ( wchar_t );
-	int     killwchar ( wchar_t * );
-	int     mvaddnwstr ( int, int, const wchar_t *, int );
-	int     mvaddwstr ( int, int, const wchar_t * );
-	int     mvadd_wch ( int, int, const cchar_t * );
-	int     mvadd_wchnstr ( int, int, const cchar_t *, int );
-	int     mvadd_wchstr ( int, int, const cchar_t * );
-	int     mvgetn_wstr ( int, int, wint_t *, int );
-	int     mvget_wch ( int, int, wint_t * );
-	int     mvget_wstr ( int, int, wint_t * );
-	int     mvhline_set ( int, int, const cchar_t *, int );
-	int     mvinnwstr ( int, int, wchar_t *, int );
-	int     mvins_nwstr ( int, int, const wchar_t *, int );
-	int     mvins_wch ( int, int, const cchar_t * );
-	int     mvins_wstr ( int, int, const wchar_t * );
-	int     mvinwstr ( int, int, wchar_t * );
-	int     mvin_wch ( int, int, cchar_t * );
-	int     mvin_wchnstr ( int, int, cchar_t *, int );
-	int     mvin_wchstr ( int, int, cchar_t * );
-	int     mvvline_set ( int, int, const cchar_t *, int );
-	int     mvwaddnwstr ( WINDOW *, int, int, const wchar_t *, int );
-	int     mvwaddwstr ( WINDOW *, int, int, const wchar_t * );
-	int     mvwadd_wch ( WINDOW *, int, int, const cchar_t * );
-	int     mvwadd_wchnstr ( WINDOW *, int, int, const cchar_t *, int );
-	int     mvwadd_wchstr ( WINDOW *, int, int, const cchar_t * );
-	int     mvwgetn_wstr ( WINDOW *, int, int, wint_t *, int );
-	int     mvwget_wch ( WINDOW *, int, int, wint_t * );
-	int     mvwget_wstr ( WINDOW *, int, int, wint_t * );
-	int     mvwhline_set ( WINDOW *, int, int, const cchar_t *, int );
-	int     mvwinnwstr ( WINDOW *, int, int, wchar_t *, int );
-	int     mvwins_nwstr ( WINDOW *, int, int, const wchar_t *, int );
-	int     mvwins_wch ( WINDOW *, int, int, const cchar_t * );
-	int     mvwins_wstr ( WINDOW *, int, int, const wchar_t * );
-	int     mvwin_wch ( WINDOW *, int, int, cchar_t * );
-	int     mvwin_wchnstr ( WINDOW *, int, int, cchar_t *, int );
-	int     mvwin_wchstr ( WINDOW *, int, int, cchar_t * );
-	int     mvwinwstr ( WINDOW *, int, int, wchar_t * );
-	int     mvwvline_set ( WINDOW *, int, int, const cchar_t *, int );
-	int     pecho_wchar ( WINDOW *, const cchar_t * );
-	int     setcchar ( cchar_t *, const wchar_t *, const attr_t, short, const void * );
-	int     slk_wset ( int, const wchar_t *, int );
-	int     unget_wch ( const wchar_t );
-	int     vline_set ( const cchar_t *, int );
-	int     waddnwstr ( WINDOW *, const wchar_t *, int );
-	int     waddwstr ( WINDOW *, const wchar_t * );
-	int     wadd_wch ( WINDOW *, const cchar_t * );
-	int     wadd_wchnstr ( WINDOW *, const cchar_t *, int );
-	int     wadd_wchstr ( WINDOW *, const cchar_t * );
-	int     wbkgrnd ( WINDOW *, const cchar_t * );
-	void    wbkgrndset ( WINDOW *, const cchar_t * );
-	int     wborder_set ( WINDOW *, const cchar_t *, const cchar_t *,
-	                      const cchar_t *, const cchar_t *, const cchar_t *,
-	                      const cchar_t *, const cchar_t *, const cchar_t * );
-	int     wecho_wchar ( WINDOW *, const cchar_t * );
-	int     wgetbkgrnd ( WINDOW *, cchar_t * );
-	int     wgetn_wstr ( WINDOW *, wint_t *, int );
-	int     wget_wch ( WINDOW *, wint_t * );
-	int     wget_wstr ( WINDOW *, wint_t * );
-	int     whline_set ( WINDOW *, const cchar_t *, int );
-	int     winnwstr ( WINDOW *, wchar_t *, int );
-	int     wins_nwstr ( WINDOW *, const wchar_t *, int );
-	int     wins_wch ( WINDOW *, const cchar_t * );
-	int     wins_wstr ( WINDOW *, const wchar_t * );
-	int     winwstr ( WINDOW *, wchar_t * );
-	int     win_wch ( WINDOW *, cchar_t * );
-	int     win_wchnstr ( WINDOW *, cchar_t *, int );
-	int     win_wchstr ( WINDOW *, cchar_t * );
-	wchar_t * wunctrl ( cchar_t * );
-	int     wvline_set ( WINDOW *, const cchar_t *, int );
-#endif
-
-	/* Quasi-standard */
-
-	chtype  getattrs ( WINDOW * );
-	int     getbegx ( WINDOW * );
-	int     getbegy ( WINDOW * );
-	int     getmaxx ( WINDOW * );
-	int     getmaxy ( WINDOW * );
-	int     getparx ( WINDOW * );
-	int     getpary ( WINDOW * );
-	int     getcurx ( WINDOW * );
-	int     getcury ( WINDOW * );
-	void    traceoff ( void );
-	void    traceon ( void );
-	char  * unctrl ( chtype );
-
-	int     crmode ( void );
-	int     nocrmode ( void );
-	int     draino ( int );
-	int     resetterm ( void );
-	int     fixterm ( void );
-	int     saveterm ( void );
-	int     setsyx ( int, int );
-
-	int     mouse_set ( unsigned long );
-	int     mouse_on ( unsigned long );
-	int     mouse_off ( unsigned long );
-	int     request_mouse_pos ( void );
-	int     map_button ( unsigned long );
-	void    wmouse_position ( WINDOW *, int *, int * );
-	unsigned long getmouse ( void );
-	unsigned long getbmap ( void );
-
-	/* ncurses */
-
-	int     assume_default_colors ( int, int );
-	const char * curses_version ( void );
-	bool    has_key ( int );
-	int     use_default_colors ( void );
-	int     wresize ( WINDOW *, int, int );
-
-	int     mouseinterval ( int );
-	mmask_t mousemask ( mmask_t, mmask_t * );
-	bool    mouse_trafo ( int *, int *, bool );
-	int     nc_getmouse ( MEVENT * );
-	int     ungetmouse ( MEVENT * );
-	bool    wenclose ( const WINDOW *, int, int );
-	bool    wmouse_trafo ( const WINDOW *, int *, int *, bool );
-
-	/* PDCurses */
-
-	int     addrawch ( chtype );
-	int     insrawch ( chtype );
-	bool    is_termresized ( void );
-	int     mvaddrawch ( int, int, chtype );
-	int     mvdeleteln ( int, int );
-	int     mvinsertln ( int, int );
-	int     mvinsrawch ( int, int, chtype );
-	int     mvwaddrawch ( WINDOW *, int, int, chtype );
-	int     mvwdeleteln ( WINDOW *, int, int );
-	int     mvwinsertln ( WINDOW *, int, int );
-	int     mvwinsrawch ( WINDOW *, int, int, chtype );
-	int     raw_output ( bool );
-	int     resize_term ( int, int );
-	WINDOW * resize_window ( WINDOW *, int, int );
-	int     waddrawch ( WINDOW *, chtype );
-	int     winsrawch ( WINDOW *, chtype );
-	char    wordchar ( void );
+/* Wide-character functions */
 
 #ifdef PDC_WIDE
-	wchar_t * slk_wlabel ( int );
+int     addnwstr ( const wchar_t *, int );
+int     addwstr ( const wchar_t * );
+int     add_wch ( const cchar_t * );
+int     add_wchnstr ( const cchar_t *, int );
+int     add_wchstr ( const cchar_t * );
+int     border_set ( const cchar_t *, const cchar_t *, const cchar_t *,
+                     const cchar_t *, const cchar_t *, const cchar_t *,
+                     const cchar_t *, const cchar_t * );
+int     box_set ( WINDOW *, const cchar_t *, const cchar_t * );
+int     echo_wchar ( const cchar_t * );
+int     erasewchar ( wchar_t * );
+int     getbkgrnd ( cchar_t * );
+int     getcchar ( const cchar_t *, wchar_t *, attr_t *, short *, void * );
+int     getn_wstr ( wint_t *, int );
+int     get_wch ( wint_t * );
+int     get_wstr ( wint_t * );
+int     hline_set ( const cchar_t *, int );
+int     innwstr ( wchar_t *, int );
+int     ins_nwstr ( const wchar_t *, int );
+int     ins_wch ( const cchar_t * );
+int     ins_wstr ( const wchar_t * );
+int     inwstr ( wchar_t * );
+int     in_wch ( cchar_t * );
+int     in_wchnstr ( cchar_t *, int );
+int     in_wchstr ( cchar_t * );
+char   *key_name ( wchar_t );
+int     killwchar ( wchar_t * );
+int     mvaddnwstr ( int, int, const wchar_t *, int );
+int     mvaddwstr ( int, int, const wchar_t * );
+int     mvadd_wch ( int, int, const cchar_t * );
+int     mvadd_wchnstr ( int, int, const cchar_t *, int );
+int     mvadd_wchstr ( int, int, const cchar_t * );
+int     mvgetn_wstr ( int, int, wint_t *, int );
+int     mvget_wch ( int, int, wint_t * );
+int     mvget_wstr ( int, int, wint_t * );
+int     mvhline_set ( int, int, const cchar_t *, int );
+int     mvinnwstr ( int, int, wchar_t *, int );
+int     mvins_nwstr ( int, int, const wchar_t *, int );
+int     mvins_wch ( int, int, const cchar_t * );
+int     mvins_wstr ( int, int, const wchar_t * );
+int     mvinwstr ( int, int, wchar_t * );
+int     mvin_wch ( int, int, cchar_t * );
+int     mvin_wchnstr ( int, int, cchar_t *, int );
+int     mvin_wchstr ( int, int, cchar_t * );
+int     mvvline_set ( int, int, const cchar_t *, int );
+int     mvwaddnwstr ( WINDOW *, int, int, const wchar_t *, int );
+int     mvwaddwstr ( WINDOW *, int, int, const wchar_t * );
+int     mvwadd_wch ( WINDOW *, int, int, const cchar_t * );
+int     mvwadd_wchnstr ( WINDOW *, int, int, const cchar_t *, int );
+int     mvwadd_wchstr ( WINDOW *, int, int, const cchar_t * );
+int     mvwgetn_wstr ( WINDOW *, int, int, wint_t *, int );
+int     mvwget_wch ( WINDOW *, int, int, wint_t * );
+int     mvwget_wstr ( WINDOW *, int, int, wint_t * );
+int     mvwhline_set ( WINDOW *, int, int, const cchar_t *, int );
+int     mvwinnwstr ( WINDOW *, int, int, wchar_t *, int );
+int     mvwins_nwstr ( WINDOW *, int, int, const wchar_t *, int );
+int     mvwins_wch ( WINDOW *, int, int, const cchar_t * );
+int     mvwins_wstr ( WINDOW *, int, int, const wchar_t * );
+int     mvwin_wch ( WINDOW *, int, int, cchar_t * );
+int     mvwin_wchnstr ( WINDOW *, int, int, cchar_t *, int );
+int     mvwin_wchstr ( WINDOW *, int, int, cchar_t * );
+int     mvwinwstr ( WINDOW *, int, int, wchar_t * );
+int     mvwvline_set ( WINDOW *, int, int, const cchar_t *, int );
+int     pecho_wchar ( WINDOW *, const cchar_t * );
+int     setcchar ( cchar_t *, const wchar_t *, const attr_t, short, const void * );
+int     slk_wset ( int, const wchar_t *, int );
+int     unget_wch ( const wchar_t );
+int     vline_set ( const cchar_t *, int );
+int     waddnwstr ( WINDOW *, const wchar_t *, int );
+int     waddwstr ( WINDOW *, const wchar_t * );
+int     wadd_wch ( WINDOW *, const cchar_t * );
+int     wadd_wchnstr ( WINDOW *, const cchar_t *, int );
+int     wadd_wchstr ( WINDOW *, const cchar_t * );
+int     wbkgrnd ( WINDOW *, const cchar_t * );
+void    wbkgrndset ( WINDOW *, const cchar_t * );
+int     wborder_set ( WINDOW *, const cchar_t *, const cchar_t *,
+                      const cchar_t *, const cchar_t *, const cchar_t *,
+                      const cchar_t *, const cchar_t *, const cchar_t * );
+int     wecho_wchar ( WINDOW *, const cchar_t * );
+int     wgetbkgrnd ( WINDOW *, cchar_t * );
+int     wgetn_wstr ( WINDOW *, wint_t *, int );
+int     wget_wch ( WINDOW *, wint_t * );
+int     wget_wstr ( WINDOW *, wint_t * );
+int     whline_set ( WINDOW *, const cchar_t *, int );
+int     winnwstr ( WINDOW *, wchar_t *, int );
+int     wins_nwstr ( WINDOW *, const wchar_t *, int );
+int     wins_wch ( WINDOW *, const cchar_t * );
+int     wins_wstr ( WINDOW *, const wchar_t * );
+int     winwstr ( WINDOW *, wchar_t * );
+int     win_wch ( WINDOW *, cchar_t * );
+int     win_wchnstr ( WINDOW *, cchar_t *, int );
+int     win_wchstr ( WINDOW *, cchar_t * );
+wchar_t *wunctrl ( cchar_t * );
+int     wvline_set ( WINDOW *, const cchar_t *, int );
 #endif
 
-	void    PDC_debug ( const char *, ... );
-	int     PDC_ungetch ( int );
-	int     PDC_set_blink ( bool );
-	int     PDC_set_line_color ( short );
-	void    PDC_set_title ( const char * );
+/* Quasi-standard */
 
-	int     PDC_clearclipboard ( void );
-	int     PDC_freeclipboard ( char * );
-	int     PDC_getclipboard ( char **, long * );
-	int     PDC_setclipboard ( const char *, long );
+chtype  getattrs ( WINDOW * );
+int     getbegx ( WINDOW * );
+int     getbegy ( WINDOW * );
+int     getmaxx ( WINDOW * );
+int     getmaxy ( WINDOW * );
+int     getparx ( WINDOW * );
+int     getpary ( WINDOW * );
+int     getcurx ( WINDOW * );
+int     getcury ( WINDOW * );
+void    traceoff ( void );
+void    traceon ( void );
+char   *unctrl ( chtype );
 
-	unsigned long PDC_get_input_fd ( void );
-	unsigned long PDC_get_key_modifiers ( void );
-	int     PDC_return_key_modifiers ( bool );
-	int     PDC_save_key_modifiers ( bool );
+int     crmode ( void );
+int     nocrmode ( void );
+int     draino ( int );
+int     resetterm ( void );
+int     fixterm ( void );
+int     saveterm ( void );
+int     setsyx ( int, int );
+
+int     mouse_set ( unsigned long );
+int     mouse_on ( unsigned long );
+int     mouse_off ( unsigned long );
+int     request_mouse_pos ( void );
+int     map_button ( unsigned long );
+void    wmouse_position ( WINDOW *, int *, int * );
+unsigned long getmouse ( void );
+unsigned long getbmap ( void );
+
+/* ncurses */
+
+int     assume_default_colors ( int, int );
+const char *curses_version ( void );
+bool    has_key ( int );
+int     use_default_colors ( void );
+int     wresize ( WINDOW *, int, int );
+
+int     mouseinterval ( int );
+mmask_t mousemask ( mmask_t, mmask_t * );
+bool    mouse_trafo ( int *, int *, bool );
+int     nc_getmouse ( MEVENT * );
+int     ungetmouse ( MEVENT * );
+bool    wenclose ( const WINDOW *, int, int );
+bool    wmouse_trafo ( const WINDOW *, int *, int *, bool );
+
+/* PDCurses */
+
+int     addrawch ( chtype );
+int     insrawch ( chtype );
+bool    is_termresized ( void );
+int     mvaddrawch ( int, int, chtype );
+int     mvdeleteln ( int, int );
+int     mvinsertln ( int, int );
+int     mvinsrawch ( int, int, chtype );
+int     mvwaddrawch ( WINDOW *, int, int, chtype );
+int     mvwdeleteln ( WINDOW *, int, int );
+int     mvwinsertln ( WINDOW *, int, int );
+int     mvwinsrawch ( WINDOW *, int, int, chtype );
+int     raw_output ( bool );
+int     resize_term ( int, int );
+WINDOW *resize_window ( WINDOW *, int, int );
+int     waddrawch ( WINDOW *, chtype );
+int     winsrawch ( WINDOW *, chtype );
+char    wordchar ( void );
+
+#ifdef PDC_WIDE
+wchar_t *slk_wlabel ( int );
+#endif
+
+void    PDC_debug ( const char *, ... );
+int     PDC_ungetch ( int );
+int     PDC_set_blink ( bool );
+int     PDC_set_line_color ( short );
+void    PDC_set_title ( const char * );
+
+int     PDC_clearclipboard ( void );
+int     PDC_freeclipboard ( char * );
+int     PDC_getclipboard ( char **, long * );
+int     PDC_setclipboard ( const char *, long );
+
+unsigned long PDC_get_input_fd ( void );
+unsigned long PDC_get_key_modifiers ( void );
+int     PDC_return_key_modifiers ( bool );
+int     PDC_save_key_modifiers ( bool );
 
 #ifdef XCURSES
-	WINDOW * Xinitscr ( int, char ** );
-	void    XCursesExit ( void );
-	int     sb_init ( void );
-	int     sb_set_horz ( int, int, int );
-	int     sb_set_vert ( int, int, int );
-	int     sb_get_horz ( int *, int *, int * );
-	int     sb_get_vert ( int *, int *, int * );
-	int     sb_refresh ( void );
+WINDOW *Xinitscr ( int, char ** );
+void    XCursesExit ( void );
+int     sb_init ( void );
+int     sb_set_horz ( int, int, int );
+int     sb_set_vert ( int, int, int );
+int     sb_get_horz ( int *, int *, int * );
+int     sb_get_vert ( int *, int *, int * );
+int     sb_refresh ( void );
 #endif
 
-	/*** Functions defined as macros ***/
+/*** Functions defined as macros ***/
 
-	/* getch() and ungetch() conflict with some DOS libraries */
+/* getch() and ungetch() conflict with some DOS libraries */
 
 #define getch()            wgetch(stdscr)
 #define ungetch(ch)        PDC_ungetch(ch)
@@ -1341,7 +1341,7 @@ extern "C"
 #define COLOR_PAIR(n)      (((chtype)(n) << PDC_COLOR_SHIFT) & A_COLOR)
 #define PAIR_NUMBER(n)     (((n) & A_COLOR) >> PDC_COLOR_SHIFT)
 
-	/* These will _only_ work as macros */
+/* These will _only_ work as macros */
 
 #define getbegyx(w, y, x)  (y = getbegy(w), x = getbegx(w))
 #define getmaxyx(w, y, x)  (y = getmaxy(w), x = getmaxx(w))
@@ -1349,20 +1349,20 @@ extern "C"
 #define getyx(w, y, x)     (y = getcury(w), x = getcurx(w))
 
 #define getsyx(y, x)       { if (curscr->_leaveit) (y)=(x)=-1; \
-		else getyx(curscr,(y),(x)); }
+    else getyx(curscr,(y),(x)); }
 
 #ifdef NCURSES_MOUSE_VERSION
 # define getmouse(x) nc_getmouse(x)
 #endif
 
-	/* return codes from PDC_getclipboard() and PDC_setclipboard() calls */
+/* return codes from PDC_getclipboard() and PDC_setclipboard() calls */
 
 #define PDC_CLIP_SUCCESS         0
 #define PDC_CLIP_ACCESS_ERROR    1
 #define PDC_CLIP_EMPTY           2
 #define PDC_CLIP_MEMORY_ERROR    3
 
-	/* PDCurses key modifier masks */
+/* PDCurses key modifier masks */
 
 #define PDC_KEY_MODIFIER_SHIFT   1
 #define PDC_KEY_MODIFIER_CONTROL 2

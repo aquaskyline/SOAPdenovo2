@@ -41,7 +41,7 @@ typedef unsigned short     u16_t;
 typedef unsigned int       u32_t;
 typedef unsigned long long u64_t;
 
-typedef char * chptr;
+typedef char *chptr;
 
 //*****************************************************************************
 
@@ -54,36 +54,36 @@ int ModifyVerbosity(const int);
 #define verboseBufSize 16384
 
 #define ModVerboseStrAndVerbose(level, ...) \
-			{\
-				if(verbosity >> level)\
-				{\
-					snprintf(verboseStr, verboseBufSize, ##__VA_ARGS__);\
-					fprintf(stderr,"[%s]:%s\n",__FUNCTION__,verboseStr);\
-				}\
-			}
+  {\
+    if(verbosity >> level)\
+      {\
+        snprintf(verboseStr, verboseBufSize, ##__VA_ARGS__);\
+        fprintf(stderr,"[%s]:%s\n",__FUNCTION__,verboseStr);\
+      }\
+  }
 #define mvnv(level, ...) ModVerboseStrAndVerbose(level, ##__VA_ARGS__)
 #define die(...) \
-		{\
-			ModVerboseStrAndVerbose(0, ##__VA_ARGS__);\
-			fprintf(stderr,"Program terminated.\n");\
-			exit(EXIT_FAILURE);\
-		}
+  {\
+    ModVerboseStrAndVerbose(0, ##__VA_ARGS__);\
+    fprintf(stderr,"Program terminated.\n");\
+    exit(EXIT_FAILURE);\
+  }
 #define sigdie(sig, ...) \
-		{\
-			ModVerboseStrAndVerbose(0, ##__VA_ARGS__);\
-			fprintf(stderr,"Program terminated.\n");\
-			exit(sig);\
-		}
+  {\
+    ModVerboseStrAndVerbose(0, ##__VA_ARGS__);\
+    fprintf(stderr,"Program terminated.\n");\
+    exit(sig);\
+  }
 #define perrdie(...) \
-		{\
-			ModVerboseStrAndVerbose(0, ##__VA_ARGS__);\
-			perror("");\
-			fprintf(stderr,"Program terminated.\n");\
-			exit(EXIT_FAILURE);\
-		}
+  {\
+    ModVerboseStrAndVerbose(0, ##__VA_ARGS__);\
+    perror("");\
+    fprintf(stderr,"Program terminated.\n");\
+    exit(EXIT_FAILURE);\
+  }
 #define mk \
-{\
-	fprintf(stderr, "DBG Marker @ %s:%d\n", __FUNCTION__, __LINE__);\
-}
+  {\
+    fprintf(stderr, "DBG Marker @ %s:%d\n", __FUNCTION__, __LINE__);\
+  }
 
 #endif

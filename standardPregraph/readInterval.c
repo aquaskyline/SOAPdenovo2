@@ -30,26 +30,26 @@
 
 void destroyReadIntervMem ()
 {
-	freeMem_manager ( rv_mem_manager );
-	rv_mem_manager = NULL;
+  freeMem_manager ( rv_mem_manager );
+  rv_mem_manager = NULL;
 }
 
-READINTERVAL * allocateRV ( int readid, int edgeid )
+READINTERVAL *allocateRV ( int readid, int edgeid )
 {
-	READINTERVAL * newRV;
-	newRV = ( READINTERVAL * ) getItem ( rv_mem_manager );
-	newRV->readid = readid;
-	newRV->edgeid = edgeid;
-	newRV->nextInRead = NULL;
-	newRV->prevInRead = NULL;
-	newRV->nextOnEdge = NULL;
-	newRV->prevOnEdge = NULL;
-	return newRV;
+  READINTERVAL *newRV;
+  newRV = ( READINTERVAL * ) getItem ( rv_mem_manager );
+  newRV->readid = readid;
+  newRV->edgeid = edgeid;
+  newRV->nextInRead = NULL;
+  newRV->prevInRead = NULL;
+  newRV->nextOnEdge = NULL;
+  newRV->prevOnEdge = NULL;
+  return newRV;
 }
 
-void dismissRV ( READINTERVAL * rv )
+void dismissRV ( READINTERVAL *rv )
 {
-	returnItem ( rv_mem_manager, rv );
+  returnItem ( rv_mem_manager, rv );
 }
 
 /*************************************************
@@ -66,12 +66,12 @@ Return:
 *************************************************/
 void createRVmemo ()
 {
-	if ( !rv_mem_manager )
-	{
-		rv_mem_manager = createMem_manager ( RVBLOCKSIZE, sizeof ( READINTERVAL ) );
-	}
-	else
-	{
-		fprintf ( stderr, "Warning from createRVmemo: rv_mem_manager is an active pointer.\n" );
-	}
+  if ( !rv_mem_manager )
+    {
+      rv_mem_manager = createMem_manager ( RVBLOCKSIZE, sizeof ( READINTERVAL ) );
+    }
+  else
+    {
+      fprintf ( stderr, "Warning from createRVmemo: rv_mem_manager is an active pointer.\n" );
+    }
 }
