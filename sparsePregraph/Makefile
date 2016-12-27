@@ -1,8 +1,8 @@
-CC=            g++ # /opt/blc/gcc-4.5.0/bin/gcc #gcc
+CC=            g++
 ifdef debug
-CFLAGS=         -O0 -g -fomit-frame-pointer #-static #-mcrc32 -march=core2 -msse4.1 -msse4.2
+CFLAGS=         -O0 -g -fomit-frame-pointer #-mcrc32
 else
-CFLAGS=         -O4 -fomit-frame-pointer #-static #-mcrc32 -march=core2 -msse4.1 -msse4.2
+CFLAGS=         -O3 -fomit-frame-pointer -w #-mcrc32
 endif
 
 DFLAGS=         
@@ -37,15 +37,6 @@ EXTRA_FLAGS += -Wl,--hash-style=both
 LIBS += -lbam
 endif
 
-ifneq (,$(findstring Unix,$(shell uname)))
-EXTRA_FLAGS += -Wl,--hash-style=both
-LIBS += -lbam -lrt
-endif
-
-ifneq (,$(findstring Darwin,$(shell uname)))
-LIBS += -lbammac
-endif
-
 ifneq (,$(findstring $(shell uname -m), x86_64))
 CFLAGS += -m64
 endif
@@ -61,26 +52,23 @@ endif
 .SUFFIXES:.cpp .o
 
 .cpp.o:
-		@printf "Compiling $<...                             \r"; \
-		$(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $< || echo "Error in command: $(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $<"
+		@printf "Compiling $<...                               \r"
+		@$(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $< || echo "Error in command: $(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $<"
 
 all:		clean $(OBJS) 
+		@printf "$(PROG) objects generated.                    \n"
 #pregraph_sparse
 
-.PHONY:all clean install
+.PHONY:all clean
 
 envTest:
 		@test $(BIT_ERR) != 1 || sh -c 'echo "Fatal: 64bit CPU and Operating System required!";false;'
 
-pregraph_sparse: clean	envTest $(OBJS)
-		@printf "Linking...                                                       \r"
-		#@$(CC) $(CFLAGS)$(INCLUDES) -o $(PROG)  $(OBJS) $(LIBPATH) $(LIBS) $(ENTRAFLAGS)
-		@printf "$(PROG) compilation done.\n";
+pregraph_sparse: clean envTest $(OBJS)
+		@printf "Linking...                                     \r"
+		@$(CC) $(CFLAGS)$(INCLUDES) -o $(PROG)  $(OBJS) $(LIBPATH) $(LIBS) $(ENTRAFLAGS)
+		@printf "$(PROG) compilation done.                      \n"
 
 clean:
-		@rm -fr gmon.out *.o a.out *.exe *.dSYM $(PROG) *~ *.a *.so.* *.so *.dylib
-		@printf "$(PROG) cleaning done.\n";
-
-install:
-		@cp $(PROG) ../bin/
-		@printf "$(PROG) installed at ../bin/$(PROG)\n"
+		@rm -fr gmon.out *.o a.out $(PROG)
+		@printf "$(PROG) cleaning done.                         \n"

@@ -9,9 +9,9 @@ CC=             gcc
 GCCVERSIONMAJOR := $(shell expr `$(CC) -dumpversion | cut -f1 -d.` \>= 4)
 GCCVERSIONMINOR := $(shell expr `$(CC) -dumpversion | cut -f2 -d.` \>= 4)
 ifdef debug
-CFLAGS=         -O0 -g -fomit-frame-pointer #-static #-mcrc32 -march=core2 -msse4.1 -msse4.2
+CFLAGS=         -O0 -g -fomit-frame-pointer #-mcrc32
 else
-CFLAGS=         -O4 -fomit-frame-pointer #-static #-mcrc32 -march=core2 -msse4.1 -msse4.2
+CFLAGS=         -O3 -fomit-frame-pointer -w #-mcrc32
 endif
 DFLAGS=         
 OBJS=		arc.o attachPEinfo.o bubble.o check.o compactEdge.o \
@@ -49,15 +49,6 @@ EXTRA_FLAGS += -Wl,--hash-style=both
 LIBS += -lbam -lrt 
 endif
 
-ifneq (,$(findstring Unix,$(shell uname)))
-EXTRA_FLAGS += -Wl,--hash-style=both
-LIBS += -lbam -lrt
-endif
-
-ifneq (,$(findstring Darwin,$(shell uname)))
-LIBS += -lbammac
-endif
-
 ifneq (,$(findstring $(shell uname -m), x86_64))
 CFLAGS += -m64
 endif
@@ -73,12 +64,11 @@ endif
 .SUFFIXES:.c .o
 
 .c.o:
-		@printf "Compiling $<...                             \r"; \
-		$(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $< || echo "Error in command: $(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $<"
+		@printf "Compiling $<...                                     \r"
+		@$(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $< || echo "Error in command: $(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $<"
 
 all:		clean $(OBJS)
-
-#SOAPdenovo
+		@printf "$(PROG) objects generated.                          \n"
 
 .PHONY:all clean install
 
@@ -88,14 +78,10 @@ envTest:
 		@test $(GCCVERSIONMINOR) == 1 || sh -c 'echo "GCC version lower than 4.4.0";false;'
 
 SOAPdenovo:	envTest $(OBJS)
-		@printf "Linking...                                                \r"
+		@printf "Linking...                                          \r"
 		@$(CC) $(CFLAGS) -o $(PROG) $(OBJS) $(LIBPATH) $(LIBS) $(ENTRAFLAGS)
-		@printf "$(PROG) compilation done.\n";
+		@printf "$(PROG) compilation done.                           \n"
 
 clean:
 		@rm -fr gmon.out *.o a.out *.exe *.dSYM $(PROG) *~ *.a *.so.* *.so *.dylib
-		@printf "$(PROG) cleaning done.\n";
-
-install:
-		@cp $(PROG) ../bin/
-		@printf "$(PROG) installed at ../bin/$(PROG)\n"
+		@printf "$(PROG) cleaning done.                              \n"

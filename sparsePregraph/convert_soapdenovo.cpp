@@ -1,7 +1,7 @@
 /*
  * convert_soapdenovo.cpp
  *
- * Copyright (c) 2008-2012 BGI-Shenzhen <soap at genomics dot org dot cn>.
+ * Copyright (c) 2008-2016 Ruibang Luo <aquaskyline.com>.
  *
  * This file is part of SOAPdenovo.
  *
