@@ -44,8 +44,8 @@ SOAPdenovo-fusion:
 
 ifdef debug
 SOAPdenovo-63mer:
-	@cd sparsePregraph;make 63mer=1 debug=1;cd ..;
-	@cd standardPregraph;make 63mer=1 debug=1;cd ..;
+	@cd sparsePregraph;make 63mer=1 debug=1 clean all;cd ..;
+	@cd standardPregraph;make 63mer=1 debug=1 clean all;cd ..;
 	@$(CC) sparsePregraph/*.o standardPregraph/*.o $(LIBPATH) $(LIBS) $(EXTRA_FLAGS) -o SOAPdenovo-63mer
 SOAPdenovo-127mer:
 	@cd sparsePregraph;make 127mer=1 debug=1 clean all;cd ..;
@@ -53,8 +53,8 @@ SOAPdenovo-127mer:
 	@$(CC) sparsePregraph/*.o standardPregraph/*.o $(LIBPATH) $(LIBS) $(EXTRA_FLAGS) -o SOAPdenovo-127mer
 else
 SOAPdenovo-63mer:
-	@cd sparsePregraph;make 63mer=1;cd ..;
-	@cd standardPregraph;make 63mer=1;cd ..;
+	@cd sparsePregraph;make 63mer=1 clean all;cd ..;
+	@cd standardPregraph;make 63mer=1 clean all;cd ..;
 	@$(CC) sparsePregraph/*.o standardPregraph/*.o $(LIBPATH) $(LIBS) $(EXTRA_FLAGS) -o SOAPdenovo-63mer
 SOAPdenovo-127mer:
 	@cd sparsePregraph;make 127mer=1 clean all;cd ..;
