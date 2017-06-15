@@ -39,7 +39,7 @@ void *ckalloc(unsigned long long amount)
 
   if ((p = (void *) calloc( 1, (unsigned long long) amount)) == NULL && amount != 0)
     {
-      printf("not enought memory");
+      printf("Out of memory");
       fflush(stdout);
       exit(-1);
     }
