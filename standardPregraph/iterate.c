@@ -1888,11 +1888,11 @@ static int cmp_seq ( const void *a, const void *b )
                 }
             }
 
-          if ( i == A->length && i < B->length )
+          if ( ( A->length == 0 ) || ( i == A->length && i < B->length ) )
             {
               return -1;
             }
-          else if ( i < A->length && i ==  B->length )
+          else if ( ( B->length == 0 ) || ( i < A->length && i ==  B->length ) )
             {
               return 1;
             }
