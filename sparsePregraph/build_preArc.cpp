@@ -97,7 +97,7 @@ void build_vertexes ( vertex_hash2 *v_ht, int K_size, char *edge_file )
   bool bal_ed;//回文为0
   const int BUFF_LEN = 1024;
   char line[BUFF_LEN];
-  char str[32];
+  //char str[32];
   char to_buff[BUFF_LEN];//buffer 2k edge seq  BUFF_LEN>4*K_size
   int processed = 0; //0表示未处理 1表示 处理完毕 2 表示已经处理了from_vertex ,to_vertex 还没有处理
   size_t edge_id = 0;
@@ -125,13 +125,13 @@ void build_vertexes ( vertex_hash2 *v_ht, int K_size, char *edge_file )
             }
 
 #ifdef _63MER_
-          sscanf ( line + 7, "%d,%llx %llx ,%llx %llx ,%s %d,%d", &edge_len,
-                   & ( from_kmer.kmer ) [0], & ( from_kmer.kmer ) [1], & ( to_kmer.kmer ) [0], & ( to_kmer.kmer ) [1], str, &cvg, &bal_ed ); // from_kmer to_kmer is of no use here
+          sscanf ( line, ">length %d,%llX %llX,%llX %llX,cvg %d,%d", &edge_len,
+                   & ( from_kmer.kmer ) [0], & ( from_kmer.kmer ) [1], & ( to_kmer.kmer ) [0], & ( to_kmer.kmer ) [1],  &cvg, &bal_ed ); // from_kmer to_kmer is of no use here
 #endif
 #ifdef _127MER_
-          sscanf ( line + 7, "%d,%llx %llx %llx %llx ,%llx %llx %llx %llx ,%s %d,%d", &edge_len,
+          sscanf ( line, ">length %d,%llX %llX %llX %llX,%llX %llX %llX %llX,cvg %d,%d", &edge_len,
                    & ( from_kmer.kmer ) [0], & ( from_kmer.kmer ) [1], & ( from_kmer.kmer ) [2], & ( from_kmer.kmer ) [3],
-                   & ( to_kmer.kmer ) [0], & ( to_kmer.kmer ) [1], & ( to_kmer.kmer ) [2], & ( to_kmer.kmer ) [3], str, &cvg, &bal_ed ); // from_kmer to_kmer is of no use here
+                   & ( to_kmer.kmer ) [0], & ( to_kmer.kmer ) [1], & ( to_kmer.kmer ) [2], & ( to_kmer.kmer ) [3],  &cvg, &bal_ed ); // from_kmer to_kmer is of no use here
 #endif
           edge_len_left = K_size + edge_len;
           processed = 0;
@@ -1311,7 +1311,7 @@ int put_path_2_buffer ( struct edge_path_buffer *buffer, unsigned int *path )
 
   memcpy ( ( buffer->path_buffer ) [pos], path, buffer->max_path_length * sizeof ( unsigned int ) );
 
-  for ( unsigned int i = 1; i < path[0]; i++ )
+  for ( unsigned int i = 1; i <= path[0]; i++ )
     {
       pthread_spin_lock ( ( buffer->locks ) + path[i] );
       ( ( buffer->mark_on_edge ) [path[i]] ) ++;
