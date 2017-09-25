@@ -513,7 +513,7 @@ static void merge_linearV2 ( char bal_edge, STACK *nStack, int count, gzFile *fp
               */
             }
 
-          longNode->l_links = edge_c;
+          set_kmer_edge_id(*longNode ,edge_c);
           longNode->twin = ( unsigned char ) ( bal_edge + 1 );
         }
       else
@@ -536,7 +536,7 @@ static void merge_linearV2 ( char bal_edge, STACK *nStack, int count, gzFile *fp
               */
             }
 
-          longNode->l_links = edge_c + bal_edge;
+          set_kmer_edge_id(*longNode, edge_c + bal_edge);
           longNode->twin = ( unsigned char ) ( -bal_edge + 1 );
         }
     }
@@ -570,12 +570,12 @@ static void merge_linearV2 ( char bal_edge, STACK *nStack, int count, gzFile *fp
 
       if ( temp->isSmaller )
         {
-          del_node->l_links = edge_c;
+          set_kmer_edge_id(*del_node, edge_c);
           del_node->twin = ( unsigned char ) ( bal_edge + 1 );
         }
       else
         {
-          del_node->l_links = edge_c + bal_edge;
+          set_kmer_edge_id(*del_node, edge_c + bal_edge);
           del_node->twin = ( unsigned char ) ( -bal_edge + 1 );
         }
     }

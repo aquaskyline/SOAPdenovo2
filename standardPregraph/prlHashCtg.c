@@ -143,7 +143,8 @@ static void singleKmer ( int t, KmerSet *kset, unsigned int seq_index, unsigned 
           node->twin = 1;
         };
 
-      node->l_links = ctgIdArray[seq_index];
+      //node->l_links = ctgIdArray[seq_index];
+      set_kmer_contig_id(*node ,ctgIdArray[seq_index]);
 
       node->r_links = pos;
     }

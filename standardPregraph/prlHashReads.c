@@ -956,7 +956,8 @@ static void thread_delow ( KmerSet *set, unsigned char thrdID )
                 }
             }
 
-          if ( rs->l_links == 0 && rs->r_links == 0 )
+            //if ( rs->l_links == 0 && rs->r_links == 0 )
+            if ( get_kmer_left_covs(*rs) ==0 && get_kmer_right_covs(*rs) == 0 )
             {
               rs->deleted = 1;
               tips[thrdID]++;
@@ -1027,14 +1028,16 @@ static void thread_mark ( KmerSet *set, unsigned char thrdID )
 
           if ( rs->single )
             {
-              kmerFreq[thrdID][1]++;
+              //kmerFreq[thrdID][1]++;
               counter++;
             }
+          /*
           else
             {
               kmerFreq[thrdID][ ( l_cvg > r_cvg ? l_cvg : r_cvg )]++;
             }
-
+          */
+          kmerFreq[thrdID][get_kmer_cov(*rs)] ++ ; 
           if ( in_num == 1 && out_num == 1 )
             {
               rs->linear = 1;

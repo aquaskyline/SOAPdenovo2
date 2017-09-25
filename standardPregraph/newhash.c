@@ -74,6 +74,7 @@ Return:
 static inline void update_kmer ( kmer_t *mer, ubyte left, ubyte right )
 {
   ubyte4 cov;
+  ubyte4 cov_all;
 
   if ( left < 4 )
     {
@@ -94,6 +95,14 @@ static inline void update_kmer ( kmer_t *mer, ubyte left, ubyte right )
           set_kmer_right_cov ( *mer, right, cov + 1 );
         }
     }
+    if ( left < 4 || right < 4 )
+    {
+       cov_all = get_kmer_cov( *mer );
+       if(cov_all < MAX_KMER_COV_ALL)
+       {
+           set_kmer_cov(*mer,cov_all+1);
+       }
+    }
 }
 
 /*************************************************
@@ -113,7 +122,9 @@ Return:
 *************************************************/
 static inline void set_new_kmer ( kmer_t *mer, Kmer seq, ubyte left, ubyte right )
 {
-  *mer = empty_kmer;
+  // *mer = empty_kmer;
+  memset(mer,0,sizeof(kmer_t));
+  mer->single=1;
   set_kmer_seq ( *mer, seq );
 
   if ( left < 4 )
@@ -125,6 +136,7 @@ static inline void set_new_kmer ( kmer_t *mer, Kmer seq, ubyte left, ubyte right
     {
       set_kmer_right_cov ( *mer, right, 1 );
     }
+    set_kmer_cov(*mer,1);
 }
 
 static inline int is_prime_kh ( ubyte8 num )
