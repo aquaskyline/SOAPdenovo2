@@ -94,7 +94,7 @@ void build_vertexes ( vertex_hash2 *v_ht, int K_size, char *edge_file )
   size_t line_len, edge_len_left;
   int edge_len;
   int cvg;
-  bool bal_ed;//回文为0
+  int bal_ed;//回文为0
   const int BUFF_LEN = 1024;
   char line[BUFF_LEN];
   //char str[32];
@@ -125,11 +125,11 @@ void build_vertexes ( vertex_hash2 *v_ht, int K_size, char *edge_file )
             }
 
 #ifdef _63MER_
-          sscanf ( line, ">length %d,%llX %llX,%llX %llX,cvg %d,%d", &edge_len,
+          sscanf ( line, ">length %d,%llx %llx,%llx %llx,cvg %d,%d", &edge_len,
                    & ( from_kmer.kmer ) [0], & ( from_kmer.kmer ) [1], & ( to_kmer.kmer ) [0], & ( to_kmer.kmer ) [1],  &cvg, &bal_ed ); // from_kmer to_kmer is of no use here
 #endif
 #ifdef _127MER_
-          sscanf ( line, ">length %d,%llX %llX %llX %llX,%llX %llX %llX %llX,cvg %d,%d", &edge_len,
+          sscanf ( line, ">length %d,%llx %llx %llx %llx,%llx %llx %llx %llx,cvg %d,%d", &edge_len,
                    & ( from_kmer.kmer ) [0], & ( from_kmer.kmer ) [1], & ( from_kmer.kmer ) [2], & ( from_kmer.kmer ) [3],
                    & ( to_kmer.kmer ) [0], & ( to_kmer.kmer ) [1], & ( to_kmer.kmer ) [2], & ( to_kmer.kmer ) [3],  &cvg, &bal_ed ); // from_kmer to_kmer is of no use here
 #endif
