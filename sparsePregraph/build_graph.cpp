@@ -234,19 +234,20 @@ static void process_round1_threaded ( struct read_t *read, struct hashtable2 *ht
 
       pthread_spin_lock ( &locks[hash_idx[j]] );
       found[j] = look_up_in_a_list2_r1 ( &seq[j], ( bucket2_r1 ** * ) &bktptr[j] ); //lock...
-      pthread_spin_unlock ( &locks[hash_idx[j]] );
+      //pthread_spin_unlock ( &locks[hash_idx[j]] );
 
       if ( found[j] == 0 )
         {
-          pthread_spin_lock ( &locks[hash_idx[j]] );
+          //pthread_spin_lock ( &locks[hash_idx[j]] );
           * ( bktptr[j] ) = ( struct bucket2 * ) malloc ( sizeof ( struct bucket2_r1 ) ); //lock ...
           memset ( * ( bktptr[j] ), 0, sizeof ( struct bucket2_r1 ) );
           memcpy ( & ( ( ( struct bucket2_r1 * ) * ( bktptr[j] ) )->kmer_t2.kmer ), & ( seq[j].kmer ), Kmer_arr_sz * sizeof ( uint64_t ) );
           ( ( struct bucket2_r1 * ) * ( bktptr[j] ) )->kmer_info.cov1 = 0;
           // the cvg is useless in round 1
-          pthread_spin_unlock ( &locks[hash_idx[j]] );
+          //pthread_spin_unlock ( &locks[hash_idx[j]] );
           ( *bucket_count ) ++;
         }
+	  pthread_spin_unlock(&locks[hash_idx[j]]);
 
       j = j + h;
 

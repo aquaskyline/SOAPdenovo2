@@ -28,6 +28,7 @@
 #endif
 
 #define MAX_KMER_COV 63
+#define MAX_KMER_COV_ALL 255
 #define EDGE_BIT_SIZE 6 //6 bit for each edge
 #define EDGE_XOR_MASK 0x3FU
 #define LINKS_BITS 0x00FFFFFFU
@@ -35,8 +36,10 @@
 #define get_kmer_seq(mer) ((mer).seq)
 #define set_kmer_seq(mer, val) ((mer).seq = val)
 
-#define get_kmer_left_cov(mer, idx) (((mer).l_links>>((idx)*EDGE_BIT_SIZE))&EDGE_XOR_MASK)
-#define set_kmer_left_cov(mer, idx, val) ((mer).l_links = ((mer).l_links&(~(EDGE_XOR_MASK<<((idx)*EDGE_BIT_SIZE)))) | (((val)&EDGE_XOR_MASK)<<((idx)*EDGE_BIT_SIZE)) )
+//#define get_kmer_left_cov(mer, idx) (((mer).l_links>>((idx)*EDGE_BIT_SIZE))&EDGE_XOR_MASK)
+//#define set_kmer_left_cov(mer, idx, val) ((mer).l_links = ((mer).l_links&(~(EDGE_XOR_MASK<<((idx)*EDGE_BIT_SIZE)))) | (((val)&EDGE_XOR_MASK)<<((idx)*EDGE_BIT_SIZE)) )
+#define get_kmer_left_cov(mer, idx) (((mer).l_links.l_links.l_links>>((idx)*EDGE_BIT_SIZE))&EDGE_XOR_MASK)
+#define set_kmer_left_cov(mer, idx, val) ((mer).l_links.l_links.l_links = (((mer).l_links.l_links.l_links)&(~(EDGE_XOR_MASK<<((idx)*EDGE_BIT_SIZE)))) | (((val)&EDGE_XOR_MASK)<<((idx)*EDGE_BIT_SIZE)) )
 #define get_kmer_left_covs(mer) (get_kmer_left_cov(mer, 0) + get_kmer_left_cov(mer, 1) + get_kmer_left_cov(mer, 2) + get_kmer_left_cov(mer, 3))
 
 #define get_kmer_right_cov(mer, idx) (((mer).r_links>>((idx)*EDGE_BIT_SIZE))&EDGE_XOR_MASK)
@@ -52,6 +55,15 @@
 #define clear_kmer_entity_del(flags, idx)  ((flags)[(idx)>>4] &= ~(0x02u<<(((idx)&0x0f)<<1)))
 #define exists_kmer_entity(flags, idx)     (!((flags)[(idx)>>4]>>(((idx)&0x0f)<<1)&0x03))
 
+#define set_kmer_edge_id(mer, idx)  (((mer).l_links.edgeId)=(idx))
+#define get_kmer_edge_id(mer)  ((mer).l_links.edgeId)
+#define set_kmer_contig_id(mer , idx)  (((mer).l_links.contigId) = (idx))
+#define get_kmer_contig_id(mer)  ((mer).l_links.contigId)
+#define set_kmer_cov(mer, idx) (((mer).l_links.l_links.covs) = ((idx) & 0xff))
+#define get_kmer_cov(mer) ((mer).l_links.l_links.covs)
+
+
+
 #ifdef MER127
 typedef __uint128_t u128b;
 
@@ -62,11 +74,24 @@ typedef struct u256b
 } U256b;
 #else
 #endif
+typedef struct  l_link_pack
+{
+    ubyte4 l_links :  4 * EDGE_BIT_SIZE;
+    ubyte4 covs : 8;
+} L_link_pack;
+ 
+typedef union l_link_union
+{
+    L_link_pack l_links;
+    ubyte4 edgeId;
+    ubyte4 contigId;
+} L_link_union;
 
 typedef struct kmer_st
 {
   Kmer seq;       //kmer set
-  ubyte4 l_links;                     // sever as edgeID since make_edge
+  L_link_union l_links;
+  //ubyte4 l_links;                     // sever as edgeID since make_edge
   ubyte4 r_links: 4 * EDGE_BIT_SIZE;
   ubyte4 linear: 1;
   ubyte4 deleted: 1;
