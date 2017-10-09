@@ -931,6 +931,10 @@ boolean readseqInLib ( char *src_seq, char *src_name, int *len_seq, char *buf, i
       if ( lib_array[i].paired == 1 )
         {
           readseqInBuf ( src_seq, src_name, len_seq, buf, start, offset );
+          if( *len_seq < 1 )
+          {
+            return 0;
+          }
 
           if ( lib_array[i].reverse )
             {
@@ -945,6 +949,10 @@ boolean readseqInLib ( char *src_seq, char *src_name, int *len_seq, char *buf, i
         {
           readseqInBuf ( src_seq, src_name, len_seq, buf, start, offset );
 
+          if( *len_seq < 1 )
+          {
+            return 0;
+          }
           if ( lib_array[i].reverse )
             {
               reverse2k ( src_seq, *len_seq );
@@ -961,6 +969,10 @@ boolean readseqInLib ( char *src_seq, char *src_name, int *len_seq, char *buf, i
       if ( lib_array[i].paired == 1 )
         {
           readseqfq ( src_seq, src_name, len_seq, buf, start, offset );
+          if( *len_seq < 1 )
+          {
+            return 0;
+          }
 
           if ( lib_array[i].reverse )
             {
@@ -974,6 +986,10 @@ boolean readseqInLib ( char *src_seq, char *src_name, int *len_seq, char *buf, i
       else
         {
           readseqfq ( src_seq, src_name, len_seq, buf, start, offset );
+          if( *len_seq < 1 )
+          {
+            return 0;
+          }
 
           if ( lib_array[i].reverse )
             {
@@ -989,10 +1005,18 @@ boolean readseqInLib ( char *src_seq, char *src_name, int *len_seq, char *buf, i
   if ( lib_array[i].curr_type == 6 )
     {
       readseqfq ( src_seq, src_name, len_seq, buf, start, offset );
+      if( *len_seq < 1 )
+      {
+          return 0;
+      }
     }
   else
     {
       readseqInBuf ( src_seq, src_name, len_seq, buf, start, offset );
+      if( *len_seq < 1 )
+      {
+          return 0;
+      }
     }
 
   /*
