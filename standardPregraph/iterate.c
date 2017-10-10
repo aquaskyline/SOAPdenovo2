@@ -25,7 +25,9 @@
 #include "kmerhash.h"
 #include "extfunc.h"
 #include "extvab.h"
-
+#if DEBUG
+#define inline  
+#endif
 static Kmer *kmerBuffer;
 static ubyte8 *hashBanBuffer;
 

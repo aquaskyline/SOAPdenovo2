@@ -9,7 +9,7 @@ CC=             gcc
 GCCVERSIONMAJOR := $(shell expr `$(CC) -dumpversion | cut -f1 -d.` \>= 4)
 GCCVERSIONMINOR := $(shell expr `$(CC) -dumpversion | cut -f2 -d.` \>= 4)
 ifdef debug
-CFLAGS=         -O0 -g -fomit-frame-pointer #-msse4.2
+CFLAGS=         -O0 -g -fomit-frame-pointer -DDEBUG#-msse4.2
 else
 CFLAGS=         -O3 -fomit-frame-pointer -w #-msse4.2
 endif

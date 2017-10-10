@@ -17,11 +17,11 @@
 #define GapUpperBound 300000
 
 #define MaxCntNode 1000
-
+/*
 static int DEBUG = 0;
 static int DEBUG1 = 0;
 static int DEBUG2 = 0;
-
+*/
 static int bySmall = 1;
 
 static boolean static_f = 0;

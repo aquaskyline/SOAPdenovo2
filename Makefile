@@ -1,7 +1,7 @@
 MAKEFLAGS += --no-print-directory
 CC = g++
 ifdef debug
-CFLAGS=         -O0 -g -fomit-frame-pointer
+CFLAGS=         -O0 -g -fomit-frame-pointer -DDEBUG
 else
 CFLAGS=         -O3 -fomit-frame-pointer
 endif
