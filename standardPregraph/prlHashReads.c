@@ -869,9 +869,15 @@ int AIORead ( struct aiocb *mycb, int *offset, char *buf, char *cach, int *rt, i
                   *rt = aio_read ( mycb );
                   return 1;
                 }
+              else if ( 0 == get )
+              {
+                  fprintf(stderr, "Warning : aio_return zero, the size of input file must be N * 32768.\n");
+                  return 2;
+              }
               else
                 {
-                  fprintf(stderr, "Error: aio_return error.\n");
+                  fprintf(stderr, "Error: aio_return %d, error happened.\n",get);
+                  exit(-1);
                 }
 
               /*else
