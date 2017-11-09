@@ -106,7 +106,7 @@ inline void Init_HT2 ( struct hashtable2 *ht, size_t ht_sz )
 }
 
 
-inline bool look_up_in_a_list2_r1 ( struct kmer_t2 *seq, struct bucket2_r1 *** ptr )
+inline bool look_up_in_a_list2_r1 ( struct kmer_t2 *seq, struct bucket2_r1 **volatile* ptr )
 {
   while ( ( **ptr ) != NULL )
     {
@@ -121,7 +121,7 @@ inline bool look_up_in_a_list2_r1 ( struct kmer_t2 *seq, struct bucket2_r1 *** p
   return ( ( **ptr ) != NULL );
 }
 
-inline bool look_up_in_a_list2 ( struct kmer_t2 *seq, struct bucket2 *** ptr )
+inline bool look_up_in_a_list2 ( struct kmer_t2 *seq, struct bucket2 **volatile* ptr )
 {
   while ( ( **ptr ) != NULL )
     {
