@@ -1,4 +1,4 @@
-[![Build Status](https://www.travis-ci.org/cchd0001/SOAPdenovo2.svg?branch=master)
+![Build Status](https://www.travis-ci.org/cchd0001/SOAPdenovo2.svg?branch=master)
 
 # Manual of SOAPdenovo2
 
