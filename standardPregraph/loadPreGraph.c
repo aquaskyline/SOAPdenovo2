@@ -457,7 +457,7 @@ void loadEdge ( char *graphfile )
   sprintf ( name, "%s.edge.gz", graphfile );
   fp = gzopen ( name, "r" );
   num_ed_limit = 1.2 * num_ed;
-  edge_array = ( EDGE * ) ckalloc ( ( num_ed_limit + 1 ) * sizeof ( EDGE ) );
+  edge_array = ( EDGE * ) ckalloc ( ( num_ed_limit + 3 ) * sizeof ( EDGE ) );
 
   for ( j = num_ed + 1; j <= num_ed_limit; j++ )
     {
