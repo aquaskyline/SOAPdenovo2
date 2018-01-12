@@ -409,7 +409,7 @@ int connectByPE_grad ( FILE *fp, int peGrad, char *line )
 
   if ( strlen ( line ) )
     {
-      sscanf ( line, "%lld %d %d", &pre_readno, &pre_contigno, &pre_pos );
+      sscanf ( line, "%lld %u %d", &pre_readno, &pre_contigno, &pre_pos );
 
       if ( pre_readno <= minno )
         {
@@ -427,7 +427,7 @@ int connectByPE_grad ( FILE *fp, int peGrad, char *line )
 
   while ( fgets ( line, lineLen, fp ) != NULL )
     {
-      sscanf ( line, "%lld %d %d", &readno, &contigno, &pos );
+      sscanf ( line, "%lld %u %d", &readno, &contigno, &pos );
 
       if ( readno > maxno )
         {
@@ -520,7 +520,7 @@ int connectByPE_grad_gz ( gzFile *fp, int peGrad, char *line )
 
   if ( strlen ( line ) )
     {
-      sscanf ( line, "%lld %d %d", &pre_readno, &pre_contigno, &pre_pos );
+      sscanf ( line, "%lld %u %d", &pre_readno, &pre_contigno, &pre_pos );
 
       if ( pre_readno <= minno )
         {
@@ -538,7 +538,7 @@ int connectByPE_grad_gz ( gzFile *fp, int peGrad, char *line )
 
   while ( gzgets ( fp, line, lineLen ) != NULL )
     {
-      sscanf ( line, "%lld %d %d", &readno, &contigno, &pos );
+      sscanf ( line, "%lld %u %d", &readno, &contigno, &pos );
 
       if ( readno > maxno )
         {
