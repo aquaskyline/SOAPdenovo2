@@ -26,7 +26,7 @@
 #include "extfunc.h"
 #include "extvab.h"
 #if DEBUG
-#define inline  
+#define inline
 #endif
 static Kmer *kmerBuffer;
 static ubyte8 *hashBanBuffer;
@@ -1062,7 +1062,7 @@ void addEdge ( unsigned int from, unsigned int to, char ch, int bal_edge, unsign
   if ( num_ed_temp + 1 > num_ed_limit )
     {
       unsigned int new_num_ed = num_ed_limit * 1.2;
-      edge_array = ( EDGE * ) ckrealloc ( edge_array, ( new_num_ed + 1 ) * sizeof ( EDGE ), ( num_ed_limit + 1 ) * sizeof ( EDGE ) );
+      edge_array = ( EDGE * ) ckrealloc ( edge_array, ( new_num_ed + 3 ) * sizeof ( EDGE ), ( num_ed_limit + 3 ) * sizeof ( EDGE ) );
       num_ed_limit = new_num_ed;
       int j;
 
@@ -2733,4 +2733,3 @@ void Iterate ( char *libfile, char *graph, int maxk, int M )   //boolean keepRea
   fprintf ( stderr, "Iteration finished.\n" );
   fprintf ( stderr, "Time spent on iteration: %dm.\n\n", ( int ) ( stop_t - start_t ) / 60 );
 }
-
