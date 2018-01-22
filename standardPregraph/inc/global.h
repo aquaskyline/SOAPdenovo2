@@ -91,6 +91,7 @@ int initKmerSetSize = 0;   // init_size = (ubyte8) ((double) initKmerSetSize * 1
 long known_genome_size = 0;
 int smallKmer = 0;  // the kmer of the step "Map"
 int deltaKmer = 0;  // for map, K-k
+long contigTotalLength = 0 ;
 
 double cvg_low = 0.1;
 double cvg_high = 2;

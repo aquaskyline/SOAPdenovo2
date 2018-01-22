@@ -29,7 +29,7 @@
 static void initenv ( int argc, char **argv );
 static char shortrdsfile[256];
 static char graphfile[256];
-
+extern long contigTotalLength;
 static void display_map_usage ();
 
 /*************************************************
@@ -159,7 +159,7 @@ void initenv ( int argc, char **argv )
   inpseq = outseq = 0;
   fprintf ( stderr, "Parameters: map " );
 
-  while ( ( copt = getopt ( argc, argv, "s:g:K:p:k:f" ) ) != EOF )
+  while ( ( copt = getopt ( argc, argv, "s:g:K:p:k:h:f" ) ) != EOF )
     {
       //printf("get option\n");
       switch ( copt )
@@ -194,6 +194,12 @@ void initenv ( int argc, char **argv )
           smallKmer = atoi ( temp );
           break;
 
+        case 'h':
+          fprintf ( stderr, "-h %s ", optarg );
+          sscanf ( optarg, "%s", temp );
+          contigTotalLength = atol( temp );
+          break;
+
         case 'f':
           fill = 1;
           fprintf ( stderr, "-f " );
@@ -220,9 +226,10 @@ void initenv ( int argc, char **argv )
 
 static void display_map_usage ()
 {
-  fprintf ( stderr, "\nmap -s configFile -g inputGraph [-f] [-p n_cpu -k kmer_R2C]\n" );
+  fprintf ( stderr, "\nmap -s configFile -g inputGraph [-f] [-p n_cpu -k kmer_R2C] [-h contig_total_length]\n" );
   fprintf ( stderr, "  -s <string>        configFile: the config file of solexa reads\n" );
   fprintf ( stderr, "  -g <string>        inputGraph: prefix of input graph file names\n" );
+  fprintf ( stderr, "  -h (optional)      total length of contigs for init hash table. [1024]\n" ); 
   fprintf ( stderr, "  -f (optional)      output gap related reads in map step for using SRkgf to fill gap, [NO]\n" );
   fprintf ( stderr, "  -p <int>           n_cpu: number of cpu for use, [8]\n" );
 #ifdef MER127
