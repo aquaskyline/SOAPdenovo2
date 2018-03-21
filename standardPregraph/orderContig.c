@@ -5497,6 +5497,7 @@ static void outputLinks ( FILE *fp, int insertS )
   unsigned int i, bal_ctg, bal_toCtg;
   CONNECT *cnts, *temp_cnt;
 
+  fprintf ( fp, "id contigID\tgapLen\tweight\tinsertS\n");
   for ( i = 1; i <= num_ctg; i++ )
     {
       cnts = contig_array[i].downwardConnect;
