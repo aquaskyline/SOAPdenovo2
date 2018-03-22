@@ -12,8 +12,8 @@ OBJS=		build_graph.o build_edge.o multi_threads.o \
 PROG=           
 INCLUDES=	-I./inc
 SUBDIRS=    . 
-LIBPATH=	-L/usr/lib64
-LIBS=       -pthread -lz -L./inc
+LIBPATH=	-L./inc -L/usr/lib64
+LIBS=       -pthread -lz
 EXTRA_FLAGS=
 VERSION =    1.0.3
 
