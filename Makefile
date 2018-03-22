@@ -10,7 +10,7 @@ SUBDIRS = sparsePregraph standardPregraph fusion
 PROG=       SOAPdenovo-63mer SOAPdenovo-127mer SOAPdenovo-fusion
 INCLUDES=   -I./sparsePregraph/inc -I./standardPregraph/inc
 
-LIBPATH=    -L/lib64 -L/usr/lib64 -L./sparsePregraph/inc -L./standardPregraph/inc
+LIBPATH=    -L./sparsePregraph/inc -L./standardPregraph/inc -L/lib64 -L/usr/lib64
 LIBS=       -pthread -lz -lm
 EXTRA_FLAGS= 
 
