@@ -27,7 +27,7 @@ OBJS=		arc.o attachPEinfo.o bubble.o check.o compactEdge.o \
 PROG=       SOAPdenovo-63mer
 INCLUDES=   -Iinc
 SUBDIRS=    .
-LIBPATH=    -L/lib64 -L/usr/lib64 -L./inc
+LIBPATH=    -L./inc -L/lib64 -L/usr/lib64
 LIBS=       -pthread -lz -lm 
 EXTRA_FLAGS=
 
