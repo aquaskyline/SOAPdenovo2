@@ -2701,6 +2701,7 @@ void outputLinks(FILE *fp, int insertS)
   CONNECT *cnts, *temp_cnt;
 
   //printf("outputLinks, %d contigs\n",num_ctg);
+  fprintf ( fp, "id contigID\tgapLen\tweight\tinsertS\n");
   for(i = 1; i <= num_ctg; i++)
     {
       cnts = contig_array[i].downwardConnect;
