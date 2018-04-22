@@ -1,18 +1,18 @@
 MAKEFLAGS += --no-print-directory
-CC = g++
+CXX ?= g++
 ifdef debug
-CFLAGS=         -O0 -g -fomit-frame-pointer -DDEBUG
+CFLAGS = -O0 -g -fomit-frame-pointer -DDEBUG
 else
-CFLAGS=         -O3 -fomit-frame-pointer
+CFLAGS = -O3 -fomit-frame-pointer
 endif
 
 SUBDIRS = sparsePregraph standardPregraph fusion
-PROG=       SOAPdenovo-63mer SOAPdenovo-127mer SOAPdenovo-fusion
-INCLUDES=   -I./sparsePregraph/inc -I./standardPregraph/inc
+PROG = SOAPdenovo-63mer SOAPdenovo-127mer SOAPdenovo-fusion
+INCLUDES = -I/usr/include/bam -I./sparsePregraph/inc -I./standardPregraph/inc
 
-LIBPATH=    -L./sparsePregraph/inc -L./standardPregraph/inc -L/lib64 -L/usr/lib64
-LIBS=       -pthread -lz -lm
-EXTRA_FLAGS= 
+LIBPATH = -L./sparsePregraph/inc -L./standardPregraph/inc
+LIBS = -pthread -lz -lm
+EXTRA_FLAGS =
 
 BIT_ERR = 0
 ifeq (,$(findstring $(shell uname -m), x86_64 ppc64 ia64))
@@ -25,15 +25,15 @@ LIBS += -lbam -lrt
 endif
 
 ifneq (,$(findstring $(shell uname -m), x86_64))
-CFLAGS += -m64
+CXXFLAGS += -m64
 endif
 
 ifneq (,$(findstring $(shell uname -m), ia64))
-CFLAGS +=
+CXXFLAGS +=
 endif
 
 ifneq (,$(findstring $(shell uname -m), ppc64))
-CFLAGS += -mpowerpc64
+CXXFLAGS += -mpowerpc64
 endif
 
 
@@ -46,20 +46,20 @@ ifdef debug
 SOAPdenovo-63mer:
 	@cd sparsePregraph;make 63mer=1 debug=1 clean all;cd ..;
 	@cd standardPregraph;make 63mer=1 debug=1 clean all;cd ..;
-	@$(CC) sparsePregraph/*.o standardPregraph/*.o $(LIBPATH) $(LIBS) $(EXTRA_FLAGS) -o SOAPdenovo-63mer
+	@$(CXX) sparsePregraph/*.o standardPregraph/*.o $(LIBPATH) $(LIBS) $(EXTRA_FLAGS) -o SOAPdenovo-63mer
 SOAPdenovo-127mer:
 	@cd sparsePregraph;make 127mer=1 debug=1 clean all;cd ..;
 	@cd standardPregraph;make 127mer=1 debug=1 clean all;cd ..;
-	@$(CC) sparsePregraph/*.o standardPregraph/*.o $(LIBPATH) $(LIBS) $(EXTRA_FLAGS) -o SOAPdenovo-127mer
+	@$(CXX) sparsePregraph/*.o standardPregraph/*.o $(LIBPATH) $(LIBS) $(EXTRA_FLAGS) -o SOAPdenovo-127mer
 else
 SOAPdenovo-63mer:
 	@cd sparsePregraph;make 63mer=1 clean all;cd ..;
 	@cd standardPregraph;make 63mer=1 clean all;cd ..;
-	@$(CC) sparsePregraph/*.o standardPregraph/*.o $(LIBPATH) $(LIBS) $(EXTRA_FLAGS) -o SOAPdenovo-63mer
+	@$(CXX) sparsePregraph/*.o standardPregraph/*.o $(LIBPATH) $(LIBS) $(EXTRA_FLAGS) -o SOAPdenovo-63mer
 SOAPdenovo-127mer:
 	@cd sparsePregraph;make 127mer=1 clean all;cd ..;
 	@cd standardPregraph;make 127mer=1 clean all;cd ..;
-	@$(CC) sparsePregraph/*.o standardPregraph/*.o $(LIBPATH) $(LIBS) $(EXTRA_FLAGS) -o SOAPdenovo-127mer
+	@$(CXX) sparsePregraph/*.o standardPregraph/*.o $(LIBPATH) $(LIBS) $(EXTRA_FLAGS) -o SOAPdenovo-127mer
 endif
 
 clean:

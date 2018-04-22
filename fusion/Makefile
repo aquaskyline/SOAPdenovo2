@@ -6,8 +6,8 @@ bindir = $(exec_prefix)/bin
 libdir = 
 mandir = 
 
-CC = gcc
-CCOPT = -O3 -fprefetch-loop-arrays -funroll-loops -fomit-frame-pointer -w 
+CC ?= gcc
+CCOPT ?= -O3 -fprefetch-loop-arrays -funroll-loops -fomit-frame-pointer -w
 LIBS = -lm -lpthread
 INCDIRS = -Iinc/
 CFLAGS = ${CCOPT} ${INCDIRS}

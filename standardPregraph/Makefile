@@ -5,16 +5,16 @@
 #
 ###################################
 
-CC=             gcc
+CC ?= gcc
 GCCVERSIONMAJOR := $(shell expr `$(CC) -dumpversion | cut -f1 -d.` \>= 4)
 GCCVERSIONMINOR := $(shell expr `$(CC) -dumpversion | cut -f2 -d.` \>= 4)
 ifdef debug
-CFLAGS=         -O0 -g -fomit-frame-pointer -DDEBUG#-msse4.2
+CFLAGS ?= -O0 -g -fomit-frame-pointer -DDEBUG#-msse4.2
 else
-CFLAGS=         -O3 -fomit-frame-pointer -w #-msse4.2
+CFLAGS ?= -O3 -fomit-frame-pointer -w #-msse4.2
 endif
-DFLAGS=         
-OBJS=		arc.o attachPEinfo.o bubble.o check.o compactEdge.o \
+DFLAGS =
+OBJS =		arc.o attachPEinfo.o bubble.o check.o compactEdge.o \
 		concatenateEdge.o connect.o contig.o cutTipPreGraph.o cutTip_graph.o \
 		darray.o dfib.o dfibHeap.o fib.o fibHeap.o \
 		hashFunction.o kmer.o lib.o loadGraph.o loadPath.o \
@@ -25,10 +25,10 @@ OBJS=		arc.o attachPEinfo.o bubble.o check.o compactEdge.o \
 		readseq1by1.o scaffold.o searchPath.o seq.o splitReps.o \
 		cutTip_graph2.o linearEdge.o kmerhash.o read2edge.o iterate.o
 PROG=       SOAPdenovo-63mer
-INCLUDES=   -Iinc
-SUBDIRS=    .
-LIBPATH=    -L./inc -L/lib64 -L/usr/lib64
-LIBS=       -pthread -lz -lm 
+INCLUDES = -I/usr/include/bam -I./inc
+SUBDIRS = .
+LIBPATH =
+LIBS = -pthread -lz -lm
 EXTRA_FLAGS=
 
 BIT_ERR = 0
@@ -46,7 +46,7 @@ endif
 
 ifneq (,$(findstring Linux,$(shell uname)))
 EXTRA_FLAGS += -Wl,--hash-style=both
-LIBS += -lbam -lrt 
+LIBS += -lbam -lrt
 endif
 
 ifneq (,$(findstring $(shell uname -m), x86_64))
@@ -54,7 +54,7 @@ CFLAGS += -m64
 endif
 
 ifneq (,$(findstring $(shell uname -m), ia64))
-CFLAGS += 
+CFLAGS +=
 endif
 
 ifneq (,$(findstring $(shell uname -m), ppc64))

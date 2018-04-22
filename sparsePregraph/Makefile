@@ -1,21 +1,21 @@
-CC=            g++
+CXX ?= g++
 ifdef debug
-CFLAGS=         -O0 -g -fomit-frame-pointer -DDEBUG
+CFLAGS ?= -O0 -g -fomit-frame-pointer -DDEBUG
 else
-CFLAGS=         -O3 -fomit-frame-pointer -w
+CFLAGS ?= -O3 -fomit-frame-pointer -w
 endif
 
-DFLAGS=         
-OBJS=		build_graph.o build_edge.o multi_threads.o \
+DFLAGS =
+OBJS =		build_graph.o build_edge.o multi_threads.o \
 			build_preArc.o pregraph_sparse.o io_func.o\
 			global.o convert_soapdenovo.o
-PROG=           
-INCLUDES=	-I./inc
-SUBDIRS=    . 
-LIBPATH=	-L./inc -L/usr/lib64
-LIBS=       -pthread -lz
+PROG =
+INCLUDES = -I/usr/include/bam -I./inc
+SUBDIRS = .
+LIBPATH =
+LIBS = -pthread -lz
 EXTRA_FLAGS=
-VERSION =    1.0.3
+VERSION = 1.0.3
 
 ifdef 127mer
 CFLAGS += -D_127MER_
@@ -38,22 +38,22 @@ LIBS += -lbam
 endif
 
 ifneq (,$(findstring $(shell uname -m), x86_64))
-CFLAGS += -m64
+CXXFLAGS += -m64
 endif
 
 ifneq (,$(findstring $(shell uname -m), ia64))
-CFLAGS += 
+CXXFLAGS +=
 endif
 
 ifneq (,$(findstring $(shell uname -m), ppc64))
-CFLAGS += -mpowerpc64
+CXXFLAGS += -mpowerpc64
 endif
 
 .SUFFIXES:.cpp .o
 
 .cpp.o:
 		@printf "Compiling $<...                               \r"
-		@$(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $< || echo "Error in command: $(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $<"
+		@$(CXX) -c $(CXXFLAGS) $(DFLAGS) $(INCLUDES) $< || echo "Error in command: $(CXX) -c $(CXXFLAGS) $(DFLAGS) $(INCLUDES) $<"
 
 all:		$(OBJS) 
 		@printf "$(PROG) objects generated.                    \n"
@@ -66,7 +66,7 @@ envTest:
 
 pregraph_sparse: clean envTest $(OBJS)
 		@printf "Linking...                                     \r"
-		@$(CC) $(CFLAGS)$(INCLUDES) -o $(PROG)  $(OBJS) $(LIBPATH) $(LIBS) $(ENTRAFLAGS)
+		@$(CXX) $(CXXFLAGS)$(INCLUDES) -o $(PROG)  $(OBJS) $(LIBPATH) $(LIBS) $(ENTRAFLAGS)
 		@printf "$(PROG) compilation done.                      \n"
 
 clean:
