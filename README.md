@@ -18,7 +18,7 @@ MEGAHIT: An ultra-fast single-node solution for large and complex metagenomics a
 
 ## For MAC users
 
-Please use <a href="http://brew.sh">brew</a> to install SOAPdenovo. SOAPdenovo's package in Homebrew-science is managed by Shaun Jackman. 
+Please use <a href="http://brew.sh">brew</a> to SOAPdenovo. SOAPdenovo's package in Homebrew-science is managed by Shaun Jackman. 
 
 ## Introduction
 
@@ -30,7 +30,7 @@ SOAPdenovo aims for large plant and animal genomes, although it also works well 
 
 ## Installation
 1. You can download the pre-compiled binary according to your platform, unpack using "tar -zxf  ${destination folder} download.tgz" and execute directly.
-2. Or download the source code, unpack to ${destination folder} with the method above, and compile by using GNU make with command "make" at ${destination folder}/SOAPdenovo-V2.04. Then install executable to ${destination folder}/SOAPdenovo-V2.04/bin using "make install"
+2. Or download the source code, unpack to ${destination folder} with the method above, and compile by using GNU make with command "make" at ${destination folder}/SOAPdenovo-V2.04.
 
 ## How to use it
 
