@@ -90,6 +90,10 @@ static uint32_t cpuid ( uint32_t functionInput )
   uint32_t ebx;
   uint32_t ecx;
   uint32_t edx;
+
+#ifdef __aarch64__
+  ecx = 0x0;
+#else
 #ifdef __PIC__
   asm ( "pushl %%ebx\n\t" /* save %ebx */
         "cpuid\n\t"
@@ -98,6 +102,7 @@ static uint32_t cpuid ( uint32_t functionInput )
         : "cc" );
 #else
   asm ( "cpuid" : "=a" ( eax ), "=b" ( ebx ), "=c" ( ecx ), "=d" ( edx ) : "a" ( functionInput ) );
+#endif
 #endif
   return ecx;
 }
