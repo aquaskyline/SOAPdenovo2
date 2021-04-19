@@ -604,6 +604,7 @@ boolean prlRead2HashTable ( char *libfile, char *outfile )
           else
             {
               fprintf(stderr, "Error: aio_read error.\n");
+               exit(-1);
             }
         }
       //read single fasta, single fastq and PE fasta in one file
