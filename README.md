@@ -1,5 +1,8 @@
 ![Build Status](https://www.travis-ci.org/cchd0001/SOAPdenovo2.svg?branch=master)
 
+Contact: Ruibang Luo  
+Email: rbluo@cs.hku.hk  
+
 # Manual of SOAPdenovo2
 
 ## About MEGAHIT
