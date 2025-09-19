@@ -34,6 +34,7 @@
 #include "seq_util.h"
 #include "convert_soapdenovo.h"
 
+#include <pthread.h>
 
 static int LOAD_GRAPH = 0, BUILD_DBG = 1, BUILD_EDGES = 1, BUILD_PREARCS = 1;
 //static    int run_mode=0;
@@ -142,7 +143,7 @@ extern "C" int call_pregraph_sparse ( int argc, char **argv )
               //initialize the locks  unlock
               for ( size_t i = 0; i < ht2.ht_sz; ++i )
                 {
-                  locks[i] = 1;
+                  pthread_spin_init(&(locks[i]), 0);
                 }
 
               //create threads
@@ -256,7 +257,7 @@ extern "C" int call_pregraph_sparse ( int argc, char **argv )
               //initialize locks unlock
               for ( size_t i = 0; i < ht2.ht_sz; ++i )
                 {
-                  locks[i] = 1;
+                  pthread_spin_init(&(locks[i]), 0);
                 }
 
               //create threads
@@ -434,7 +435,7 @@ extern "C" int call_pregraph_sparse ( int argc, char **argv )
 
           for ( size_t i = 0; i < e_sz + 1; i++ )
             {
-              s_locks[i] = 1;
+              pthread_spin_init(&(s_locks[i]), 0);
             }
 
           /*buffers for seperate threads*/

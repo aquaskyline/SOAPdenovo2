@@ -18,7 +18,7 @@
 #define int2compbase(seq)       "TGAC"[seq]
 #define int_comp(seq)   (char)(seq^0x02) //(char)((0x4E>>((seq)<<1))&0x03)
 
-int b_ban;
+extern int b_ban;
 
 typedef unsigned long long Kmer;
 
