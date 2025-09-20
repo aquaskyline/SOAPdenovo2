@@ -27,7 +27,7 @@
 #include "extvab.h"
 static void initenv ( int argc, char **argv );
 static void display_contig_usage ();
-char shortrdsfile[256], graphfile[256];
+static char shortrdsfile[256], graphfile[256];
 static boolean repeatSolve;     //whether solve repeat or not
 //static boolean keepReadFile = 0;  //whether keep tmp selected reads file or not
 static boolean iter = 0;                //whether use multikmer or not

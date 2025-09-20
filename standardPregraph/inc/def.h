@@ -41,7 +41,7 @@
 #define int2compbase(seq)       "TGAC"[seq]         //int 0123 => base TGAC complement of ACTG
 #define int_comp(seq)   (char)(seq^0x02)         //(char)((0x4E>>((seq)<<1))&0x03)
 
-int b_ban;
+extern int b_ban;
 
 #ifdef MER127
 typedef struct kmer

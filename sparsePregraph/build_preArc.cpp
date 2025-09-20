@@ -47,6 +47,8 @@
 
 #include "sparse_kmer.h"
 
+#include <pthread.h>
+
 //programming guide:
 
 //step1:read edge & build  vertex hash
@@ -94,12 +96,12 @@ void build_vertexes ( vertex_hash2 *v_ht, int K_size, char *edge_file )
   size_t line_len, edge_len_left;
   int edge_len;
   int cvg;
-  int bal_ed;//回文为0
+  int bal_ed;//禄脴脦脛脦陋0
   const int BUFF_LEN = 1024;
   char line[BUFF_LEN];
   //char str[32];
   char to_buff[BUFF_LEN];//buffer 2k edge seq  BUFF_LEN>4*K_size
-  int processed = 0; //0表示未处理 1表示 处理完毕 2 表示已经处理了from_vertex ,to_vertex 还没有处理
+  int processed = 0; //0卤铆脢戮脦麓麓娄脌铆 1卤铆脢戮 麓娄脌铆脥锚卤脧 2 卤铆脢戮脪脩戮颅麓娄脌铆脕脣from_vertex ,to_vertex 禄鹿脙禄脫脨麓娄脌铆
   size_t edge_id = 0;
   fp = fopen ( edge_file, "r" );
 
@@ -121,7 +123,7 @@ void build_vertexes ( vertex_hash2 *v_ht, int K_size, char *edge_file )
         {
           if ( processed == 1 && bal_ed )
             {
-              edge_id++;//如果不是回文
+              edge_id++;//脠莽鹿没虏禄脢脟禄脴脦脛
             }
 
 #ifdef _63MER_
@@ -242,7 +244,7 @@ void build_vertexes ( vertex_hash2 *v_ht, int K_size, char *edge_file )
             {
               if ( line[0] == '\n' )
                 {
-                  continue;    //当len = 1023时
+                  continue;    //碌卤len = 1023脢卤
                 }
 
               fprintf ( stderr, "ERROR: in cal the status_processed !! %d \n", processed );
@@ -1073,7 +1075,7 @@ void build_preArc_threaded ( preArc_array *arc_arr, vertex_hash2 *v_ht, int K_si
   //init as unlock stat ..
   for ( size_t i = 0; i < arc_arr->array_sz; ++i )
     {
-      locks[i] = 1;
+      pthread_spin_init(&(locks[i]), 0);
     }
 
   for ( int k = 0; k < thrd_num_s; k++ )
@@ -1296,7 +1298,14 @@ int put_path_2_buffer ( struct edge_path_buffer *buffer, unsigned int *path )
   if ( debug )
     {
       static size_t times = 0;
-      static pthread_spinlock_t lock = 1;
+
+      static pthread_spinlock_t lock;
+      static int lock_initialized = 0;
+      if (!lock_initialized) {
+          pthread_spin_init(&lock, 0);
+          lock_initialized = 1;
+      }
+
       pthread_spin_lock ( &lock );
       fprintf ( stderr, "call put_path_2_buffer %lu\n", times++ );
       pthread_spin_unlock ( &lock );
